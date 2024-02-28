@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Control>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+
+@{
+    ViewData["DeleteTitle"] = "controls";
+    ViewData["Title"] = "Control List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Control Management View</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true && p.Add == true))
+                        {
+                            <a class="btn btn-primary me-2" href="~/Control/Add">
+                                <i class="fa-solid fa-plus"></i> Add New Control
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
+                    <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
+                        <li class="nav-item nav-search d-none d-lg-block">
+                            <div class="input-group">
+                                <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-responsive">
+                    <table style="width:1600px;" id="tableList" class="table table-striped table-hover table-bordered tableList">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Control Type</th>
+                                <th>Control Process</th>
+                                <th>Control Frequency</th>
+                                <th>Control Effectiveness</th>
+                                <th>Risk Identification</th>
+                                <th>Control Effectiveness Rating</th>
+                                <th colspan="2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                if(item.RiskIdentification.IsDeleted == false)
+                                {
+                                    <tr id="tr">
+                                        <td>@item.Code</td>
+                                        <td>@item.Name</td>
+                                        <td>@Html.Raw(item.Description)</td>
+                                        <td style="background-color:@item.ControlType.BGColor; color:@item.ControlType.FontColor;">@item.ControlType.Name</td>
+                                        <td style="background-color:@item.ControlProcess.BGColor; color:@item.ControlProcess.FontColor;">@item.ControlProcess.Name</td>
+                                        <td style="background-color:@item.ControlFrequency.BGColor; color:@item.ControlFrequency.FontColor;">@item.ControlFrequency.Name</td>
+                                        <td style="background-color:@item.ControlEffectiveness.BGColor; color:@item.ControlEffectiveness.FontColor;">@item.ControlEffectiveness.Name</td>
+                                        <td>@item.RiskIdentification.Name</td>
+                                        <td>@item.ControlEffectivenessRating</td>
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                        {
+                                            <td>
+                                                <a asp-action="View" asp-controller="Control" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                            </td>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                        {
+                                            <td>
+                                                <a asp-action="View" asp-controller="Control" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                            </td>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true && p.Edit == true))
+                                        {
+                                            <td>
+                                                <a asp-action="Edit" asp-controller="Control" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                            </td>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true && p.Delete == true))
+                                        {
+                                            <td>
+                                                <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                            </td>
+                                        }                                        
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: left;
+    margin-top: 15px;">
+                            <p>
+                                Showing @Model.Count() of @ViewBag.TotalRow entries
+                            </p>
+                        </div>
+                        <div class="col-md-6" >
+                            <nav aria-label="Page navigation" class="float-end mt-3">
+                                <ul class="pagination">
+                                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                    {
+                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="?page=@i&pageSize=@ViewBag.PageSize">@i</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9"></div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="AverageControl">Average Control</label>
+            <input type="text" class="form-control" id="AverageControl" name="AverageControl" readonly>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.rawgit.com/dobtco/jquery-resizable-columns/v1.0.9/jquery.resizableColumns.min.js"></script>
+
+    <script>
+        $("td,th")
+            .css({
+                position: "relative"
+            })
+            .prepend("<div class='resizer'></div>")
+            .resizable({
+                resizeHeight: false,
+                handleSelector: "",
+                onDragStart: function (e, $el, opt) {
+                    if (!$(e.target).hasClass("resizer"))
+                        return false;
+                    return true;
+                }
+            });
+        var table = $('.tableList');
+
+
+        table.draggable({
+            axis: 'x',
+            cursor: 'grabbing',
+            scroll: false,
+            start: function (event, ui) {
+                $.ui.ddmanager.current.cancelHelperRemoval = true;
+            }
+        });
+
+        function calculateAverageControlEffectivenessRating() {
+            var totalControlEffectivenessRating = 0;
+            var rowCount = 0;
+
+            $("#tableList tbody tr").each(function () {
+                var controlEffectivenessRating = parseFloat($(this).find("td:eq(8)").text()) || 0; 
+                totalControlEffectivenessRating += controlEffectivenessRating;
+                rowCount++;
+            });
+
+            var averageControlEffectivenessRating = rowCount > 0 ? totalControlEffectivenessRating / rowCount : 0;
+
+            $("#AverageControl").val(averageControlEffectivenessRating.toFixed(2));
+        }
+
+        calculateAverageControlEffectivenessRating();
+    </script>
+}

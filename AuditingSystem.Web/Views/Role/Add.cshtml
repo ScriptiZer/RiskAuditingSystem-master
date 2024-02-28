@@ -1,0 +1,207 @@
+﻿@model Role
+@{
+    ViewData["Title"] = "Role Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add New Role</h4>
+                <form class="forms-sample" id="AddForm">
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" placeholder="User Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" id="Description" placeholder="Description">
+                    </div>
+                    <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
+                        <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
+                            <li class="nav-item nav-search d-none d-lg-block">
+                                <div class="input-group">
+                                    <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tableList" class="table table-striped table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th><center>Name</center></th>
+                                    <th><center>View</center></th>
+                                    <th><center>Add</center></th>
+                                    <th><center>Edit</center></th>
+                                    <th><center>Delete</center></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var rolePermission in ViewBag.permissions)
+                                {
+                                    <tr>
+                                        <input type="hidden" value="@rolePermission?.Id" />
+                                        <td>
+                                            <center>
+                                                @rolePermission?.Name
+                                            </center>
+                                        </td>
+                                        <td>
+
+                                            <center>
+                                                <input title="View" data-size="small" id="View" name="View" class="View" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            <center>
+                                                <input title="Add" data-size="small" id="Add" name="Add" class="Add" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            <center>
+                                                <input title="Edit" data-size="small" id="Edit" name="Edit" class="Edit" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            <center>
+                                                <input title="Delete" data-size="small" id="Delete" name="Delete" class="Delete" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="float-end mt-2">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+            $("#AddForm").validate({
+                rules: {
+                    Name: {
+                        required: true
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "The Name field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select")) {
+                        error.insertAfter(element.siblings(".text-danger"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/Role/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+
+                if ($("#AddForm").valid()) {
+                    var formData = {
+                        Role: {
+                            Name: $("#Name").val(),
+                            Description: htmlDescription
+                        },
+                        Permissions: []
+                    };
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false, // إخفاء زر الإغلاق
+                        onBeforeOpen: () => {
+                            swal.showLoading(); // إضافة شريط التقدم
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $("#tableList tbody tr").each(function () {
+                            var permissionId = $(this).find("input[type=hidden]").val();
+                            var viewPermission = $(this).find(".View").prop("checked");
+                            var addPermission = $(this).find(".Add").prop("checked");
+                            var editPermission = $(this).find(".Edit").prop("checked");
+                            var deletePermission = $(this).find(".Delete").prop("checked");
+
+                            var permissionData = {
+                                Id: permissionId,
+                                View: viewPermission,
+                                Add: addPermission,
+                                Edit: editPermission,
+                                Delete: deletePermission
+                            };
+
+                            formData.Permissions.push(permissionData);
+                        });
+
+                        $.ajax({
+                            url: "/api/roles",
+                            method: "POST",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false, // إخفاء زر التأكيد
+                                    showCancelButton: false, // إخفاء زر الإلغاء
+                                    showCloseButton: false // إخفاء زر الإغلاق
+                                }).then(function () {
+                                    window.location.href = '/Role/Index';
+                                });
+                            },
+                            error: function (error) {
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, // إخفاء زر التأكيد
+                                        showCancelButton: false, // إخفاء زر الإلغاء
+                                        showCloseButton: false // إخفاء زر الإغلاق
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+
+                }
+            });
+        });
+    </script>
+}

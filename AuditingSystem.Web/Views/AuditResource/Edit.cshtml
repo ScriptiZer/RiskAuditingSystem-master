@@ -1,0 +1,290 @@
+﻿@model AuditingSystem.Entities.AuditPlan.AuditResources
+@{
+    ViewData["Title"] = "Audit Resource Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit Audit Resources</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="Company">Company</label>
+                                @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company" , @name="CompanyId"})
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="Department">Department</label>
+                                @Html.DropDownList("DepartmentId", ViewBag.DepartmentId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Department" , @name="DepartmentId"})
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="Function">Function</label>
+                               @*  <select asp-for="FunctionId" id="Function" class="form-control" multiple>
+                                    @foreach (var function in ViewBag.FunctionId as SelectList)
+                                    {
+                                        <option value="@function.Value" selected="@(Model.FunctionId != null && Model.FunctionId.Split(',').Contains(function.Value.ToString()))">@function.Text</option>
+                                    }
+                                </select> *@
+                                <div class="form-group">
+                                    @Html.DropDownList("FunctionId", ViewBag.FunctionId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Function" , @name="FunctionId"})
+                                    <span asp-validation-for="FunctionId" class="text-danger"></span>
+                                </div>
+                                <span asp-validation-for="FunctionId" class="text-danger"></span>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-4">
+                                <label>Plan Start Date</label><br>
+                                <input asp-for="PlanStartDate" name="PlanStartDate" type="text" class="StartDate form-control" asp-format="{0:yyyy/MM/dd}" />
+                            </div>
+                            <div class="col-4">
+                                <label>Plan End Date</label><br>
+                                <input asp-for="PlanEndDate" name="PlanEndDate" type="text" class="EndDate form-control" asp-format="{0:yyyy/MM/dd}" />
+                            </div>
+                        </div> 
+
+                        <div class="col-12"></div>
+                        <div class="col-12"></div>
+
+@* 
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="TotalPlan">Total Plan</label>
+                                <input value="0" class="form-control" asp-for="TotalPlan" name="TotalPlan" id="TotalPlan" readonly="readonly" />
+                                <span asp-validation-for="TotalPlan" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="TotalActual">Total Actual</label>
+                                <input value="0" class="form-control" asp-for="TotalActual" name="TotalActual" id="TotalActual" readonly="readonly" />
+                                <span asp-validation-for="TotalActual" class="text-danger"></span>
+                            </div>
+                        </div> *@
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <textarea class="form-control Description" id="Description" name="Description" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="float-end">
+                        <!-- Cancel Button -->
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <!-- Save Data Button -->
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // var company = $("#Company").val();
+            // var department = $("#Department").val();
+            // $.ajax({
+            //     url: "/AuditResource/GetDepartmentsByCompany",
+            //     data: { companyId: company },
+            //     type: "GET",
+            //     success: function (data) {
+            //         $("#Department").prop("disabled", false);
+
+            //         var options = '<option value="">-- Select One --</option>';
+
+            //         if (data && data["$values"]) {
+            //             data["$values"].forEach(function (item) {
+            //                 options += '<option value="' + item.id + '">' + item.name + '</option>';
+            //             });
+            //             $("#Department").html(options);
+            //             $("#Function").html('<option value="">-- Select One --</option>');
+            //         }
+            //     }
+            // });
+
+            // $.ajax({
+            //     url: "/AuditResource/GetFunctionsByDepartment",
+            //     data: { departmentId: department },
+            //     type: "GET",
+            //     success: function (data) {
+            //         $("#Function").prop("disabled", false);
+
+            //         var options = '<option value="">-- Select One --</option>';
+            //         if (data && data["$values"]) {
+            //             data["$values"].forEach(function (item) {
+            //                 options += '<option value="' + item.id + '">' + item.name + '</option>';
+            //             });
+            //             $("#Function").html(options);
+            //         }
+            //     }
+            // });
+            $(".StartDate").datepicker();
+            $(".EndDate").datepicker();
+            $("#Company").change(function () {
+                var companyId = $(this).val();
+                $.ajax({
+                    url: "/AuditResource/GetDepartmentsByCompany",
+                    data: { companyId: companyId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Department").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Department").html(options);
+                            $("#Function").html('<option value="">-- Select One --</option>');
+                        }
+                    }
+                });
+            });
+
+            $("#Department").change(function () {
+                var departmentId = $(this).val();
+                $.ajax({
+                    url: "/AuditResource/GetFunctionsByDepartment",
+                    data: { departmentId: departmentId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Function").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Function").html(options);
+                        }
+                    }
+                });
+            });
+          // $("#Function").select2();
+
+            $("#EditForm").validate({
+                rules: {
+                    CompanyId: {
+                        required: true
+                    },
+                    DepartmentId: {
+                        required: true
+                    },
+                    FunctionId: {
+                        required: true
+                    }
+                },
+                messages: {
+                    CompanyId: {
+                        required: "The Company field is required"
+                    },
+                    DepartmentId: {
+                        required: "The Department field is required"
+                    },
+                    FunctionId: {
+                        required: "The Function field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select") || element.is("textarea")) {
+                        error.insertAfter(element.siblings("span"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/AuditResource/Index';
+            });
+
+            $("#saveButton").click(function () {
+                // var editorDescription = CKEDITOR.instances['Description'];
+                // var htmlDescription = editorDescription.getData();
+                var functions = ($("#Function").val() || []).toString();
+
+                if ($("#EditForm").valid()) {
+                    var formData = {
+                        CompanyId: $("#Company").val(),
+                        DepartmentId: $("#Department").val(),
+                        FunctionId: functions,
+                        Description: $(".Description").val(),
+                        PlanStartDate: $(".StartDate").val() || null,
+                        PlanEndDate: $(".EndDate").val() || null
+                    };
+                    alert("formData.PlanStartDate: " + formData.PlanStartDate + " formData.PlanEndDate: " + formData.PlanStartDate);
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false, // إخفاء زر الإغلاق
+                        onBeforeOpen: () => {
+                            swal.showLoading(); // إضافة شريط التقدم
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/AuditResources/" + @Model.Id,
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false, // إخفاء زر التأكيد
+                                    showCancelButton: false, // إخفاء زر الإلغاء
+                                    showCloseButton: false // إخفاء زر الإغلاق
+                                }).then(function () {
+                                    window.location.href = '/AuditResource/Index';
+                                });
+                            },
+                            error: function (error) {
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, // إخفاء زر التأكيد
+                                        showCancelButton: false, // إخفاء زر الإلغاء
+                                        showCloseButton: false // إخفاء زر الإغلاق
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+}

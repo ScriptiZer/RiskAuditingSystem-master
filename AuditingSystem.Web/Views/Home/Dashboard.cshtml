@@ -1,0 +1,250 @@
+﻿@using System.Text.Json;
+@{
+    ViewData["Title"] = "Dashboard View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int Actualnumber = Convert.ToInt32(ViewData["totalEstimated"]);
+    string formattedActualNumber = string.Format("{0:N0}", Actualnumber);
+
+    int Estimatednumber = Convert.ToInt32(ViewData["totalActual"]);
+    string formattedEstimatedNumber = string.Format("{0:N0}", Estimatednumber);
+}
+
+<div class="row">
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Audit Budget per Month</p>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="d-flex justify-content-between traffic-status">
+                            <div class="item">
+                                <p class="mb-">Total Estimated</p>
+                                <h5 class="font-weight-bold mb-0">@formattedActualNumber</h5>
+                                <div style="background:#6640b2;" class="color-border"></div>
+                            </div>
+                            <div class="item">
+                                <p class="mb-">Total Actual</p>
+                                <h5 class="font-weight-bold mb-0">@formattedEstimatedNumber</h5>
+                                <div style="background:#1cbccd" class="color-border"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                    </div>
+                </div>
+                <canvas id="audience-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Audit Resources per Departments</p>
+                <div class="row mb-3">
+                    <div class="col-md-7">
+                        <div class="d-flex justify-content-between traffic-status">
+                            <div class="item">
+                                <p class="mb-">Total Plan</p>
+                                <h5 class="font-weight-bold mb-0">@ViewData["totalPlanperDepartment"]</h5>
+                                <div style="background:#6640b2;" class="color-border"></div>
+                            </div>
+                            <div class="item">
+                                <p class="mb-">Total Actual</p>
+                                <h5 class="font-weight-bold mb-0">@ViewData["totalActualperDepartment"]</h5>
+                                <div style="background:#1cbccd" class="color-border"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                    </div>
+                </div>
+                <canvas id="TotalPlanandActualperDepartment"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+
+        //1. SP → ActualBudgetPlanperMonth
+        if ($("#audience-chart").length) {
+            var months = @Html.Raw(JsonSerializer.Serialize(ViewData["Months"]));
+            var Actualvalues = @Html.Raw(JsonSerializer.Serialize(ViewData["ActualValues"]));
+            var Estimatedvalues = @Html.Raw(JsonSerializer.Serialize(ViewData["EstimatedValues"]));
+
+            var AudienceChartCanvas = $("#audience-chart").get(0).getContext("2d");
+            var AudienceChart = new Chart(AudienceChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        // {
+                        //     type: 'line',
+                        //     fill: false,
+                        //     data: [100, 2030, 1030, 1040, 2070, 1040,1058,7004,9009,1130,1012,1128],
+                        //     borderColor: '#ff4c5b'
+                        // },
+                        {
+                            label: '# of Estimated Budget',
+                            data: Estimatedvalues,
+                            backgroundColor: '#6640b2'
+                        },
+                        {
+                            label: '# of Actual Budget',
+                            data: Actualvalues,
+                            backgroundColor: '#1cbccd'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 20,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            gridLines: {
+                                display: true,
+                                drawBorder: false,
+                                color: "#f8f8f8",
+                                zeroLineColor: "#f8f8f8"
+                            },
+                            ticks: {
+                                beginAtZero: true
+                                // display: true,
+                                // min: 0,
+                                // max: 1000000,
+                                // stepSize: 1000,
+                                // fontColor: "#b1b0b0",
+                                // fontSize: 10,
+                                // padding: 10
+                            }
+                        }],
+                        xAxes: [{
+                            stacked: false,
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: "#b1b0b0",
+                                fontSize: 10
+                            },
+                            gridLines: {
+                                color: "rgba(0, 0, 0, 0)",
+                                display: false
+                            },
+                            barPercentage: .9,
+                            categoryPercentage: .7,
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    elements: {
+                        point: {
+                            radius: 3,
+                            backgroundColor: '#ff4c5b'
+                        }
+                    }
+                },
+            });
+        }
+
+
+        //2. SP → TotalPlanandActualperDepartment
+        if ($("#TotalPlanandActualperDepartment").length) {
+            var months = @Html.Raw(JsonSerializer.Serialize(ViewData["Departments"]));
+            var Actualvalues = @Html.Raw(JsonSerializer.Serialize(ViewData["ActualValuesperDepartment"]));
+            var PlanValues = @Html.Raw(JsonSerializer.Serialize(ViewData["PlanValuesperDepartment"]));
+
+            var AudienceChartCanvas = $("#TotalPlanandActualperDepartment").get(0).getContext("2d");
+            var AudienceChart = new Chart(AudienceChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        // {
+                        //     type: 'line',
+                        //     fill: false,
+                        //     data: [100, 2030, 1030, 1040, 2070, 1040,1058,7004,9009,1130,1012,1128],
+                        //     borderColor: '#ff4c5b'
+                        // },
+                        {
+                            label: '# of Plan Resources',
+                            data: PlanValues,
+                            backgroundColor: '#6640b2'
+                        },
+                        {
+                            label: '# of Actual Resources',
+                            data: Actualvalues,
+                            backgroundColor: '#1cbccd'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 20,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            display: true,
+                            gridLines: {
+                                display: true,
+                                drawBorder: false,
+                                color: "#f8f8f8",
+                                zeroLineColor: "#f8f8f8"
+                            },
+                            ticks: {
+                                beginAtZero: true
+                                // display: true,
+                                // min: 0,
+                                // max: 1000000,
+                                // stepSize: 1000,
+                                // fontColor: "#b1b0b0",
+                                // fontSize: 10,
+                                // padding: 10
+                            }
+                        }],
+                        xAxes: [{
+                            stacked: false,
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: "#b1b0b0",
+                                fontSize: 10
+                            },
+                            gridLines: {
+                                color: "rgba(0, 0, 0, 0)",
+                                display: false
+                            },
+                            barPercentage: .9,
+                            categoryPercentage: .7,
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    elements: {
+                        point: {
+                            radius: 3,
+                            backgroundColor: '#ff4c5b'
+                        }
+                    }
+                },
+            });
+        }
+    </script>
+}

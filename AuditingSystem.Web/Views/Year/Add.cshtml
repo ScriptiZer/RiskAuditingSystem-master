@@ -1,0 +1,170 @@
+﻿@model Year
+@{
+    ViewData["Title"] = "Year Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <input id="CompanyId" name="CompanyId" asp-for="CompanyId" type="hidden" value="@ViewBag.Company" />
+
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add New Year</h4>
+                <form class="forms-sample" id="AddForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input type="text" class="form-control" id="Name" name="Name" placeholder="Year">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="Quarter">Quarter</label>
+                                <select disabled asp-for="Quarter" id="Quarter" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Quarter)
+                                    {
+                                        <option selected value="@user.Text">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="Description">Description</label>
+                                <textarea type="text" class="form-control" id="Description" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="float-end">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+            $("#Quarter").select2();
+            
+
+            $("#AddForm").validate({
+                rules: {
+                    Name: {
+                        required: true
+                    },
+                    CompanyId: {
+                        required: true
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "The Name field is required"
+                    },
+                    CompanyId: {
+                        required: "The Company field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select")) {
+                        error.insertAfter(element.siblings("span"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/Year/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var quarters = ($("#Quarter").val() || []).toString();
+                var htmlDescription = $('#Description').summernote('code');
+
+                if ($("#AddForm").valid()) {
+                    var formData = {
+                        Name: $("#Name").val(),
+                        CompanyId: parseInt($("#CompanyId").val()),
+                        Quarter: quarters,
+                        Description: htmlDescription
+                    };
+
+                    // Replace alert with SweetAlert
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false, // إخفاء زر الإغلاق
+                        onBeforeOpen: () => {
+                            swal.showLoading(); // إضافة شريط التقدم
+                        }
+                    });
+
+                    // Simulate an asynchronous action (AJAX request in your case)
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/years",
+                            method: "POST",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false, // إخفاء زر التأكيد
+                                    showCancelButton: false, // إخفاء زر الإلغاء
+                                    showCloseButton: false // إخفاء زر الإغلاق
+                                }).then(function () {
+                                    window.location.href = '/Year/Index';
+                                });
+                            },
+                            error: function (error) {
+                                swal.close(); // إغلاق SweetAlert بعد حدوث خطأ
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    // $.each(error.responseJSON.errors, function (key, value) {
+                                    //     $("#" + key).siblings(".text-danger").text(value);
+                                    // });
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, // إخفاء زر التأكيد
+                                        showCancelButton: false, // إخفاء زر الإلغاء
+                                        showCloseButton: false // إخفاء زر الإغلاق
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000); // محاكاة الفترة الزمنية للعملية (هنا 2000 ميلي ثانية = 2 ثانية)
+                }
+            });
+
+
+        });
+    </script>
+}

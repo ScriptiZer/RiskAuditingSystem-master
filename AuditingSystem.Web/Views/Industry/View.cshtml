@@ -1,0 +1,91 @@
+﻿@model Industry
+@{
+    ViewData["Title"] = "Industry View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+<div class="row">
+
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">View Industry</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Parent Industry</label>
+                                @Html.DropDownList("ParentIndustryId", ViewBag.ParentIndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "ParentIndustryId",@name="ParentIndustryId", disabled="disabled" })
+                                <span asp-validation-for="ParentIndustryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input disabled type="text" class="form-control" id="Name" placeholder="Industry Name" asp-for="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="Description">Description</label>
+                                <textarea disabled asp-for="Description" type="text" class="form-control" id="Description" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+   
+                    <div class="float-end">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button disabled id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault(); // Prevent the default behavior of the button
+                window.location.href = '/Industry/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+
+                // if ($("#EditForm").valid()) {
+                    var formData = {
+                        Source: "System",
+                        Name: $("#Name").val(),
+                        Description: htmlDescription,
+                        ParentIndustryId: $("#ParentIndustryId").val() || null
+                    };
+                    $.ajax({
+                        url: "/api/industries/" + @Model.Id,
+                        method: "PUT",
+                        dataType: 'json',
+                        contentType: "application/json",
+                        data: JSON.stringify(formData),
+                        success: function (response) {
+                            alert("The Modified is Successfully");
+                            window.location.href = '/Industry/Index';
+                        },
+                        error: function (error) {
+                            if (error.responseJSON && error.responseJSON.errors) {
+                                $.each(error.responseJSON.errors, function (key, value) {
+                                    $("#" + key).siblings(".text-danger").text(value);
+                                });
+                            }
+                        }
+                    });
+                // }
+            });
+        });
+    </script>
+}

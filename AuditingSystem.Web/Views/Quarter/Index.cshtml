@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Quarter>
+@{
+    ViewData["DeleteTitle"] = "quarters";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Quarter Management View</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a class="btn btn-primary me-2" href="~/Quarter/Add">
+                            <i class="fa-solid fa-plus"></i> Add New Quarter
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
+                    <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
+                        <li class="nav-item nav-search d-none d-lg-block">
+                            <div class="input-group">
+                                <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-responsive">
+                    <table id="tableList" class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th colspan="2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="tr">
+                                    <td>@item.Name</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-controller="Quarter" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    </td>
+                                    <td>
+                                        <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-md-6" style="    text-align: left;
+    margin-top: 15px;">
+                            <p>
+                                Showing @Model.Count() of @ViewBag.TotalRow entries
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <nav aria-label="Page navigation" class="float-end mt-3">
+                                <ul class="pagination">
+                                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                    {
+                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="?page=@i&pageSize=@ViewBag.PageSize">@i</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

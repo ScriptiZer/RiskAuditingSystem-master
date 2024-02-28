@@ -1,0 +1,343 @@
+﻿@model Calendar
+@{
+    ViewData["Title"] = "Calendar Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+<div class="row">
+
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit User</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label asp-for="YearId">Year</label>
+                                @Html.DropDownList("YearId", null, "-- Select One --", new { @class = "form-control", @id = "YearId" , @name="YearId"})
+                                <span asp-validation-for="YearId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <input id="UserId" name="UserId" asp-for="UserId" type="hidden" />
+                            <input id="CompanyId" name="CompanyId" asp-for="CompanyId" type="hidden"  />
+                        </div>
+                    
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="DaysNumberInYear">Days Number In Year</label>
+                                <input asp-for="DaysNumberInYear" type="text" class="form-control" id="DaysNumberInYear" name="DaysNumberInYear" placeholder="Days Number In Year">
+                                <span asp-validation-for="DaysNumberInYear" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Weekends">Weekends</label>
+                                <input asp-for="Weekends" type="text" class="form-control" id="Weekends" name="Weekends" placeholder="Weekends">
+                                <span asp-validation-for="Weekends" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="HolidaysNumber">Holidays Number</label>
+                                <input asp-for="HolidaysNumber" type="text" class="form-control" id="HolidaysNumber" name="HolidaysNumber" placeholder="Holidays Number">
+                                <span asp-validation-for="HolidaysNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="NoofInternationalHlidays">No of International Hlidays</label>
+                                <input asp-for="NoofInternationalHlidays" type="text" class="form-control" id="NoofInternationalHlidays" name="NoofInternationalHlidays" placeholder="No of International Hlidays">
+                                <span asp-validation-for="NoofInternationalHlidays" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="NoofLeavesDays">No of Leaves Days</label>
+                                <input asp-for="NoofLeavesDays" type="text" class="form-control" id="NoofLeavesDays" name="NoofLeavesDays" placeholder="No of Leaves Days">
+                                <span asp-validation-for="NoofLeavesDays" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="SpecialWorkingHours">Special Working Hours</label>
+                                <input asp-for="SpecialWorkingHours" type="text" class="form-control" id="SpecialWorkingHours" name="SpecialWorkingHours" placeholder="SpecialWorkingHours">
+                                <span asp-validation-for="SpecialWorkingHours" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="EstimatedSickLeaves">Estimated Sick Leaves</label>
+                                <input asp-for="EstimatedSickLeaves" type="text" class="form-control" id="EstimatedSickLeaves" name="EstimatedSickLeaves" placeholder="Estimated Sick Leaves">
+                                <span asp-validation-for="EstimatedSickLeaves" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="BalancefromPreviousYear">Balance from Previous Year</label>
+                                <input asp-for="BalancefromPreviousYear" type="text" class="form-control" id="BalancefromPreviousYear" name="BalancefromPreviousYear" placeholder="BalancefromPreviousYear">
+                                <span asp-validation-for="BalancefromPreviousYear" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="WorkingDays">Working Days</label>
+                                <input asp-for="WorkingDays" disabled type="text" class="form-control" id="WorkingDays" name="WorkingDays" placeholder="Working Days">
+                                <span asp-validation-for="BalancefromPreviousYear" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="Description">Description</label>
+                            <textarea asp-for="Description" type="text" class="form-control" id="Description" name="Description" placeholder="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="float-end">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts{
+   
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+
+            $("#DaysNumberInYear, #Weekends, #HolidaysNumber, #NoofInternationalHlidays, #NoofLeavesDays, #SpecialWorkingHours, #EstimatedSickLeaves, #BalancefromPreviousYear").on("change", function () {
+                updateWorkingDays();
+            });
+            function updateWorkingDays() {
+                var daysNumberInYear = parseFloat($("#DaysNumberInYear").val()) || 0;
+                var weekends = parseFloat($("#Weekends").val()) || 0;
+                var holidaysNumber = parseFloat($("#HolidaysNumber").val()) || 0;
+                var noofInternationalHlidays = parseFloat($("#NoofInternationalHlidays").val()) || 0;
+                var noofLeavesDays = parseFloat($("#NoofLeavesDays").val()) || 0;
+                var specialWorkingHours = parseFloat($("#SpecialWorkingHours").val()) || 0;
+                var estimatedSickLeaves = parseFloat($("#EstimatedSickLeaves").val()) || 0;
+                var balancefromPreviousYear = parseFloat($("#BalancefromPreviousYear").val()) || 0;
+
+                var workingDays = daysNumberInYear - (weekends + holidaysNumber + noofInternationalHlidays + noofLeavesDays + (specialWorkingHours / 8) + estimatedSickLeaves + balancefromPreviousYear);
+                $("#WorkingDays").val(workingDays);
+            }
+
+            $("#FromDate").datepicker({
+                dateFormat: "yy-mm-dd",
+                onSelect: function (dateText) {
+                    updateDaysNumber();
+                }
+            });
+
+
+            $("#ToDate").datepicker({
+                dateFormat: "yy-mm-dd",
+                onSelect: function (dateText) {
+                    updateDaysNumber();
+                }
+            });
+
+
+            function updateDaysNumber() {
+                var fromDate = $("#FromDate").datepicker("getDate");
+                var toDate = $("#ToDate").datepicker("getDate");
+
+                if (fromDate && toDate && fromDate <= toDate) {
+                    var millisecondsPerDay = 24 * 60 * 60 * 1000;
+                    var daysNumber = Math.floor((toDate - fromDate) / millisecondsPerDay);
+                    $("#DaysNumber").val(daysNumber);
+                } else {
+                    $("#DaysNumber").val("");
+                }
+            }
+
+            $("#EditForm").validate({
+                rules: {
+                    CompanyId: {
+                        required: true,
+                    },
+                    UserId: {
+                        required: true
+                    },
+                    YearId: {
+                        required: true
+                    },
+                    DaysNumberInYear: {
+                        required: true,
+                        number: true
+                    },
+                    Weekends: {
+                        required: true,
+                        number: true
+                    },
+                    HolidaysNumber: {
+                        required: true,
+                        number: true
+                    },
+                    NoofInternationalHlidays: {
+                        required: true,
+                        number: true
+                    },
+                    NoofLeavesDays: {
+                        required: true,
+                        number: true
+                    },
+                    SpecialWorkingHours: {
+                        required: true,
+                        number: true
+                    },
+                    EstimatedSickLeaves: {
+                        required: true,
+                        number: true
+                    },
+                    BalancefromPreviousYear: {
+                        required: true,
+                        number: true
+                    },
+                    WorkingDays: {
+                        required: true
+                    }
+                },
+                messages: {
+                    CompanyId: {
+                        required: "The Company field is required"
+                    },
+                    UserId: {
+                        required: "The User field is required"
+                    },
+                    YearId: {
+                        required: "The Year field is required"
+                    },
+                    DaysNumberInYear: {
+                        required: "The Days Number In Year field is required",
+                        number: "Please enter a valid number"
+                    },
+                    Weekends: {
+                        required: "The Weekends field is required",
+                        number: "Please enter a valid number"
+                    },
+                    HolidaysNumber: {
+                        required: "The Holidays Number field is required",
+                        number: "Please enter a valid number"
+                    },
+                    NoofInternationalHlidays: {
+                        required: "The No of International Hlidays field is required",
+                        number: "Please enter a valid number"
+                    },
+                    NoofLeavesDays: {
+                        required: "The No of Leaves Days field is required",
+                        number: "Please enter a valid number"
+                    },
+                    SpecialWorkingHours: {
+                        required: "The Special Working Hours field is required",
+                        number: "Please enter a valid number"
+                    },
+                    EstimatedSickLeaves: {
+                        required: "The Estimated Sick Leaves field is required",
+                        number: "Please enter a valid number"
+                    },
+                    BalancefromPreviousYear: {
+                        required: "The Balance from Previous Year field is required",
+                        number: "Please enter a valid number"
+                    },
+                    WorkingDays: {
+                        required: "The Working Days field is required",
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select")) {
+                        error.insertAfter(element.siblings("span"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/Calendar/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+
+                 
+                if ($("#EditForm").valid()) {
+                    var formData = {
+                        Description: htmlDescription,
+                        CompanyId: $("#CompanyId").val(),
+                        UserId: $("#UserId").val(),
+                        YearId: $("#YearId").val(),
+                        DaysNumberInYear: $("#DaysNumberInYear").val(),
+                        Weekends: $("#Weekends").val(),
+                        HolidaysNumber: $("#HolidaysNumber").val(),
+                        NoofInternationalHlidays: $("#NoofInternationalHlidays").val(),
+                        NoofLeavesDays: $("#NoofLeavesDays").val(),
+                        SpecialWorkingHours: $("#SpecialWorkingHours").val(),
+                        EstimatedSickLeaves: $("#EstimatedSickLeaves").val(),
+                        BalancefromPreviousYear: $("#BalancefromPreviousYear").val(),
+                        WorkingDays: parseInt($("#WorkingDays").val())
+                    };
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false, // إخفاء زر الإغلاق
+                        onBeforeOpen: () => {
+                            swal.showLoading(); // إضافة شريط التقدم
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/calendars/" + @Model.Id,
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false, // إخفاء زر التأكيد
+                                    showCancelButton: false, // إخفاء زر الإلغاء
+                                    showCloseButton: false // إخفاء زر الإغلاق
+                                }).then(function () {
+                                    window.location.href = '/Calendar/Index';
+                                });
+                            },
+                            error: function (error) {
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, // إخفاء زر التأكيد
+                                        showCancelButton: false, // إخفاء زر الإلغاء
+                                        showCloseButton: false // إخفاء زر الإغلاق
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+}

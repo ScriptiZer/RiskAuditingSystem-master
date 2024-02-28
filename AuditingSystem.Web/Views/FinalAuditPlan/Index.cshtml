@@ -1,0 +1,1105 @@
+﻿@model IEnumerable<AuditingSystem.Web.ViewModels.GroupedDraftAuditPlanViewModel>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+
+@{
+    ViewData["Title"] = "Draft Audit Plan List";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
+<style>
+    .colorLabel {
+        background-color: #9fb0c6 !important
+    }
+
+
+    tr th {
+        text-align: center;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+    }
+</style>
+<style>
+    .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+        border-radius: 20px;
+    }
+
+        .toggle.ios .toggle-handle {
+            border-radius: 20px;
+        }
+
+    .cardbox {
+        cursor: pointer;
+        box-shadow: inset 4px 1px 13px 0px;
+        border-radius: 10px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        /* z-index: 99; */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        /* width: 80%; */
+    }
+
+    .cardDesc {
+        display: none;
+    }
+
+    .close, .closeDesc {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        direction: rtl;
+    }
+
+        .close:hover,
+        .close:focus,
+        .closeDesc:hover,
+        .closeDesc:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .scrollable-table-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    th {
+        text-align: center;
+    }
+
+    table {
+        border: 2px solid #b2b2b2 !important
+    }
+</style>
+@{
+    int index = 0;
+    var isView = "";
+    if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Department" && p.View == true && (p.Edit == false && p.Delete == true)))
+    {
+        isView = "disabled";
+    }
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div style="    margin-bottom: 50px;" class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Draft Audit Plan Management View</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                    </div>
+                </div>
+
+
+
+                @if (Model != null)
+                {
+                    foreach (var group in Model)
+                    {
+                        <div style="vertical-align: middle;
+                                    line-height: 1;
+                                    /* padding: 1.25rem 0.9375rem; */
+                                    border-width: 0 1px;
+                                    background-color: #cfe2ff;
+                                    width: 100%;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center; ">
+                            <div style="flex: 1;">
+                                <h5 style="font-weight: 900;    margin-left: 20px;">@group.DepartmentName</h5>
+                            </div>
+                            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+                                @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                {
+                                    <div data-departments="@group.DepartmentName" class="year-tab" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
+                                                height: 55px;
+                                                width: 70px;
+                                                box-sizing: border-box;
+                                                /* margin-right: -14px; */
+                                                background-color: #cdd8e7;
+                                                padding: 18px;" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                        @year <!--Years Tab-->
+                                    </div>
+                                }
+                            </div>
+                            <a title="@group.DepartmentName Archives" href="~/FinalAuditPlan/Archives?departmentName=@group.DepartmentName">
+                                <div style="cursor: pointer;border:1px solid #bbb;
+                                            height: 55px;
+                                            width: 70px;
+                                            box-sizing: border-box;
+                                            /* margin-right: -14px; */
+                                            background-color: #cdd8e7;
+                                            padding: 18px;display: flex; justify-content: flex-end; align-items: center;">
+
+                                    <i class="fa-solid fa-inbox"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="table-responsive scrollable-table-container" style="margin:0;padding-left: 0;" id="tableContainer">
+
+                            <table style="width: max-content;" id="tableList" class="tableList table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="3"></th>
+                                        <th rowspan="3">Audit Area</th>
+                                        <th rowspan="3">Scope</th>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            <th data-departments="@group.DepartmentName" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                                @year
+                                            </th>
+                                        }
+                                        <th colspan="7">Years of Recent Reviews</th>
+                                        <th colspan="3">Man Days</th>
+                                    </tr>
+                                    <tr>
+
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                <th data-departments="@group.DepartmentName" data-years="@year" colspan="2">@quarter.Quarter</th>
+                                            }
+                                        }
+                                        <th rowspan="2">One Year Ago</th>
+                                        <th rowspan="2">Two Year Ago</th>
+                                        <th rowspan="2">Three Year Ago</th>
+                                        <th colspan="4">Type of Review</th>
+                                        <th rowspan="2">Insource</th>
+                                        <th rowspan="2">Outsource</th>
+                                        <th rowspan="2">Manager</th>
+                                    </tr>
+                                    <tr>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                <th data-departments="@group.DepartmentName" data-years="@year">Plan</th>
+                                                <th data-departments="@group.DepartmentName" data-years="@year">Actual</th>
+                                            }
+                                        }
+                                        <th>IA</th>
+                                        <th>Gov Audit</th>
+                                        <th>ELC</th>
+                                        <th>Rpetitive Findings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in group.DraftAuditPlans)
+                                    {
+                                        <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
+                                            <h6 class="card-title m-3">@item.Department.Name</h6>
+
+                                            <div class="card-body">
+                                                <textarea cols="50" rows="5" data-draftid="@item.Id" class="form-control">@Html.Raw(item.Description)</textarea>
+                                            </div>
+
+                                            <span class="closeDesc">&times;</span>
+                                            <a title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
+                                               href="#" id="SaveDescription" data-draftid="@item.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
+                                        </div>
+
+                                        index++;
+                                        <tr id="tr" data-group="@group.DepartmentName">
+                                            @{
+                                                var iconColor = "";
+                                                var title = "";
+                                                if (item.Description != "")
+                                                {
+                                                    iconColor = "#05a536";
+                                                    title = "Edit Note";
+                                                }
+                                                else
+                                                {
+                                                    iconColor = "#0d6efd";
+                                                    title = "Add Note";
+                                                }
+                                            }
+                                            <td>
+                                                <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
+                                                    <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
+                                                </a>
+                                            </td>
+
+                                            <td>@item.Department.Name</td>
+                                            <td>@item.Function.Name</td>
+                                            @{
+                                                int userIndex = 0;
+
+                                            }
+                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                            {
+                                                foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                {
+                                                    var DraftGroupedData = ViewBag.DraftGroupedData as List<dynamic>;
+                                                    var AuditPlanData = DraftGroupedData?.FirstOrDefault(d => d.DraftAuditPlanId == item.Id && d.Year == year && d.Quarter == quarter.Quarter);
+
+                                                    var setColor = "";
+                                                    if ((AuditPlanData != null && AuditPlanData.Plan != null && AuditPlanData.Plan == 1))
+                                                    {
+                                                        setColor = "#666666";
+                                                    }
+                                                    <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@setColor">
+                                                    </td>
+
+                                                    setColor = "";
+                                                    if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 2)
+                                                    {
+                                                        setColor = "#72C044";
+                                                    }
+                                                    else if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 3)
+                                                    {
+                                                        setColor = "#C00000";
+                                                    }
+                                                    <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@setColor">
+                                                    </td>
+                                                    userIndex++;
+                                                }
+                                            }
+                                            <td>
+                                                @{
+                                                    var isChecked = "";
+                                                    if (item.IsOneYear == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="One Year Ago" data-size="small" id="IsOneYear" name="IsOneYear" class="IsOneYear" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IsOneYear" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    isChecked = "";
+                                                    if (item.IsTwoYear == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="Two Year Ago" data-size="small" id="IsTwoYear" name="IsTwoYear" class="IsTwoYear" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IsTwoYear" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    isChecked = "";
+                                                    if (item.IsThreeYear == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="Three Year Ago" data-size="small" id="IsThreeYear" name="IsThreeYear" class="IsThreeYear" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IsThreeYear" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    isChecked = "";
+                                                    if (item.IA == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="IA" data-size="small" id="IA" name="IA" class="IA" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IA" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    isChecked = "";
+                                                    if (item.GovAudit == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="Gov Audit" data-size="small" id="GovAudit" name="GovAudit" class="GovAudit" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.GovAudit" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    isChecked = "";
+                                                    if (item.ELC == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="ELC" data-size="small" id="ELC" name="ELC" class="ELC" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.ELC" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    isChecked = "";
+                                                    if (item.RpetitiveFindings == true)
+                                                    {
+                                                        isChecked = "checked";
+                                                    }
+                                                }
+                                                <center>
+                                                    <input @isView @isChecked title="Repetitive Findings" data-size="small" id="RpetitiveFindings" name="RpetitiveFindings" class="RpetitiveFindings" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.RpetitiveFindings" data-on="Yes" data-off="No">
+                                                </center>
+                                            </td>
+
+                                            <td id="insource" class="insource">
+                                                <center>
+                                                    @item.Insource
+                                                </center>
+                                            </td>
+                                            <td id="outsource" class="outsource">
+                                                <center>
+                                                    @item.Outsource
+                                                </center>
+                                            </td>
+                                            <td id="manager" class="manager">
+                                                <center>
+                                                    @item.Manager
+                                                </center>
+                                            </td>
+                                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
+                                            {
+                                                <td style="display:none;">
+                                                    <a data-id="@index" data-draftId="@item.Id" class="btnSave" id="btnSave" title="Save Data" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row" style=" margin-bottom: 50px;">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <label>Equation Total Insource</label>
+                                <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationInsource form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Equation Total Outsource</label>
+                                <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationOutsource form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Equation Total Manager</label>
+                                <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationManager form-control" />
+                            </div>
+                        </div>
+
+                        index++;
+
+                    }
+                }
+                <div class="float-end">
+                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
+                    {
+                        <button id="saveAllButton" type="button" class="btn btn-primary">Save All</button>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        function updateAllTotal(columnName) {
+            // Iterate through all unique group names
+            var uniqueGroups = [...new Set($('tr[data-group]').map(function () {
+                return $(this).data('group');
+            }).get())];
+
+            // Update total for each group
+            uniqueGroups.forEach(function (groupName) {
+                var total = 0;
+                // Iterate through all rows with the specified data-group attribute
+                $('tr[data-group="' + groupName + '"]').each(function () {
+                    // Find the value in the current row for the specified column
+                    var columnValue = parseFloat($(this).find('.' + columnName).text()) || 0;
+                    // Add the column value to the total
+                    total += columnValue;
+                });
+
+                // Update the corresponding TotalEquation input field for the specified column
+                $('.TotalEquation' + columnName.charAt(0).toUpperCase() + columnName.slice(1) + '[data-group="' + groupName + '"]').val(total);
+            });
+        }
+
+
+        function showTablePopup(index) {
+            console.log('Showing popup for index: ' + index);
+            $('#tablePopup_' + index).fadeIn();
+        }
+
+        function closeTablePopup(index) {
+            $('#tablePopup_' + index).fadeOut();
+        }
+
+        function showDescriptionPopup(index) {
+            console.log('Toggling description for index: ' + index);
+            $('#DescCard_' + index).fadeToggle();
+        }
+
+        function showColumnsForYear(year, department) {
+            $('#tableList th[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+            $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+        }
+        $(document).ready(function () {
+            $(document).on("click", ".year-tab", function () {
+                var selectedYear = $(this).data("years");
+                var selectedDepartment = $(this).data("departments");
+                $(this).toggleClass("colorLabel");
+
+                showColumnsForYear(selectedYear, selectedDepartment);
+
+            });
+            $("th[data-years]").css("display", "none");
+            $("td[data-years]").css("display", "none");
+
+            updateAllTotal('insource');
+            updateAllTotal('outsource');
+            updateAllTotal('manager');
+
+            var descriptionTextareas = $(".cardDesc");
+
+            descriptionTextareas.draggable({
+                cursor: 'grab',
+                revert: false,
+                containment: "document",
+                scroll: false
+            });
+
+            $(document).on("click", "#SaveDescription", function () {
+                var draftid = $(this).attr("data-draftid");
+
+                var descriptionValue = $("textarea[data-draftid='" + draftid + "']").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/DraftAuditPlans/SaveDesciption?id=" + draftid + "&description=" + descriptionValue, // Fix the function name here
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        console.log("Audit resources description added successfully");
+                        $(".cardDesc").fadeOut();
+                    },
+                    error: function (error) {
+                        console.error("An error occurred while adding audit resources:", error.responseText);
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".closeDesc", function () {
+                $(this).closest('.cardDesc').fadeOut();
+            });
+
+
+            $('.cardbox').click(function () {
+                var index = $(this).data('index');
+                showTablePopup(index);
+            });
+
+
+            $('.close').click(function () {
+                var index = $(this).data('index');
+                closeTablePopup(index);
+            });
+
+            $(document).on("click", "#saveAllButton", function () {
+
+                swal({
+                    title: "Saving...",
+                    text: "Please wait.",
+                    allowOutsideClick: false,
+                    showConfirmButton: false, // إخفاء زر التأكيد
+                    showCancelButton: false, // إخفاء زر الإلغاء
+                    showCloseButton: false, // إخفاء زر الإغلاق
+                    onBeforeOpen: () => {
+                        swal.showLoading(); // إضافة شريط التقدم
+                    }
+                });
+                setTimeout(function () {
+                    $(".btnSave").each(function () {
+                        var draftId = $(this).attr("data-draftId");
+                        var index = $(this).data("id");
+                        var draftAuditPlanList = [];
+                        for (var userIndex = 0; userIndex < 12; userIndex++) {
+                            var plan = $("input[name='plan-" + userIndex + "'][data-index='" + index + "']").prop('checked');
+                            var actual = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").prop('checked');
+                            var year = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").data("year");
+                            var quarter = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").data("quarter");
+
+                            draftAuditPlanList.push({
+                                DraftAuditPlanId: draftId,
+                                Year: year,//.toString(),
+                                Quarter: quarter,
+                                Plan: plan,
+                                Actual: actual
+                            });
+                        }
+
+                        var row = $(this).closest('tr');
+                        var isOneYear = row.find('.IsOneYear').prop('checked');
+                        var isTwoYear = row.find('.IsTwoYear').prop('checked');
+                        var isThreeYear = row.find('.IsThreeYear').prop('checked');
+                        var isIA = row.find('.IA').prop('checked');
+                        var isGovAudit = row.find('.GovAudit').prop('checked');
+                        var isELC = row.find('.ELC').prop('checked');
+                        var isRepetitiveFindings = row.find('.RpetitiveFindings').prop('checked');
+
+                        var formData = {
+                            Id: draftId,
+                            IsOneYear: isOneYear,
+                            IsTwoYear: isTwoYear,
+                            IsThreeYear: isThreeYear,
+                            IA: isIA,
+                            GovAudit: isGovAudit,
+                            ELC: isELC,
+                            RpetitiveFindings: isRepetitiveFindings,
+                            DraftAuditPlanList: draftAuditPlanList
+                        };
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/DraftAuditPlans/AddDraftDataAndList",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(formData),
+                            success: function (data) {
+                                if (data.success) {
+                                    console.log("Draft Audit Plan added successfully:", data.message);
+                                    //alert("The save data is successful");
+                                }
+                            },
+                            error: function (error) {
+                                console.error("An error occurred while adding audit resources:", error.responseText);
+                                alert("Failed to save data. Please check the console for details.");
+                            }
+                        });
+                    });
+                    swal.close(); // إغلاق SweetAlert بعد النجاح
+                    swal({
+                        title: "Success",
+                        text: "Your data has been saved",
+                        icon: "success",
+                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false // إخفاء زر الإغلاق
+                    });
+                }, 2000);
+            });
+        });
+    </script>
+}
+
+@* @model IEnumerable<AuditingSystem.Web.ViewModels.GroupedFinalAuditPlanViewModel>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+
+@{
+    ViewData["Title"] = "Final Audit Plan List";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/js/bootstrap5-toggle.ecmas.min.js"></script>
+
+<style>
+
+    .tableWidth {
+        width: max-content !important
+    }
+</style>
+<style>
+    .toggle.ios, .toggle-on.ios, .toggle-off.ios {
+        border-radius: 20px;
+    }
+
+        .toggle.ios .toggle-handle {
+            border-radius: 20px;
+        }
+
+    .cardbox {
+        cursor: pointer;
+        box-shadow: inset 4px 1px 13px 0px;
+        border-radius: 10px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        /* z-index: 99; */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        /* width: 80%; */
+    }
+
+    .cardDesc {
+        display: none;
+    }
+
+    .close, .closeDesc {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        direction: rtl;
+    }
+
+        .close:hover,
+        .close:focus,
+        .closeDesc:hover,
+        .closeDesc:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .scrollable-table-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    table {
+        border: 2px solid #b2b2b2 !important
+    }
+
+    .colorLabel {
+        background-color: #9fb0c6 !important
+    }
+
+
+    tr th {
+        text-align: center;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+    }
+</style>
+
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Final Audit Plan Management View</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                    </div>
+                </div>
+                <br />
+                <br />
+
+                @{
+                    int index = 0;
+                    var isView = "";
+                    if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Department" && p.View == true && (p.Edit == false && p.Delete == true)))
+                    {
+                        isView = "disabled";
+                    }
+                }
+
+                <div class="">
+                    @if (Model != null)
+                    {
+                        foreach (var group in Model)
+                        {
+                            <div style="vertical-align: middle;
+                                    line-height: 1;
+                                    /* padding: 1.25rem 0.9375rem; */
+                                    border-width: 0 1px;
+                                    background-color: #cfe2ff;
+                                    width: 100%;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center; ">
+                                <div style="flex: 1;">
+                                    <h5 style="font-weight: 900;    margin-left: 20px;">@group.DepartmentName</h5>
+                                </div>
+                                <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                    {
+                                        <div data-departments="@group.DepartmentName" class="year-tab" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
+                                                height: 55px;
+                                                width: 70px;
+                                                box-sizing: border-box;
+                                                /* margin-right: -14px; */
+                                                background-color: #cdd8e7;
+                                                padding: 18px;" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                            @year <!--Years Tab-->
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+
+
+                            <div class="scrollable-table-container scrollable-table-container"  style="margin:0;padding-left: 0;" id="tableContainer">
+                                        <table data-departments="@group.DepartmentName" style="width: 100%;" id="tableList" class="tableList table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th rowspan="3"></th>
+                                                    <th rowspan="3">Audit Area</th>
+                                                    <th rowspan="3">Scope</th>
+                                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                                    {
+                                                        <th data-departments="@group.DepartmentName" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                                            @year
+                                                        </th>
+                                                    }
+                                                    <th colspan="3">Man Days</th>
+                                                </tr>
+                                                <tr>
+                                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                                    {
+                                                        foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                        {
+                                                            <th data-departments="@group.DepartmentName" data-years="@year" colspan="2">@quarter.Quarter</th>
+                                                        }
+                                                    }
+                                                    <th rowspan="2">Insource</th>
+                                                    <th rowspan="2">Outsource</th>
+                                                    <th rowspan="2">Manager</th>
+                                                </tr>
+                                                <tr>
+                                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                                    {
+                                                        foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                        {
+                                                            <th data-departments="@group.DepartmentName" data-years="@year">Plan</th>
+                                                            <th data-departments="@group.DepartmentName" data-years="@year">Actual</th>
+                                                        }
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in group.FinalAuditPlans)
+                                                {
+                                                    <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
+                                                        <h6 class="card-title m-3">@item.Department.Name</h6>
+
+                                                        <div class="card-body">
+                                                            <textarea @isView cols="50" rows="5" data-finalId="@item.Id" class="form-control">@Html.Raw(item.Description)</textarea>
+                                                        </div>
+
+                                                        <span class="closeDesc">&times;</span>
+                                                        <a @isView title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
+                                                           href="#" id="SaveDescription" data-finalId="@item.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
+                                                    </div>
+
+                                                    index++;
+                                                    <tr id="tr" data-group="@group.DepartmentName">
+                                                        @{
+                                                            var iconColor = "";
+                                                            var title = "";
+                                                            if (item.Description != "")
+                                                            {
+                                                                iconColor = "#05a536";
+                                                                title = "Edit Note";
+                                                            }
+                                                            else
+                                                            {
+                                                                iconColor = "#0d6efd";
+                                                                title = "Add Note";
+                                                            }
+                                                        }
+                                                        <td>
+                                                            <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
+                                                                <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
+                                                            </a>
+                                                        </td>
+
+                                                        <td>@item.Department.Name</td>
+                                                        <td>@item.Function.Name</td>
+                                                        @{
+                                                            int userIndex = 0;
+
+                                                        }
+                                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                                        {
+
+                                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                            {
+                                                                var finalGroupedData = ViewBag.FinalGroupedData as List<dynamic>;
+                                                                var AuditPlanData = finalGroupedData?.FirstOrDefault(d => d.FinalAuditPlanId == item.Id && d.Year == year && d.Quarter == quarter.Quarter);
+                                                                var isCheck = "";
+                                                                if (AuditPlanData != null && AuditPlanData.Plan != null && AuditPlanData.Plan)
+                                                                {
+                                                                    isCheck = "#666666";
+                                                                }
+                                                                <td data-departments="@group.DepartmentName" data-years="@year"  style="background-color:@isCheck">
+                                                                    
+                                                                </td>
+
+
+                                                                isCheck = "";
+                                                                if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual)
+                                                                {
+                                                                    isCheck = "#72C044";
+                                                                }
+                                                                <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@isCheck">
+                                                                    
+                                                                </td>
+                                                                userIndex++;
+                                                            }
+                                                        }
+                                                       
+
+                                                        <td id="insource" class="insource">
+                                                            <center>
+                                                                @item.Insource
+                                                            </center>
+                                                        </td>
+                                                        <td id="outsource" class="outsource">
+                                                            <center>
+                                                                @item.Outsource
+                                                            </center>
+                                                        </td>
+                                                        <td id="manager" class="manager">
+                                                            <center>
+                                                                @item.Manager
+                                                            </center>
+                                                        </td>
+                                                       
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-3">
+                                    <label>Equation Total Insource</label>
+                                    <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationInsource form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Equation Total Outsource</label>
+                                    <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationOutsource form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Equation Total Manager</label>
+                                    <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationManager form-control" />
+                                </div>
+                            </div>
+                               
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function updateAllTotal(columnName) {
+            // Iterate through all unique group names
+            var uniqueGroups = [...new Set($('tr[data-group]').map(function () {
+                return $(this).data('group');
+            }).get())];
+
+            // Update total for each group
+            uniqueGroups.forEach(function (groupName) {
+                var total = 0;
+                // Iterate through all rows with the specified data-group attribute
+                $('tr[data-group="' + groupName + '"]').each(function () {
+                    // Find the value in the current row for the specified column
+                    var columnValue = parseFloat($(this).find('.' + columnName).text()) || 0;
+                    // Add the column value to the total
+                    total += columnValue;
+                });
+
+                // Update the corresponding TotalEquation input field for the specified column
+                $('.TotalEquation' + columnName.charAt(0).toUpperCase() + columnName.slice(1) + '[data-group="' + groupName + '"]').val(total);
+            });
+        }
+
+
+        function showTablePopup(index) {
+            console.log('Showing popup for index: ' + index);
+            $('#tablePopup_' + index).fadeIn();
+        }
+
+        function closeTablePopup(index) {
+            $('#tablePopup_' + index).fadeOut();
+        }
+
+        function showDescriptionPopup(index) {
+            console.log('Toggling description for index: ' + index);
+            $('#DescCard_' + index).fadeToggle();
+        }
+
+        function showColumnsForYear(year, department) {
+            $('#tableList th[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+            $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+        }
+        $(document).ready(function () {
+            $(document).on("click", ".year-tab", function () {
+                var selectedYear = $(this).data("years");
+                var selectedDepartment = $(this).data("departments");
+                $(this).toggleClass("colorLabel");
+                $('#tableList[ data-departments="' + selectedDepartment + '"]').toggleClass("tableWidth");
+                showColumnsForYear(selectedYear, selectedDepartment);
+
+            });
+            $("th[data-years]").css("display", "none");
+            $("td[data-years]").css("display", "none");
+
+            updateAllTotal('insource');
+            updateAllTotal('outsource');
+            updateAllTotal('manager');
+
+            var descriptionTextareas = $(".cardDesc");
+
+            descriptionTextareas.draggable({
+                cursor: 'grab',
+                revert: false,
+                containment: "document",
+                scroll: false
+            });
+
+            $(document).on("click", "#SaveDescription", function () {
+                var finalId = $(this).attr("data-finalId");
+
+                var descriptionValue = $("textarea[data-finalId='" + finalId + "']").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/FinalAuditPlans/SaveDesciption?id=" + finalId + "&description=" + descriptionValue, // Fix the function name here
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        console.log("Audit resources description added successfully");
+                        $(".cardDesc").fadeOut();
+                    },
+                    error: function (error) {
+                        console.error("An error occurred while adding audit resources:", error.responseText);
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".closeDesc", function () {
+                $(this).closest('.cardDesc').fadeOut();
+            });
+
+
+            $('.cardbox').click(function () {
+                var index = $(this).data('index');
+                showTablePopup(index);
+            });
+
+
+            $('.close').click(function () {
+                var index = $(this).data('index');
+                closeTablePopup(index);
+            });
+
+            // $(document).on("click", "#btnSave", function () {
+            //     var finalId = $(this).attr("data-finalId");
+            //     var index = $(this).data("id");
+            //     var finalAuditPlanList = [];
+
+            //     for (var userIndex = 0; userIndex < 12; userIndex++) {
+            //         var plan = $("input[name='plan-" + userIndex + "'][data-index='" + index + "']").prop('checked');
+            //         var actual = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").prop('checked');
+            //         var year = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").data("year");
+            //         var quarter = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").data("quarter");
+
+            //         finalAuditPlanList.push({
+            //             FinalAuditPlanId: finalId,
+            //             Year: year.toString(),
+            //             Quarter: quarter,
+            //             Plan: plan,
+            //             Actual: actual
+            //         });
+            //     }
+
+
+            //     $.ajax({
+            //         type: "POST",
+            //         url: "/api/FinalAuditPlans/AddFinalListData",
+            //         contentType: "application/json; charset=utf-8",
+            //         data: JSON.stringify(finalAuditPlanList),
+            //         success: function (data) {
+            //             if (data.success) {
+            //                 console.log("Final Audit Plan added successfully:", data.message);
+            //                 alert("The save data is successful");
+            //             }
+            //         },
+            //         error: function (error) {
+            //             console.error("An error occurred while adding audit resources:", error.responseText);
+            //             alert("Failed to save data. Please check the console for details.");
+            //         }
+            //     });
+            // });
+        });
+    </script>
+} *@

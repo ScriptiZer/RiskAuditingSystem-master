@@ -1,0 +1,278 @@
+﻿@model Company
+@{
+    ViewData["Title"] = "Company View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">View Company</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="row">
+
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Code">Code</label>
+                                <input disabled type="text" class="form-control" id="Code" placeholder="Code" asp-for="Code">
+                                <span asp-validation-for="Code" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label>Industry</label>
+                                @Html.DropDownList("IndustryId", ViewBag.IndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Industry", @name = "IndustryId", disabled = "disabled" })
+                                <span asp-validation-for="IndustryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input disabled type="text" class="form-control" id="Name" placeholder="Company Name" asp-for="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Email">Email</label>
+                                <input disabled type="email" class="form-control" id="Email" placeholder="Email Address" asp-for="Email">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="ContactNumber">Contact Number</label>
+                                <input disabled type="text" class="form-control" id="ContactNumber" placeholder="Contact Number" asp-for="ContactNo">
+                                <span asp-validation-for="ContactNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Address">Address</label>
+                                <textarea disabled asp-for="Address" type="text" class="form-control" id="Address" placeholder="Address"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+
+
+                        <div class="col-md-6 col-xs-12">
+                            <h5 class="alert alert-primary">Resources Setting</h5>
+                            <div class="form-group">
+                                <label asp-for="PlanYear">PlanYear</label>
+                                <select disabled style="width:100%" asp-for="PlanYear" id="PlanYear" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Year as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.PlanYear != null && Model.PlanYear.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Insources">Insources</label>
+                                <select disabled style="width:100%" asp-for="Insources" id="Insources" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Insources as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.Insources != null && Model.Insources.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Outsources">Outsources</label>
+                                <select disabled style="width:100%" asp-for="Outsources" id="Outsources" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Outsources as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.Outsources != null && Model.Outsources.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Manager">Managers</label>
+                                <select disabled style="width:100%" asp-for="Manager" id="Manager" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Manager as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.Manager != null && Model.Manager.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xs-12">
+                            <h5 class="alert alert-primary">Budget Setting</h5>
+                            <div class="form-group">
+                                <label asp-for="BudgetPlanYear">PlanYear</label>
+                                <select disabled style="width:100%" asp-for="BudgetPlanYear" id="BudgetPlanYear" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Year as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.BudgetPlanYear != null && Model.BudgetPlanYear.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BudgetInsources">Insources</label>
+                                <select disabled style="width:100%" asp-for="BudgetInsources" id="BudgetInsources" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Insources as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.BudgetInsources != null && Model.BudgetInsources.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BudgetOutsources">Outsources</label>
+                                <select disabled style="width:100%" asp-for="BudgetOutsources" id="BudgetOutsources" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Outsources as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.BudgetOutsources != null && Model.BudgetOutsources.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BudgetManager">Managers</label>
+                                <select disabled style="width:100%" asp-for="BudgetManager" id="BudgetManager" class="form-control" multiple>
+                                    @foreach (var item in ViewBag.Manager as SelectList)
+                                    {
+                                        <option value="@item.Value" selected="@(Model.BudgetManager != null && Model.BudgetManager.Split(',').Contains(item.Value.ToString()))">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <textarea asp-for="Description" type="text" class="form-control" id="Description" placeholder="Description"></textarea>
+                    </div>
+                    
+                    <div class="float-end">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button disabled id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+
+            $("#Outsources").select2();
+            $("#Insources").select2();
+            $("#Manager").select2();
+            $("#PlanYear").select2();
+
+            $("#BudgetOutsources").select2();
+            $("#BudgetInsources").select2();
+            $("#BudgetManager").select2();
+            $("#BudgetPlanYear").select2();
+            $("#EditForm").validate({
+                rules: {
+                    IndustryId: {
+                        required: true
+                    },
+                    Name: {
+                        required: true
+                    },
+                    // Email: {
+                    //     required: true,
+                    //     email: true
+                    // },
+                    ContactNo: {
+                        required: true
+                    },
+                    Address: {
+                        required: true
+                    },
+                    Code: {
+                        required: true
+                    }
+                },
+                messages: {
+                    IndustryId: {
+                        required: "The Industry field is required"
+                    },
+                    Name: {
+                        required: "The Name field is required"
+                    },
+                    // Email: {
+                    //     required: "The Email field is required",
+                    //     email: "Please enter a valid email address"
+                    // },
+                    ContactNo: {
+                        required: "The Contact Number field is required"
+                    },
+                    Address: {
+                        required: "The Address field is required"
+                    },
+                    Code: {
+                        required: "The Code field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select") || element.is("textarea")) {
+                        error.insertAfter(element.siblings("span"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/Company/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+
+                var outsource = ($("#Outsources").val() || []).toString();
+                var insource = ($("#Insources").val() || []).toString();
+                var manager = ($("#Manager").val() || []).toString();
+                var year = ($("#PlanYear").val() || []).toString();
+                var budgetoutsource = ($("#BudgetOutsources").val() || []).toString();
+                var budgetinsource = ($("#BudgetInsources").val() || []).toString();
+                var budgetmanager = ($("#BudgetManager").val() || []).toString();
+                var budgetyear = ($("#BudgetPlanYear").val() || []).toString();
+
+                if ($("#EditForm").valid()) {
+                    var formData = {
+                        Name: $("#Name").val(),
+                        Email: $("#Email").val(),
+                        Address: $("#Address").val(),
+                        ContactNo: $("#ContactNumber").val(),
+                        IndustryId: $("#Industry").val(),
+                        Outsources: outsource,
+                        Insources: insource,
+                        Manager: manager,
+                        PlanYear: year,
+                        BudgetOutsources: budgetoutsource,
+                        BudgetInsources: budgetinsource,
+                        BudgetManager: budgetmanager,
+                        BudgetPlanYear: budgetyear,
+                        Code: $("#Code").val(),
+                        Description: htmlDescription
+                    };
+                    $.ajax({
+                        url: "/api/companies/" + @Model.Id,
+                        method: "PUT",
+                        dataType: 'json',
+                        contentType: "application/json",
+                        data: JSON.stringify(formData),
+                        success: function (response) {
+                            alert("The Modified is Successfully");
+                            window.location.href = '/Company/Index';
+                        },
+                        error: function (error) {
+                            if (error.responseJSON && error.responseJSON.errors) {
+                                $.each(error.responseJSON.errors, function (key, value) {
+                                    $("#" + key).siblings(".text-danger").text(value);
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

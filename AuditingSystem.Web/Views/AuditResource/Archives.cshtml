@@ -1,0 +1,833 @@
+﻿@model IEnumerable<IGrouping<string, AuditingSystem.Web.ViewModels.AuditProcessVM>>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using System.Globalization;
+@using System.Collections;
+@using System.Collections.Generic;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+@{
+    ViewData["DeleteTitle"] = "AuditResources";
+    ViewData["Title"] = "Audit Resource List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+<style>
+    .colorLabel {
+        background-color: #9fb0c6 !important
+    }
+
+    table {
+        border: 2px solid #b2b2b2 !important
+    }
+
+    .sourceInput {
+        width: 50%;
+        text-align: center;
+        height: 41px;
+        font-size: 18px;
+    }
+
+    tr th {
+        text-align: center;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        /* z-index: 99; */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        /* width: 80%; */
+    }
+
+    .cardDesc {
+        display: none;
+    }
+
+    .close, .closeDesc {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        direction: rtl;
+    }
+
+        .close:hover,
+        .close:focus,
+        .closeDesc:hover,
+        .closeDesc:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .scrollable-table-container {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    th {
+        text-align: center;
+    }
+
+    input[type="date"] {
+        /* width: 80%; */
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    input[type="text"] {
+        /* width: 80%; */
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+</style>
+
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Archives Audit Resources Management View</h4>
+                    </div>
+                    @* <div class="col-md-6 text-end">
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && p.Add == true))
+                        {
+                            <a class="btn btn-primary me-2" href="~/AuditResource/Add">
+                                <i class="fa-solid fa-plus"></i> Add New Audit Resources
+                            </a>
+                        }
+                    </div> *@
+                </div>
+                <br />
+                <br />
+
+                @{
+                    int index = 0;
+                    List<double> cal1 = new List<double>();
+                    List<double> cal2 = new List<double>();
+                    cal1.Add(0);
+                    cal2.Add(0);
+
+
+                    var isView = "";
+
+                    if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && (p.Edit == false && p.Delete == true)))
+                    {
+                        isView = "disabled";
+                    }
+                }
+
+                <div class="">
+                    @foreach (var departmentGroup in ViewBag.DepartmentGroups)
+                    {
+
+                        <div style="vertical-align: middle;
+                            line-height: 1;
+                            /* padding: 1.25rem 0.9375rem; */
+                            border-width: 0 1px;
+                            background-color: #cfe2ff;
+                            width: 100%;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center; ">
+                            <div style="flex: 1;">
+                                <h5 style="font-weight: 900;    margin-left: 20px;">@departmentGroup.Key</h5>
+                            </div>
+                            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+                                @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                {
+                                    <div class="year-tab" data-departments="@departmentGroup.Key" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
+                                        height: 55px;
+                                        width: 70px;
+                                        box-sizing: border-box;
+                                        /* margin-right: -14px; */
+                                        background-color: #cdd8e7;
+                                        padding: 18px;" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                        @year <!--Years Tab-->
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="table-responsive scrollable-table-container" id="tableContainer" style="margin:0;padding-left: 0;">
+                            <table style="width: max-content;" id="tableList" class="tableList table table-striped table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="6"></th>
+                                        <th rowspan="6">Scope</th>
+                                        <th rowspan="6">Plan Start Date</th>
+                                        <th rowspan="6">Plan End Date</th>
+                                        @{
+                                            int countYears = 1;
+                                        }
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            <th data-departments="@departmentGroup.Key" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                                @year <!--Year value-->
+                                            </th>
+                                            countYears++;
+                                        }
+
+                                        <th colspan="14">Man Days</th>
+                                        <th rowspan="6">Total Plan</th>
+                                        <th rowspan="6">Total Actual</th>
+                                        @* <th rowspan="6" colspan="3">Actions</th> *@
+                                    </tr>
+                                    <tr>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                <th data-departments="@departmentGroup.Key" data-years="@year" colspan="2">@quarter.Quarter</th>
+                                            }
+                                        }
+                                        <th colspan="6">Insource</th>
+                                        <th colspan="6">Outsource</th>
+                                        <th style="text-align:center;" colspan="2">Manager</th>
+                                    </tr>
+                                    <tr>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                <th data-departments="@departmentGroup.Key" data-years="@year" rowspan="2">Start Date</th>
+                                                <th data-departments="@departmentGroup.Key" data-years="@year" rowspan="2">End Date</th>
+                                            }
+                                        }
+                                        @if (ViewBag.InsourceUsers != null)
+                                        {
+                                            foreach (var user in ViewBag.InsourceUsers)
+                                            {
+                                                <th colspan="2">@user.Name</th>
+                                            }
+                                        }
+                                        @if (ViewBag.outsourceUsers != null)
+                                        {
+                                            foreach (var user in ViewBag.outsourceUsers)
+                                            {
+                                                <th colspan="2">@user.Name</th>
+                                            }
+                                        }
+                                        @if (ViewBag.ManagerUsers != null)
+                                        {
+                                            foreach (var user in ViewBag.ManagerUsers)
+                                            {
+                                                <th colspan="2">@user.Name</th>
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        @if (ViewBag.InsourceUsers != null)
+                                        {
+                                            foreach (var user in ViewBag.InsourceUsers)
+                                            {
+                                                <th>Plan (IN DAYS)</th>
+                                                <th>Actual (IN DAYS)</th>
+                                            }
+                                        }
+                                        @if (ViewBag.outsourceUsers != null)
+                                        {
+                                            foreach (var user in ViewBag.outsourceUsers)
+                                            {
+                                                <th>Plan</th>
+                                                <th>Actual</th>
+                                            }
+                                        }
+                                        @if (ViewBag.ManagerUsers != null)
+                                        {
+                                            foreach (var user in ViewBag.ManagerUsers)
+                                            {
+                                                <th>Plan</th>
+                                                <th>Actual</th>
+                                            }
+                                        }
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var companyViewModel in departmentGroup)
+                                    {
+
+
+                                        <div class="card cardDesc" id="DescCard_@index" style="display: none;    position: absolute;
+                                                    z-index: 999;
+                                                    top: 50%;
+                                                    box-shadow: 0px 0px 6px 0px;
+                                                    border-radius: 10px;">
+                                            @foreach (var functionId in companyViewModel.Functions)
+                                            {
+                                                <h6 class="card-title m-3">@functionId</h6>
+                                            }
+
+
+                                            <div class="card-body">
+                                                <textarea cols="50" rows="5" data-ResourceId="@companyViewModel.ResourceId" class="form-control">@Html.Raw(companyViewModel.Description)</textarea>
+                                            </div>
+
+                                            <span class="closeDesc">&times;</span>
+                                            <a title="Save Description" style="float: right;
+                                                        margin-top: 10px;
+                                                        margin-right: 5px;
+                                                        margin-bottom: 12px;"
+                                               href="#" id="SaveDescription" data-ResourceId="@companyViewModel.ResourceId"><i class="fa-solid fa-floppy-disk"></i></a>
+                                        </div>
+                                        index++;
+
+                                        DateTime? planStartDate = companyViewModel.PlanStartDate;
+                                        DateTime? planEndDate = companyViewModel.PlanEndDate;
+                                        string formattedStartDate = "";
+                                        string formattedEndDate = "";
+                                        cal1.Add(0);
+                                        cal2.Add(0);
+
+                                        if (planStartDate.HasValue && planEndDate.HasValue)
+                                        {
+                                            formattedStartDate = planStartDate.Value.ToString("dd/MM/yyyy");
+                                            formattedEndDate = planEndDate.Value.ToString("dd/MM/yyyy");
+
+                                            DateTime startDate = DateTime.ParseExact(formattedStartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                            DateTime endDate = DateTime.ParseExact(formattedEndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                                            TimeSpan dateDifference = endDate - startDate;
+
+                                            DateTime startOfYear = new DateTime(startDate.Year, 1, 1);
+                                            TimeSpan dateDifference2 = startDate - startOfYear;
+
+                                            cal1[index] = (dateDifference.TotalDays / ((countYears - 1) * 365)) * 100;
+                                            cal2[index] = (dateDifference2.TotalDays / ((countYears - 1) * 365)) * 100;
+                                        }
+
+                                        <tr style="display:none;">
+                                            <td colspan="4"></td>
+                                            <td colspan="@(8*(countYears-1))">
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-white" role="progressbar" style="width:@(cal2[index])%; color:#000;">
+                                                        @formattedStartDate
+                                                    </div>
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width:@(cal1[index])%">
+                                                        @formattedEndDate
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr id="tr" data-group="@departmentGroup.Key">
+                                            <td>
+                                                @{
+                                                    var iconColor = "";
+                                                    var title = "";
+                                                    if (companyViewModel.Description != "")
+                                                    {
+                                                        iconColor = "#05a536";
+                                                        title = "Edit Note";
+                                                    }
+                                                    else
+                                                    {
+                                                        iconColor = "#0d6efd";
+                                                        title = "Add Note";
+                                                    }
+                                                }
+                                                <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
+                                                    <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
+                                                </a>
+                                            </td>
+
+
+
+                                            @foreach (var function in companyViewModel.Functions)
+                                            {
+                                                <td><a asp-action="Edit" asp-controller="AuditResource" asp-route-id="@companyViewModel.ResourceId">@function</a></td>
+
+                                            }
+                                            @{
+                                                // DateTime? planStartDate = companyViewModel.PlanStartDate;
+                                                // DateTime? planEndDate = companyViewModel.PlanEndDate;
+                                                // string formattedStartDate ="";
+                                                // string formattedEndDate = "";
+                                                if (planStartDate.HasValue)
+                                                {
+                                                    formattedStartDate = planStartDate.Value.ToString("dd/MM/yyyy");
+                                                }
+                                                if (planEndDate.HasValue)
+                                                {
+                                                    formattedEndDate = planEndDate.Value.ToString("dd/MM/yyyy");
+                                                }
+                                                <td><a>@formattedStartDate</a></td>
+                                                <td><a>@formattedEndDate</a></td>
+                                            }
+                                            @{
+                                                int userIndex = 0;
+                                            }
+                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                            {
+                                                foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                {
+                                                    var startEndDateGroupedData = ViewBag.StartEndDateGroupedData as List<dynamic>;
+                                                    var DateGroupedData = startEndDateGroupedData?.FirstOrDefault(d => d.YearId == year && d.QuarterId == quarter.Quarter && d.AuditResourceId == companyViewModel.ResourceId);
+
+                                                    <td data-departments="@departmentGroup.Key" ="@departmentGroup.Key" data-years="@year">
+                                                        @* <label>Plan Start Date</label><br>
+                                        <input @isView value="@(DateGroupedData?.PlanStartDate?.ToShortDateString() ?? null)" title="Plan Start Date - @year - @quarter.Quarter" type="text" name="plan-start-date-@userIndex" data-index="@(index)" data-year="@year" data-quarter="@quarter.Quarter" class="StartEndDate" />
+                                        <br> *@
+                                                        <br /><label>Actual Start Date</label><br>
+                                                        <input @isView value="@(DateGroupedData?.ActualStartDate?.ToShortDateString() ?? null)" title="Actual Start Date - @year - @quarter.Quarter" type="text" name="actual-start-date-@userIndex" data-index="@(index)" data-year="@year" data-quarter="@quarter.Quarter" class="StartEndDate" />
+                                                        <br>
+                                                        <br /><label>AssignedTo Start Actual</label>
+                                                        @Html.DropDownList("AssignedToStartActual-"+userIndex , new SelectList(ViewBag.AssignedToStartActual, "Value", "Text", DateGroupedData?.AssignedToStartActualId), "-- Select One --", new { @class = "form-control AssignedToStartActual", @data_index = index, @data_year = year, @data_quarter = quarter.Quarter })
+
+                                                    </td>
+                                                    <td data-departments="@departmentGroup.Key" data-years="@year" style="">
+                                                        @* <label>Plan End Date</label><br>
+                                        <input @isView value="@(DateGroupedData?.PlanEndDate?.ToShortDateString() ?? null)" title="Plan End Date - @year - @quarter.Quarter" type="text" name="plan-end-date-@userIndex" data-index="@(index)" data-year="@year" data-quarter="@quarter.Quarter" class="StartEndDate" />
+                                        <br> *@
+                                                        <br /><label>Actual End Date</label><br>
+                                                        <input @isView value="@(DateGroupedData?.ActualEndDate?.ToShortDateString() ?? null)" title="Actual End Date - @year - @quarter.Quarter" type="text" name="actual-end-date-@userIndex" data-index="@(index)" data-year="@year" data-quarter="@quarter.Quarter" class="StartEndDate" />
+                                                        <br>
+                                                        <br /><label>AssignedTo End Actual</label>
+                                                        @Html.DropDownList("AssignedToEndActual-"+userIndex, new SelectList(ViewBag.AssignedToEndActual, "Value", "Text", DateGroupedData?.AssignedToEndActualId), "-- Select One --", new { @class = "form-control AssignedToEndActual", @data_index = index, @data_year = year, @data_quarter = quarter.Quarter })
+                                                    </td>
+                                                    userIndex++;
+                                                }
+                                            }
+
+
+
+                                            @{
+                                                userIndex = 0;
+                                            }
+
+                                            <!-- Insource Users -->
+                                            @if (ViewBag.InsourceUsers != null)
+                                            {
+                                                foreach (var user in ViewBag.InsourceUsers)
+                                                {
+                                                    var insourceData = ViewBag.UserGroupedData as List<dynamic>;
+                                                    var userGroupData = insourceData?.FirstOrDefault(d => d.UserId == user.Id && d.ResourceType == "Insource" && d.AuditResourceId == companyViewModel.ResourceId);
+
+                                                    <td>
+                                                        <center> <input class="sourceInput" @isView title="Insource - @user.Name - Plan" type="number" min="0" name="in-planned-day-@userIndex" data-index="@(index)" data-user="@user.Id" value="@(userGroupData?.PlannedDays ?? 0)" /> <!--Plan--></center>
+                                                    </td>
+
+                                                    <td>
+                                                        <center><input class="sourceInput" @isView title="Insource - @user.Name - Actual" type="number" min="0" name="in-actual-day-@userIndex" data-index="@(index)" data-user="@user.Id" value="@(userGroupData?.ActualDays ?? 0)" /> <!--Actual--></center>
+                                                    </td>
+                                                    userIndex++;
+                                                }
+                                            }
+
+
+                                            @{
+                                                userIndex = 0;
+                                            }
+
+                                            <!-- Outsource Users -->
+                                            @if (ViewBag.outsourceUsers != null)
+                                            {
+                                                foreach (var user in ViewBag.outsourceUsers)
+                                                {
+                                                    var outsourceData = ViewBag.UserGroupedData as List<dynamic>;
+                                                    var userGroupData = outsourceData?.FirstOrDefault(d => d.UserId == user.Id && d.ResourceType == "Outsource" && d.AuditResourceId == companyViewModel.ResourceId);
+                                                    <td>
+                                                        <center> <input class="sourceInput" @isView title="Outsource - @user.Name - Plan" type="number" min="0" name="out-planned-day-@userIndex" data-index="@(index)" data-user="@user.Id" value="@(userGroupData?.PlannedDays ?? 0)" /> <!--Plan--></center>
+                                                    </td>
+                                                    <td>
+                                                        <center> <input class="sourceInput" @isView title="Outsource - @user.Name - Actual" type="number" min="0" name="out-actual-day-@userIndex" data-index="@(index)" data-user="@user.Id" value="@(userGroupData?.ActualDays ?? 0)" /><!--Actual--></center>
+                                                    </td>
+                                                    userIndex++;
+                                                }
+                                            }
+
+                                            @{
+                                                userIndex = 0;
+                                            }
+
+                                            <!-- Manager Users -->
+                                            @if (ViewBag.ManagerUsers != null)
+                                            {
+                                                foreach (var user in ViewBag.ManagerUsers)
+                                                {
+                                                    var managerData = ViewBag.UserGroupedData as List<dynamic>;
+                                                    var userGroupData = managerData?.FirstOrDefault(d => d.UserId == user.Id && d.ResourceType == "Manager" && d.AuditResourceId == companyViewModel.ResourceId);
+                                                    <td>
+                                                        <center><input class="sourceInput" @isView title="Manager - @user.Name - Plan" type="number" min="0" name="manager-planned-day-@userIndex" data-index="@(index)" data-user="@user.Id" value="@(userGroupData?.PlannedDays ?? 0)" /><!--Plan--></center>
+                                                    </td>
+                                                    <td>
+                                                        <center><input class="sourceInput" @isView title="Manager - @user.Name - Actual" type="number" min="0" name="manager-actual-day-@userIndex" data-index="@(index)" data-user="@user.Id" value="@(userGroupData?.ActualDays ?? 0)" /><!--Actual--></center>
+                                                    </td>
+                                                    userIndex++;
+                                                }
+                                            }
+
+                                            @{
+                                                userIndex = 0;
+                                            }
+
+                                            <td class="totalPlan"></td> <!--Total Plan-->
+                                            <td class="totalActual"></td> <!--Total Actual-->
+@*                                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                            {
+                                                <td>
+                                                    <a asp-action="View" asp-controller="AuditResource" asp-route-id="@companyViewModel.ResourceId" title="View"><i class="fa-solid fa-eye"></i></a>
+                                                </td>
+                                            }
+                                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                            {
+                                                <td>
+                                                    <a asp-action="View" asp-controller="AuditResource" asp-route-id="@companyViewModel.ResourceId" title="View"><i class="fa-solid fa-eye"></i></a>
+                                                </td>
+                                            }
+                                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && p.Add == true))
+                                            {
+                                                <td style="">
+                                                    <a id="btnSave" class="showAlertButton btnSave" title="Add Data" data-ResourceId="@companyViewModel.ResourceId" data-id="@(index)" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                                </td>
+                                            }
+                                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && p.Edit == true))
+                                            {
+                                                <td>
+                                                    <a asp-action="Edit" asp-controller="AuditResource" asp-route-id="@companyViewModel.ResourceId" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                                </td>
+                                            }
+                                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && p.Delete == true))
+                                            {
+                                                <td>
+                                                    <a data-actions-id="@companyViewModel.ResourceId" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                                </td>
+                                            } *@
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" style=" margin-bottom: 50px;">
+                            <div class="col-md-6"></div>
+                            <div class="col-md-3">
+                                <label>Equation Total Plan</label>
+                                <input type="text" readonly="readonly" data-group="@departmentGroup.Key" class="TotalEquationPlan form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Equation Total Actual</label>
+                                <input type="text" readonly="readonly" data-group="@departmentGroup.Key" class="TotalEquationActual form-control" />
+                            </div>
+                        </div>
+
+                    }
+
+                </div>
+                <div class="modal-footer float-end">
+                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true && p.Add == true))
+                    {
+                        <button class="btn btn-primary" id="saveAllButton">
+                            <i class="fa-solid fa-save"></i> Save All
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script>
+
+        function showDescriptionPopup(index) {
+            console.log('Toggling description for index: ' + index);
+            $('#DescCard_' + index).fadeToggle();
+        }
+
+        function showTablePopup(department) {
+            console.log('Showing popup for department: ' + department);
+            $('.modal').fadeOut();
+            $('#tablePopup_' + department).fadeIn();
+        }
+
+        function closeTablePopup(department) {
+            $('#tablePopup_' + department).fadeOut();
+        }
+
+        function showColumnsForYear(year, department) {
+            $('#tableList th[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+            $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+        }
+
+        $(document).ready(function () {
+
+            $(document).on("click", ".year-tab", function () {
+                var selectedYear = $(this).data("years");
+                var selectedDepartment = $(this).data("departments");
+                $(this).toggleClass("colorLabel");
+
+                showColumnsForYear(selectedYear, selectedDepartment);
+
+            });
+
+            $("th[data-years]").css("display", "none");
+            $("td[data-years]").css("display", "none");
+
+            $(".StartEndDate").datepicker();
+
+            $(document).on("click", "#SaveDescription", function () {
+                var resourceId = $(this).data("resourceid");
+                var descriptionValue = $("textarea[data-resourceid='" + resourceId + "']").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/AuditResources/SaveDesciption?id=" + resourceId + "&description=" + descriptionValue,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        console.log("Audit resources description added successfully");
+                        $(".cardDesc").fadeOut();
+                    },
+                    error: function (error) {
+                        console.error("An error occurred while adding audit resources:", error.responseText);
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".closeDesc", function () {
+                $(this).closest('.cardDesc').fadeOut();
+            });
+
+
+            $(".department-table-container").hide();
+
+            $(".toggle-department").click(function () {
+                var departmentTable = $(this).next(".department-table-container");
+                departmentTable.slideToggle();
+            });
+            var descriptionTextareas = $(".cardDesc");
+
+
+            descriptionTextareas.draggable({
+                cursor: 'grab',
+                revert: false,
+                containment: "document",
+                scroll: false
+            });
+
+            calculateTotals();
+
+            $("input[name^='in-planned-day-'], input[name^='out-planned-day-'], input[name^='manager-planned-day-'], input[name^='in-actual-day-'], input[name^='out-actual-day-'], input[name^='manager-actual-day-']").on("input", function () {
+                calculateTotals();
+            });
+
+            function calculateTotals() {
+                var grandTotalPlan = [];
+                var grandTotalActual = [];
+                $("tr").each(function () {
+                    var currentRow = $(this);
+                    var totalPlan = 0;
+                    var totalActual = 0;
+
+                    currentRow.find("input[name^='in-planned-day-'], input[name^='out-planned-day-'], input[name^='manager-planned-day-']").each(function () {
+                        totalPlan += parseInt($(this).val()) || 0;
+                    });
+
+                    currentRow.find("input[name^='in-actual-day-'], input[name^='out-actual-day-'], input[name^='manager-actual-day-']").each(function () {
+                        totalActual += parseInt($(this).val()) || 0;
+                    });
+
+                    currentRow.find("td:eq(-5)").text(totalPlan); // Total Plan
+                    currentRow.find("td:eq(-4)").text(totalActual); // Total Actual
+
+                    var group = $(this).attr("data-group");
+                    if (grandTotalPlan[group] == undefined) {
+                        grandTotalPlan[group] = 0;
+                    }
+                    if (grandTotalActual[group] == undefined) {
+                        grandTotalActual[group] = 0;
+                    }
+                    grandTotalPlan[group] += totalPlan;
+                    grandTotalActual[group] += totalActual;
+
+                    $(".TotalEquationPlan[data-group='" + group + "']").val(grandTotalPlan[group]);
+                    $(".TotalEquationActual[data-group='" + group + "']").val(grandTotalActual[group]);
+                });
+
+            }
+
+            $(document).on("click", "#saveAllButton", function () {
+                swal({
+                    title: "Saving...",
+                    text: "Please wait.",
+                    allowOutsideClick: false,
+                    showConfirmButton: false, // إخفاء زر التأكيد
+                    showCancelButton: false, // إخفاء زر الإلغاء
+                    showCloseButton: false, // إخفاء زر الإغلاق
+                    onBeforeOpen: () => {
+                        swal.showLoading(); // إضافة شريط التقدم
+                    }
+                });
+                setTimeout(function () {
+                    $(".btnSave").each(function () {
+                        var index = $(this).data("id");
+
+                        var auditResourcesList = [];
+                        var startDateEndDateList = [];
+                        var auditResource = $(this).attr("data-ResourceId");
+
+                        // Collect data for Insource, Outsource, and Manager users
+                        for (var userIndex = 0; userIndex < 3; userIndex++) {
+                            // Insource data
+                            var inPlannedDay = $("input[name='in-planned-day-" + userIndex + "'][data-index='" + index + "']").val();
+                            var inActualDay = $("input[name='in-actual-day-" + userIndex + "'][data-index='" + index + "']").val();
+                            var inUser = $("input[name='in-planned-day-" + userIndex + "'][data-index='" + index + "']").data("user");
+
+                            // Outsource data
+                            var outPlannedDay = $("input[name='out-planned-day-" + userIndex + "'][data-index='" + index + "']").val();
+                            var outActualDay = $("input[name='out-actual-day-" + userIndex + "'][data-index='" + index + "']").val();
+                            var outUser = $("input[name='out-planned-day-" + userIndex + "'][data-index='" + index + "']").data("user");
+
+                            // Push data for Insource
+                            auditResourcesList.push({
+                                AuditResourceId: auditResource,
+                                UserId: inUser,
+                                Plan: inPlannedDay,
+                                Actual: inActualDay,
+                                ResourceType: "Insource"
+                            });
+
+                            // Push data for Outsource
+                            auditResourcesList.push({
+                                AuditResourceId: auditResource,
+                                UserId: outUser,
+                                Plan: outPlannedDay,
+                                Actual: outActualDay,
+                                ResourceType: "Outsource"
+                            });
+                        }
+
+                        for (var userIndex = 0; userIndex < 1; userIndex++) {
+                            // Manager data
+                            var managerPlannedDay = $("input[name='manager-planned-day-" + userIndex + "'][data-index='" + index + "']").val();
+                            var managerActualDay = $("input[name='manager-actual-day-" + userIndex + "'][data-index='" + index + "']").val();
+                            var managerUser = $("input[name='manager-planned-day-" + userIndex + "'][data-index='" + index + "']").data("user");
+
+
+                            // Push data for Manager
+                            auditResourcesList.push({
+                                AuditResourceId: auditResource,
+                                UserId: managerUser,
+                                Plan: managerPlannedDay,
+                                Actual: managerActualDay,
+                                ResourceType: "Manager"
+                            });
+                        }
+                        function formatDate(dateString) {
+                            if (dateString) {
+                                var date = new Date(dateString);
+                                return date.toISOString();
+                            } else {
+                                return null;
+                            }
+                        }
+                        // Collect data for Start Date and End Date
+                        for (var userIndex = 0; userIndex < 12; userIndex++) {
+                            var planstartdate = $("input[name='plan-start-date-" + userIndex + "'][data-index='" + index + "']").val();
+                            var planenddate = $("input[name='plan-end-date-" + userIndex + "'][data-index='" + index + "']").val();
+                            var actualstartdate = $("input[name='actual-start-date-" + userIndex + "'][data-index='" + index + "']").val();
+                            var actualenddate = $("input[name='actual-end-date-" + userIndex + "'][data-index='" + index + "']").val();
+                            var assignedtostartactual = $(".AssignedToStartActual[name='AssignedToStartActual-" + userIndex + "'][data-index='" + index + "']").val();
+                            var assignedtoendactual = $(".AssignedToEndActual[name='AssignedToEndActual-" + userIndex + "'][data-index='" + index + "']").val();
+                            var year = $("input[name='actual-start-date-" + userIndex + "'][data-index='" + index + "']").data("year");
+                            var quarter = $("input[name='actual-start-date-" + userIndex + "'][data-index='" + index + "']").data("quarter");
+                            //var resourceid = $(this).attr("data-ResourceId");
+                            //alert("assignedtostartactual: " + assignedtostartactual +" assignedtoendactual: " + assignedtoendactual)
+                            startDateEndDateList.push({
+                                AuditResourceId: auditResource,
+                                YearId: year.toString(),
+                                QuarterId: quarter,
+                                ActualStartDate: formatDate(actualstartdate) || null,
+                                ActualEndDate: formatDate(actualenddate) || null,
+                                AssignedToStartActualId: assignedtostartactual || null,
+                                AssignedToEndActualId: assignedtoendactual || null
+                            });
+                        }
+
+                        // Combine both arrays
+                        var combinedData = {
+                            auditResourcesLists: auditResourcesList,
+                            StartDateEndDateList: startDateEndDateList
+                        };
+
+                        // Perform AJAX request to save data
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/AuditResources/AddResourcesList",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(combinedData),
+                            success: function (data) {
+                                console.log("Audit resources added successfully:", data);
+                                var auditResourceId = data.length > 0 ? data[0].AuditResourceId : null;
+                                //alert("The save data is successfully");
+                            },
+                            error: function (error) {
+                                console.error("An error occurred while adding audit resources:", error.responseText);
+                            }
+                        });
+                    });
+                    swal.close(); // إغلاق SweetAlert بعد النجاح
+                    swal({
+                        title: "Success",
+                        text: "Your data has been saved",
+                        icon: "success",
+                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false // إخفاء زر الإغلاق
+                    });
+                }, 2000);
+            });
+        });
+    </script>
+}
+
+

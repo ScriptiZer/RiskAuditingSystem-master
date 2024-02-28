@@ -1,0 +1,319 @@
+﻿@model Company
+@{
+    ViewData["Title"] = "Company Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add New Company</h4>
+                <form class="forms-sample" id="AddForm">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Code">Code</label>
+                                <input type="text" class="form-control" id="Code" name="Code" placeholder="Code">
+                                <span asp-validation-for="Code" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Industry">Industry</label>
+                                @Html.DropDownList("IndustryId", null, "-- Select One --", new { @class = "form-control", @id = "Industry", @name = "IndustryId" })
+                                <span asp-validation-for="IndustryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input type="text" class="form-control" id="Name" name="Name" placeholder="Company Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Email">Email</label>
+                                <input type="email" class="form-control" id="Email" name="Email" placeholder="Email Address">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="ContactNumber">Contact Number</label>
+                                <input type="text" class="form-control" id="ContactNumber" name="ContactNo" placeholder="Contact Number">
+                                <span asp-validation-for="ContactNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="Address">Address</label>
+                                <textarea type="text" class="form-control" id="Address" name="Address" placeholder="Address"></textarea>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12"></div>
+
+
+                        <div class="col-md-6 col-xs-12">
+                            <h5 class="alert alert-primary">Resources Setting</h5>
+                            <div class="form-group">
+                                <label asp-for="PlanYear">Plan Year</label>
+                                <select style="width:100% !important;" asp-for="PlanYear" id="PlanYear" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Year)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Insources">Insources</label>
+                                <select style="width:100% !important;" asp-for="Insources" id="Insources" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Insources)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Outsources">Outsources</label>
+                                <select style="width:100% !important;" asp-for="Outsources" id="Outsources" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Outsources)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Manager">Managers</label>
+                                <select style="width:100% !important;" asp-for="Manager" id="Manager" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Manager)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-xs-12">
+                            <h5 class="alert alert-primary">Budget Setting</h5>
+                            <div class="form-group">
+                                <label asp-for="BudgetPlanYear">Plan Year</label>
+                                <select style="width:100% !important;" asp-for="BudgetPlanYear" id="BudgetPlanYear" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Year)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BudgetInsources">Insources</label>
+                                <select style="width:100% !important;" asp-for="BudgetInsources" id="BudgetInsources" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Insources)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BudgetOutsources">Outsources</label>
+                                <select style="width:100% !important;" asp-for="BudgetOutsources" id="BudgetOutsources" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Outsources)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="BudgetManager">Managers</label>
+                                <select style="width:100% !important;" asp-for="BudgetManager" id="BudgetManager" class="form-control" multiple>
+                                    @foreach (var user in ViewBag.Manager)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div> 
+                     
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <textarea type="text" class="form-control" id="Description" name="Description" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="float-end">
+
+                        <!-- Cancel Button -->
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <!-- Save Data Button -->
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+
+            $("#Outsources").select2();
+            $("#Insources").select2();
+            $("#Manager").select2();
+            $("#PlanYear").select2();
+            $("#BudgetOutsources").select2();
+            $("#BudgetInsources").select2();
+            $("#BudgetManager").select2();
+            $("#BudgetPlanYear").select2();
+
+            $("#AddForm").validate({
+                rules: {
+                    IndustryId: {
+                        required: true
+                    },
+                    Name: {
+                        required: true
+                    },
+                    // Email: {
+                    //     required: true,
+                    //     email: true
+                    // },
+                    ContactNo: {
+                        required: true
+                    },
+                    Address: {
+                        required: true
+                    },
+                    Code: {
+                        required: true
+                    }
+                },
+                messages: {
+                    IndustryId: {
+                        required: "The Industry field is required"
+                    },
+                    Name: {
+                        required: "The Name field is required"
+                    },
+                    // Email: {
+                    //     required: "The Email field is required",
+                    //     email: "Please enter a valid email address"
+                    // },
+                    ContactNo: {
+                        required: "The Contact Number field is required"
+                    },
+                    Address: {
+                        required: "The Address field is required"
+                    },
+                    Code: {
+                        required: "The Code field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select") || element.is("textarea")) {
+                        error.insertAfter(element.siblings("span"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/Company/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+
+                var outsource = ($("#Outsources").val() || []).toString();
+                var insource = ($("#Insources").val() || []).toString();
+                var manager = ($("#Manager").val() || []).toString();
+                var year = ($("#PlanYear").val() || []).toString();
+                var budgetoutsource = ($("#BudgetOutsources").val() || []).toString();
+                var budgetinsource = ($("#BudgetInsources").val() || []).toString();
+                var budgetmanager = ($("#BudgetManager").val() || []).toString();
+                var budgetyear = ($("#BudgetPlanYear").val() || []).toString();
+
+                if ($("#AddForm").valid()) {
+                    var formData = {
+                        Name: $("#Name").val(),
+                        Email: $("#Email").val(),
+                        Address: $("#Address").val(),
+                        ContactNo: $("#ContactNumber").val(),
+                        IndustryId: $("#Industry").val(),
+                        Outsources: outsource,
+                        Insources: insource,
+                        Manager: manager,
+                        PlanYear: year,
+                        BudgetOutsources: budgetoutsource,
+                        BudgetInsources: budgetinsource,
+                        BudgetManager: budgetmanager,
+                        BudgetPlanYear: budgetyear,
+                        Code: $("#Code").val(),
+                        Description: htmlDescription
+                    };
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false, // إخفاء زر الإغلاق
+                        onBeforeOpen: () => {
+                            swal.showLoading(); // إضافة شريط التقدم
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/companies",
+                            method: "POST",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false, // إخفاء زر التأكيد
+                                    showCancelButton: false, // إخفاء زر الإلغاء
+                                    showCloseButton: false // إخفاء زر الإغلاق
+                                }).then(function () {
+                                    window.location.href = '/Company/Index';
+                                });
+                            },
+                            error: function (error) {
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, // إخفاء زر التأكيد
+                                        showCancelButton: false, // إخفاء زر الإلغاء
+                                        showCloseButton: false // إخفاء زر الإغلاق
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+}

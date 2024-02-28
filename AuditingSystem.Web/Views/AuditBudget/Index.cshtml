@@ -1,0 +1,609 @@
+﻿@model IEnumerable<AuditingSystem.Web.ViewModels.GetBudgetListVM>
+@{
+    ViewData["Title"] = "Audit Budget List";
+}
+
+<style>
+    .colorLabel {
+        background-color: #9fb0c6 !important
+    }
+
+    .tableWidth {
+        width: max-content !important
+    }
+
+
+    tr th {
+        text-align: center;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+    }
+
+    table {
+        border: 2px solid #b2b2b2 !important
+    }
+
+    input {
+        width: 60%;
+        height: 41px;
+        font-size: 18px;
+    }
+
+    .cardbox {
+        cursor: pointer;
+        box-shadow: inset 4px 1px 13px 0px;
+        border-radius: 10px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        /* z-index: 99; */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        /* width: 80%; */
+    }
+
+    .cardDesc {
+        display: none;
+    }
+
+    .close, .closeDesc {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        direction: rtl;
+    }
+
+        .close:hover,
+        .close:focus,
+        .closeDesc:hover,
+        .closeDesc:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+<style>
+    .scrollable-table-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    /* Add some custom styles for the tabs */
+    .nav-tabs-custom {
+        border-bottom: 2px solid #ddd;
+    }
+
+        .nav-tabs-custom .nav-item {
+            margin-bottom: -1px;
+        }
+
+        .nav-tabs-custom .nav-link {
+            border: 1px solid transparent;
+            border-radius: 0;
+            color: #333;
+        }
+
+            .nav-tabs-custom .nav-link.active {
+                background-color: #f8f9fa;
+                border-color: #ddd #ddd #f8f9fa;
+                color: #007bff;
+            }
+</style>
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Audit Budget Management View</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                    </div>
+                </div>
+                <br />
+                <br />
+
+                @{
+                    int index = 0;
+                }
+
+
+                <div class="">
+                    @foreach (var group in Model.GroupBy(x => x.AuditBudget.ResourceType))
+                    {
+                        <div style="vertical-align: middle;
+                            line-height: 1;
+                            /* padding: 1.25rem 0.9375rem; */
+                            border-width: 0 1px;
+                            background-color: #cfe2ff;
+                            width: 100%;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center; ">
+                            <div style="flex: 1;">
+                                <h5 style="font-weight: 900;    margin-left: 20px;">@group.Key</h5>
+                            </div>
+                            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+                                @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                {
+                                    <div class="year-tab" data-departments="@group.Key" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
+                                        height: 55px;
+                                        width: 70px;
+                                        box-sizing: border-box;
+                                        /* margin-right: -14px; */
+                                        background-color: #cdd8e7;
+                                        padding: 18px;" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                        @year <!--Years Tab-->
+                                    </div>
+                                }
+                            </div>
+                            <a title="@group.Key Archives" href="~/AuditBudget/Archives?resourceType=@group.Key">
+                                <div style="cursor: pointer;border:1px solid #bbb;
+                                            height: 55px;
+                                            width: 70px;
+                                            box-sizing: border-box;
+                                            /* margin-right: -14px; */
+                                            background-color: #cdd8e7;
+                                            padding: 18px;display: flex; justify-content: flex-end; align-items: center;">
+
+                                    <i class="fa-solid fa-inbox"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="table-responsive scrollable-table-container" id="tableContainer" style="margin:0;padding-left: 0;">
+
+                            <table data-departments="@group.Key" style="width: width: 100%" id="tableList" class="tableList table table-striped table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="4"></th>
+                                        <th colspan="2" style="text-align:center;">Items</th>
+                                        <th rowspan="4">Estimated</th>
+                                        <th rowspan="4">Actual</th>
+                                        <th rowspan="4">Variance</th>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            <th data-departments="@group.Key" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 6)">
+                                                @year
+                                            </th>
+                                        }
+                                        <th style="display:none;" rowspan="4">Actions</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th rowspan="3">Budget Type</th>
+                                        <th rowspan="3">Auditors</th>
+
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                <th data-departments="@group.Key" data-years="@year" colspan="@(3 * 2)">@quarter.Quarter</th>
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                var monthes = GetMonthesForQuarter(quarter.Quarter);
+
+                                                foreach (var month in monthes.Split(','))
+                                                {
+                                                    <th data-departments="@group.Key" data-years="@year" colspan="2" style="text-align:center;">@month</th>
+                                                }
+                                            }
+                                        }
+                                    </tr>
+                                    <tr>
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                var monthes = GetMonthesForQuarter(quarter.Quarter);
+
+                                                foreach (var month in monthes.Split(','))
+                                                {
+                                                    <th data-departments="@group.Key" data-years="@year">Estimated</th>
+                                                    <th data-departments="@group.Key" data-years="@year">Actual</th>
+                                                }
+                                            }
+                                        }
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in group)
+                                    {
+                                        <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
+                                            <h6 class="card-title m-3">@item.User.Name</h6>
+
+                                            <div class="card-body">
+                                                <textarea cols="50" rows="5" data-budgetId="@item.AuditBudget.Id" class="form-control">@Html.Raw(item.AuditBudget.Description)</textarea>
+                                            </div>
+
+                                            <span class="closeDesc">&times;</span>
+                                            <a title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
+                                               href="#" id="SaveDescription" data-budgetId="@item.AuditBudget.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
+                                        </div>
+                                        index++;
+                                        <tr data-group="@group.Key" id="tr-@group.Key-@index">
+                                            @{
+                                                var iconColor = "";
+                                                var title = "";
+                                                if (item.AuditBudget.Description != "")
+                                                {
+                                                    iconColor = "#05a536";
+                                                    title = "Edit Note";
+                                                }
+                                                else
+                                                {
+                                                    iconColor = "#0d6efd";
+                                                    title = "Add Note";
+                                                }
+                                            }
+                                            <td>
+                                                <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
+                                                    <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <select title="Budget Type" data-index="@index" class="BudgetType form-control" asp-for="@item.AuditBudget.BudgetType">
+                                                    <option value="">-- Select One --</option>
+                                                    <option value="Salary">Salary</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                @item.User.Name
+                                            </td>
+                                            <td>
+                                                <center> <input id="estimated" title="Estimated" data-index="@index" class="estimated" value="@item.AuditBudget.TotalEstmated" type="number" min="0" /></center>
+                                            </td>
+                                            <td>
+                                                <center> <input readonly id="actual" title="Actual" class="actual" value="@item.AuditBudget.TotalActual" type="number" min="0" /></center>
+                                            </td>
+                                            <td>
+                                                <center> <input title="Variance" readonly="readonly" class="variance" value="@item.AuditBudget.Variance" type="number" min="0" /></center>
+                                            </td>
+                                            @{
+                                                int userIndex = 0;
+                                            }
+                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                            {
+                                                foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                {
+                                                    var monthes = GetMonthesForQuarter(quarter.Quarter);
+
+                                                    foreach (var month in monthes.Split(','))
+                                                    {
+                                                        <input type="hidden" name="company-@userIndex" id="compayId" data-index="@index" value="@item.Company.Id" />
+
+                                                        var data = ViewBag.BudgetGroupedData as List<dynamic>;
+                                                        var budgetGroupData = data?.FirstOrDefault(d => d.BudgetId == item.AuditBudget.Id && d.Year == Convert.ToInt32(year) && d.Quarter == quarter.Quarter && d.Month == month);
+
+                                                        <td data-departments="@group.Key" data-years="@year" style="text-align:center;">
+                                                            <center>
+                                                                <input title="@item.User.Name - @year - @quarter.Quarter - @month - Estimated"
+                                                                       type="number" min="0" name="estimated-@userIndex" data-index="@index"
+                                                                       data-year="@year" data-quarter="@quarter.Quarter" data-month="@month" class="estimated"
+                                                                       value="@(budgetGroupData?.Estimated ?? 0)" />
+                                                            </center>
+                                                        </td>
+
+                                                        <td data-departments="@group.Key" data-years="@year" style="text-align:center;">
+                                                            <center>
+                                                                <input title="@item.User.Name - @year - @quarter.Quarter - @month - Actual"
+                                                                       type="number" min="0" name="actual-@userIndex" data-index="@index"
+                                                                       data-year="@year" data-quarter="@quarter.Quarter" data-month="@month" class="actual"
+                                                                       value="@(budgetGroupData?.Actual ?? 0)" />
+                                                            </center>
+                                                        </td>
+                                                        userIndex++;
+                                                    }
+                                                }
+                                            }
+
+                                            <td style="display:none;">
+                                                <a id="btnSave-@userIndex-@index" class="showAlertButton btnSave" title="Add Data" data-budgetId="@item.AuditBudget.Id" data-id="@index" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" style=" margin-bottom: 50px;">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <label>Equation Total Estimated</label>
+                                <input type="text" readonly="readonly" data-group="@group.Key" class="TotalEquationEstimated form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Equation Total Actual</label>
+                                <input type="text" readonly="readonly" data-group="@group.Key" class="TotalEquationActual form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Equation Total Variance</label>
+                                <input type="text" readonly="readonly" data-group="@group.Key" class="TotalEquationVariance form-control" />
+                            </div>
+                        </div>
+
+                    }
+                </div>
+                <div class="modal-footer float-end">
+                    <button class="btn btn-primary" id="saveAllButton">
+                        <i class="fa-solid fa-save"></i> Save All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    var yearQuarterDictionary = ViewBag.yearQuarterDictionary;
+}
+@section Scripts{
+
+    <script>
+
+
+        function calculateActualTotals() {
+            $("tr").each(function () {
+                var currentRow = $(this);
+                var totalActual = 0;
+                currentRow.find("input[name^='actual-']").each(function () {
+                    totalActual += parseInt($(this).val()) || 0;
+                });
+
+                currentRow.find("#actual").val(totalActual); // Total Actual
+            });
+        }
+        function divEstimatedValue(index, estimatedValue) {
+            var estimated = estimatedValue / 12;
+
+            $("tr").each(function () {
+                var currentRow = $(this);
+                currentRow.find("input[name^='estimated-'][data-index='" + index + "']").each(function () {
+                    currentRow.find(this).val(estimated); // Estimated after div
+                });
+            });
+        }
+
+        function showTablePopup(index) {
+            console.log('Showing popup for index: ' + index);
+            $('#tablePopup_' + index).fadeIn();
+        }
+
+        function closeTablePopup(index) {
+            $('#tablePopup_' + index).fadeOut();
+        }
+
+        function showDescriptionPopup(index) {
+            console.log('Toggling description for index: ' + index);
+            $('#DescCard_' + index).fadeToggle();
+        }
+
+        function showColumnsForYear(year, department) {
+            $('#tableList th[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+            $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
+        }
+
+        $(document).ready(function () {
+            $(document).on("click", ".year-tab", function () {
+                var selectedYear = $(this).data("years");
+                var selectedDepartment = $(this).data("departments");
+                $(this).toggleClass("colorLabel");
+                $('#tableList[ data-departments="' + selectedDepartment + '"]').toggleClass("tableWidth");
+
+                showColumnsForYear(selectedYear, selectedDepartment);
+
+            });
+            $("th[data-years]").css("display", "none");
+            $("td[data-years]").css("display", "none");
+
+            $("input[name^='actual-']").on("input", function () {
+                calculateActualTotals();
+            });
+            $(document).on("input", "#estimated", function () {
+                var estimated = $(this).val();
+                var index = $(this).data("index");
+                divEstimatedValue(index, estimated);
+            });
+
+            var descriptionTextareas = $(".cardDesc");
+
+            descriptionTextareas.draggable({
+                cursor: 'grab',
+                revert: false,
+                containment: "document",
+                scroll: false
+            });
+
+            $(document).on("click", "#SaveDescription", function () {
+                var budgetId = $(this).attr("data-budgetid");
+
+                var descriptionValue = $("textarea[data-budgetId='" + budgetId + "']").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/AuditBudgets/SaveDesciption?id=" + budgetId + "&description=" + descriptionValue, // Fix the function name here
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        console.log("Audit resources description added successfully");
+                        $(".cardDesc").fadeOut();
+                    },
+                    error: function (error) {
+                        console.error("An error occurred while adding audit resources:", error.responseText);
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".closeDesc", function () {
+                $(this).closest('.cardDesc').fadeOut();
+            });
+
+
+            $('.cardbox').click(function () {
+                var index = $(this).data('index');
+                showTablePopup(index);
+            });
+
+
+            $('.close').click(function () {
+                var index = $(this).data('index');
+                closeTablePopup(index);
+            });
+
+            $(document).on("click", "#saveAllButton", function () {
+                $(".btnSave").each(function () {
+                    var row = $(this).closest("tr");
+                    var formData = {
+                        TotalEstmated: row.find(".estimated").val(),
+                        TotalActual: row.find(".actual").val(),
+                        Variance: row.find(".variance").val(),
+                        BudgetType: row.find(".BudgetType").val()
+                    };
+
+                    var bId = $(this);
+                    var index = $(this).data("id");
+
+                    $.ajax({
+                        url: "/api/AuditBudgets/" + bId.attr("data-BudgetId"),
+                        method: "PUT",
+                        dataType: 'json',
+                        contentType: "application/json",
+                        data: JSON.stringify(formData),
+                        success: function (response) {
+                            console.log("Server response:", response);
+                            console.log("The Save is Successfully for estimated, actual, and variance");
+                        },
+                        error: function (error) {
+                            console.error("Error:", error);
+                            if (error.responseJSON && error.responseJSON.errors) {
+                                $.each(error.responseJSON.errors, function (key, value) {
+                                    row.find("#" + key).siblings(".text-danger").text(value);
+                                });
+                            }
+                        }
+                    });
+
+                    var auditBudgetList = [];
+                    for (var userIndex = 0; userIndex < 12; userIndex++) {
+                        var estimated = $("input[name='estimated-" + userIndex + "'][data-index='" + index + "']").val();
+                        var actual = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").val();
+                        var company = $("input[name='company-" + userIndex + "'][data-index='" + index + "']").val();
+                        var firstInput = $("input[name='estimated-" + userIndex + "'][data-index='" + index + "']");
+                        var year = firstInput.data("year");
+                        var quarter = firstInput.data("quarter");
+                        var month = firstInput.data("month");
+                        var budgetId = bId.attr("data-budgetId");
+
+                        auditBudgetList.push({
+                            Estimated: estimated,
+                            Actual: actual,
+                            Year: year,
+                            Quarter: quarter,
+                            Month: month,
+                            BudgetId: budgetId,
+                            CompanyId: company
+                        });
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/AuditBudgets/AddBudgetList",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(auditBudgetList),
+                        success: function (data) {
+                            console.log("Audit resources added successfully:", data);
+                            var BudgetId = data.length > 0 ? data[0].BudgetId : null;
+                            alert("The save data is successfully");
+                        },
+                        error: function (error) {
+                            console.error("An error occurred while adding audit resources:", error.responseText);
+                        }
+                    });
+                });
+            });
+
+            $(".estimated, .actual").on("input", function () {
+                var row = $(this).closest("tr");
+                var estimated = parseFloat(row.find(".estimated").val()) || 0;
+                var actual = parseFloat(row.find(".actual").val()) || 0;
+                var variance = estimated - actual;
+                row.find(".variance").val(variance.toFixed(2));
+            });
+
+            calculateTotal("estimated");
+            calculateTotal("actual");
+            calculateTotal("variance");
+
+            $(document).on("input", ".estimated, .actual, .variance", function () {
+                var fieldType = $(this).hasClass("estimated") ? "estimated" : $(this).hasClass("actual") ? "actual" : "variance";
+                calculateTotal(fieldType);
+            });
+
+            function calculateTotal(fieldType) {
+                var groupTotals = {};
+
+                $("." + fieldType).each(function () {
+                    var row = $(this).closest("tr");
+                    var groupKey = row.data('group');
+
+                    var totalField = 0;
+                    row.closest('.scrollable-table-container').find('tr[data-group="' + groupKey + '"]').each(function () {
+                        var rowValue = parseFloat($(this).find("." + fieldType).val()) || 0;
+                        totalField += rowValue;
+                    });
+
+                    $('.TotalEquation' + fieldType.charAt(0).toUpperCase() + fieldType.slice(1) + '[data-group="' + groupKey + '"]').val(totalField.toFixed(2));
+
+                    groupTotals[groupKey] = totalField;
+
+                    var totalEstimated = parseFloat($('.TotalEquationEstimated[data-group="' + groupKey + '"]').val()) || 0;
+                    var totalActual = parseFloat($('.TotalEquationActual[data-group="' + groupKey + '"]').val()) || 0;
+                    var totalVariance = totalEstimated - totalActual;
+                    $('.TotalEquationVariance[data-group="' + groupKey + '"]').val(totalVariance.toFixed(2));
+                });
+            }
+
+
+        @functions {
+        string GetMonthesForQuarter(string quarter)
+        {
+            switch (quarter)
+            {
+                case "Q1":
+                    return $"Jan,Feb,Mar";
+                case "Q2":
+                    return $"Apr,May,Jun";
+                case "Q3":
+                    return $"Jul,Aug,Sep";
+                case "Q4":
+                    return $"Oct,Nov,Dec";
+                default:
+                    return "";
+            }
+        }
+        }
+            });
+
+</script>
+}

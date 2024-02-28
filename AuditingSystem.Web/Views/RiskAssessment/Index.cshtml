@@ -1,0 +1,202 @@
+﻿@model IEnumerable<AuditingSystem.Services.ViewModels.RiskAssessmentVM>
+
+
+@{
+    ViewData["Title"] = "Risk Assessment List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Risk Assessment Management View</h4>
+                    </div>
+                </div>
+                <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
+                    <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
+                        <li class="nav-item nav-search d-none d-lg-block">
+                            <div class="input-group">
+                                <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-responsive">
+                    <table style="width:2200px;" id="tableList" class="table table-striped table-bordered tableList">
+                        <thead>
+                            <tr>
+                                <th>Risk Title</th>
+                                <th>Risk Category</th>
+                                <th>Risk Description</th>
+                                <th>Risk Rating Rationalization</th>
+                                <th>Risk Impact</th>
+                                <th>Risk Likelihood</th>
+                                <th>Inherent Risk Rating</th>
+                                <th>Control Name</th>
+                                <th>Control Description</th>
+                                <th>Control Type</th>
+                                <th>Control Process</th>
+                                <th>Control Frequency</th>
+                                <th>Control Effectiveness</th>
+                                <th>Control Effectiveness Rating</th>
+                                <th>Residual Risk Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.RiskIdentification.Name</td>
+                                    <td style="background-color:@item.RiskCategory.BGColor;color:@item.RiskCategory.FontColor">@item.RiskCategory.Name</td>
+                                    <td style="width: 200px;">@Html.Raw(item.RiskIdentification.Description)</td>
+                                    <td>@Html.Raw(item.RiskIdentification.RiskRatingRationalization)</td>
+                                    <td>@item.RiskImpact.Name - @item.RiskImpact.Rate</td>
+                                    <td>@item.RiskLikehood.Name - @item.RiskLikehood.Rate</td>
+                                    <td>@item.RiskIdentification.InherentRiskRating</td>
+                                    <td>@item.Control.Name</td>
+                                    <td>@Html.Raw(item.Control.Description)</td>
+                                    <td>@item.ControlType.Name</td>
+                                    <td>@item.ControlProcess.Name</td>
+                                    <td>@item.ControlFrequency.Name</td>
+                                    <td>@item.ControlEffectiveness.Name - @item.ControlEffectiveness.Rate</td>
+                                    <td>@item.Control.ControlEffectivenessRating</td>
+                                     
+                                        @if (item.RiskAssessmentList.ResidualRiskRating == "Active Management")
+                                        {
+                                            <td style="background-color:#C00000;color:#ffffff">@item.RiskAssessmentList.ResidualRiskRating</td>
+                                        }
+                                        else if (item.RiskAssessmentList.ResidualRiskRating == "Continuous Review")
+                                        {
+                                            <td style="background-color:#FF9933">@item.RiskAssessmentList.ResidualRiskRating</td>
+                                        }
+                                        else if (item.RiskAssessmentList.ResidualRiskRating == "Periodic Monitoring")
+                                        {
+                                            <td style="background-color:#FFFF00">@item.RiskAssessmentList.ResidualRiskRating</td>
+                                        }
+                                        else if (item.RiskAssessmentList.ResidualRiskRating == "No major concern")
+                                        {
+                                            <td style="background-color:#66FF33">@item.RiskAssessmentList.ResidualRiskRating</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@item.RiskAssessmentList.ResidualRiskRating</td>
+                                        }
+                                     
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-md-6" style="    text-align: left;
+    margin-top: 15px;">
+                            <p>
+                                Showing @Model.Count() of @ViewBag.TotalRow entries
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <nav aria-label="Page navigation" class="float-end mt-3">
+                                <ul class="pagination">
+                                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                    {
+                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="?page=@i&pageSize=@ViewBag.PageSize">@i</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6"></div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="AverageInherentRisk">Average Inherent Risk</label>
+            <input type="text" class="form-control" id="AverageInherentRisk" name="AverageInherentRisk" readonly>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="AverageControl">Average Control</label>
+            <input type="text" class="form-control" id="AverageControl" name="AverageControl" readonly>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.rawgit.com/dobtco/jquery-resizable-columns/v1.0.9/jquery.resizableColumns.min.js"></script>
+
+    <script>
+        $("td,th")
+            .css({
+                position: "relative"
+            })
+            .prepend("<div class='resizer'></div>")
+            .resizable({
+                resizeHeight: false,
+                handleSelector: "",
+                onDragStart: function (e, $el, opt) {
+                    if (!$(e.target).hasClass("resizer"))
+                        return false;
+                    return true;
+                }
+            });
+
+        var table = $('.tableList');
+
+
+        table.draggable({
+            axis: 'x',
+            cursor: 'grabbing',
+            scroll: false,
+            start: function (event, ui) {
+                $.ui.ddmanager.current.cancelHelperRemoval = true;
+            }
+        });
+        function calculateAverageInherentRisk() {
+            var totalInherentRisk = 0;
+            var rowCount = 0;
+
+            $("#tableList tbody tr").each(function () {
+                var inherentRisk = parseFloat($(this).find("td:eq(6)").text()) || 0;
+                totalInherentRisk += inherentRisk;
+                rowCount++;
+            });
+
+            var averageInherentRisk = rowCount > 0 ? totalInherentRisk / rowCount : 0;
+
+            $("#AverageInherentRisk").val(averageInherentRisk.toFixed(2));
+        }
+
+        
+        function calculateAverageControlEffectivenessRating() {
+            var totalControlEffectivenessRating = 0;
+            var rowCount = 0;
+
+            $("#tableList tbody tr").each(function () {
+                var controlEffectivenessRating = parseFloat($(this).find("td:eq(13)").text()) || 0;
+                totalControlEffectivenessRating += controlEffectivenessRating;
+                rowCount++;
+            });
+
+            var averageControlEffectivenessRating = rowCount > 0 ? totalControlEffectivenessRating / rowCount : 0;
+
+            $("#AverageControl").val(averageControlEffectivenessRating.toFixed(2));
+        }
+
+        calculateAverageInherentRisk();
+        calculateAverageControlEffectivenessRating();
+    </script>
+}

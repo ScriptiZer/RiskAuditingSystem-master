@@ -1,0 +1,136 @@
+﻿@model IEnumerable<Tasks>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+
+@{
+    ViewData["DeleteTitle"] = "tasks";
+    ViewData["Title"] = "Task List By Objective";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Task Management View</h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Add == true))
+                        {
+                            <a class="btn btn-primary me-2" href="~/Task/Add">
+                                <i class="fa-solid fa-plus"></i> Add New Task
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+
+
+                            <th>
+                                TASK
+                            </th>
+                            <th>
+
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <div class="row">
+                                            <div class="col">
+                                                <b>
+                                                    <code title="Objective">
+                                                        @(item.Objective.Activity.Function.Department.Company.Code + "." + item.Objective.Activity.Function.Department.Code + "."
+                                                            + item.Objective.Activity.Function.Code + "." + item.Objective.Activity.Code + "." + item.Objective.Code + "." + item.Code)
+                                                    </code>
+                                                    ›
+
+                                                    @(item.Name != null ? item.Name : "N/A")
+                                                </b>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col col-12 pl-5 pt-2" v-for="child in item.practices"
+                                                 :key="child.id">
+                                                &nbsp; &nbsp; &nbsp;
+                                                @foreach (var practice in item.Practices.OrderBy(f => f.Code))
+                                                {
+                                                    <h6>
+                                                        <ol style="list-style-type:none;">
+                                                            <li>
+                                                                <a href="/Practice?TaskId=" + @item.Id
+                                                                   title="Practice">
+                                                                    {{child.code}} {{child.practiceName}}
+                                                                    @item.Code @item.Name
+                                                                </a>
+                                                            </li>
+                                                        </ol>
+                                                    </h6>
+                                                }
+
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Edit == true))
+                                    {
+                                        <td>
+                                            <a asp-action="Edit" asp-controller="Task" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Delete == true))
+                                    {
+                                        <td>
+                                            <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
