@@ -1,0 +1,172 @@
+﻿@model AuditingSystem.Entities.AuditFieldWork.AuditProgram
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+@{
+    ViewData["Title"] = "Add";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add New Audit Program</h4>
+                <form class="forms-sample" id="AddForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Company">Company</label>
+                                @Html.DropDownList("CompanyId", null, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId" })
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Company">Auditor</label>
+                                @Html.DropDownList("AuditorId", null, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId" })
+                                <span asp-validation-for="AuditorId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Department">Department</label>
+                                @Html.DropDownList("DepartmentId", null, "-- Select One --", new { @class = "form-control", @id = "Department", @name = "DepartmentId" })
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Company">Actual Date</label>
+                                <input title="ActualDate" type="text" name="ActualDate" class="ActualDate form-control" />
+                                <span asp-validation-for="ActualDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Period">Period</label>
+                                <input title="Period" type="text" name="Period" class="Period form-control" />
+                                <span asp-validation-for="Period" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Audit Program List Management View</h4>
+                    </div>
+                </div>
+                <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
+                    <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
+                        <li class="nav-item nav-search d-none d-lg-block">
+                            <div class="input-group">
+                                <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-responsive">
+                    <table id="tableList" class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Major Process
+                                </th>
+                                <th>
+                                    SubProcess
+                                </th>
+                                <th>
+                                    Risk Category
+                                </th>
+                                <th>
+                                    Risk Description
+                                </th>
+                                <th>
+                                    Control Description
+                                </th>
+                                <th>Test Description</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                       @*  <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="tr">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Company.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Department.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.User.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ActualDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Period)
+                                    </td>
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && p.Edit == true))
+                                    {
+                                        <td>
+                                            <a asp-action="Edit" asp-controller="User" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && p.Delete == true))
+                                    {
+                                        <td>
+                                            <a data-actions-id="@item.Id" title="Delete" class="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody> *@
+                    </table>
+                </div>
+
+                <br />
+                <br />
+                <br />
+                <div class="float-end">
+                    <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                    @* <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button> *@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".ActualDate").datepicker();
+            $(".Period").datepicker();
+        });
+    </script>
+}

@@ -6,6 +6,7 @@ using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Entities.RiskAssessments;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities;
+using AuditingSystem.Entities.AuditFieldWork;
 
 namespace AuditingSystem.Database
 {
@@ -57,6 +58,8 @@ namespace AuditingSystem.Database
         public virtual DbSet<FinalAuditPlanList> FinalAuditPlanLists { get; set; }
         public virtual DbSet<Permission>? Permissions { get; set; }
         public virtual DbSet<RolesPermissions>? RolesPermissions { get; set; }
+        public virtual DbSet<AuditProgram>? AuditPrograms { get; set; }
+        public virtual DbSet<AuditProgramList>? AuditProgramLists { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -28,6 +28,8 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
 
             var list = from riskAssessment in db.RiskAssessmentsList
                        join riskIdentification in db.RiskIdentifications on riskAssessment.RiskIdentificationId equals riskIdentification.Id
+                       join company in db.Companies on riskIdentification.CompanyId equals company.Id
+                       join department in db.Departments on riskIdentification.DepartmentId equals department.Id
                        join control in db.Controls on riskAssessment.ControlId equals control.Id
                        join riskCategory in db.RiskCategories on riskIdentification.RiskCategoryId equals riskCategory.Id
                        join riskImpact in db.RiskImpacts on riskIdentification.RiskImpactId equals riskImpact.Id
@@ -39,6 +41,8 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
                        where riskIdentification.IsDeleted == false && control.IsDeleted == false
                            select new RiskAssessmentVM
                            {
+                               Company = company,
+                               Department = department,
                                RiskAssessmentList = riskAssessment,
                                RiskIdentification = riskIdentification,
                                RiskCategory = riskCategory,

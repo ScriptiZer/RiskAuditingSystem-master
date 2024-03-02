@@ -4,6 +4,7 @@ using AuditingSystem.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuditingSystem.Database.Migrations
 {
     [DbContext(typeof(AuditingSystemDbContext))]
-    partial class AuditingSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302170445_AddAuditPrograms")]
+    partial class AddAuditPrograms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1609,17 +1611,11 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1655,10 +1651,6 @@ namespace AuditingSystem.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("FunctionId");
 
@@ -2472,18 +2464,6 @@ namespace AuditingSystem.Database.Migrations
 
             modelBuilder.Entity("AuditingSystem.Entities.RiskAssessments.RiskIdentification", b =>
                 {
-                    b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
                         .WithMany()
                         .HasForeignKey("FunctionId")
@@ -2501,10 +2481,6 @@ namespace AuditingSystem.Database.Migrations
                     b.HasOne("AuditingSystem.Entities.Lockups.RiskLikehood", "RiskLikelihood")
                         .WithMany()
                         .HasForeignKey("RiskLikelihoodId");
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Department");
 
                     b.Navigation("Function");
 

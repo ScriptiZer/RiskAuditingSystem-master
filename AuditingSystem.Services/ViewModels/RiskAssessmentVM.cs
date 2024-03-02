@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditProcess;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Entities.RiskAssessments;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace AuditingSystem.Services.ViewModels
 {
     public class RiskAssessmentVM
     {
+        public  Company? Company { get; set; }
+        public  Department? Department { get; set; }
         public  RiskAssessmentList? RiskAssessmentList { get; set; }
         public RiskIdentification? RiskIdentification { get; set; }
         public RiskCategory? RiskCategory { get; set; }

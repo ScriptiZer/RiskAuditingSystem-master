@@ -19,20 +19,25 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
         private readonly IBaseRepository<RiskImpact, int> _riskImpactRepository;
         private readonly IBaseRepository<RiskLikehood, int> _likelihoodRepository;
         private readonly IBaseRepository<Function, int> _functionRepository;
+        private readonly IBaseRepository<Company, int> _companyRepository;
+        private readonly IBaseRepository<Department, int> _departmentRepository;
 
         public RiskIdentificationController(
             IBaseRepository<RiskIdentification, int> riskIdentificaionRepository,
             IBaseRepository<RiskCategory, int> riskCategoryRepository,
             IBaseRepository<RiskImpact, int> riskImpactRepository,
             IBaseRepository<RiskLikehood, int> likelihoodRepository,
-            IBaseRepository<Function, int> functionRepository)
+            IBaseRepository<Function, int> functionRepository,
+            IBaseRepository<Company, int> companyRepository,
+            IBaseRepository<Department, int> departmentRepository)
         {
             _riskIdentificaionRepository = riskIdentificaionRepository;
             _riskCategoryRepository = riskCategoryRepository;
             _riskImpactRepository = riskImpactRepository;
             _likelihoodRepository = likelihoodRepository;
             _functionRepository = functionRepository;
-
+            _companyRepository = companyRepository;
+            _departmentRepository = departmentRepository;
         }
 
         public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
@@ -43,9 +48,9 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
                 return RedirectToAction("Login", "Account");
 
             var riskIdentifications = await _riskIdentificaionRepository.ListAsync(
-                new Expression<Func<RiskIdentification, bool>>[] { c => c.IsDeleted == false },
+                new Expression<Func<RiskIdentification, bool>>[] { c => c.IsDeleted == false},
                 q => q.OrderBy(u => u.Id),
-            c => c.RiskCategory, c => c.RiskImpact, c => c.RiskLikelihood);
+            c => c.RiskCategory, c => c.RiskImpact, c => c.RiskLikelihood, c => c.Company, c => c.Department);
             var model = riskIdentifications.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             ViewBag.TotalRow = riskIdentifications.Count();
             ViewBag.CurrentPage = page;
@@ -77,12 +82,24 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
                 q => q.OrderBy(u => u.Rate),
                 null);
 
+            var company = await _companyRepository.ListAsync(
+                new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false },
+                q => q.OrderBy(u => u.Id),
+                null);
+
+            var department = await _departmentRepository.ListAsync(
+                new Expression<Func<Department, bool>>[] { u => u.IsDeleted == false },
+                q => q.OrderBy(u => u.Id),
+                null);
+
             var function = await _functionRepository.ListAsync(
               new Expression<Func<Function, bool>>[] { u => u.IsDeleted == false },
               q => q.OrderBy(u => u.Id),
               null);
 
             ViewBag.RiskCategoryId = new SelectList(riskCategory, "Id", "Name");
+            ViewBag.CompanyId = new SelectList(company, "Id", "Name");
+            ViewBag.DepartmentId = new SelectList(department, "Id", "Name");
             ViewBag.FunctionId = new SelectList(function, "Name", "Name");
             ViewBag.RiskImpactId = new SelectList(riskImpact.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name");
             ViewBag.RiskLikelihoodId = new SelectList(likelihood.Select(l => new { Id = l.Id, Name = $"{l.Rate} - {l.Name}" }), "Id", "Name");
@@ -148,7 +165,20 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
               new Expression<Func<Function, bool>>[] { u => u.IsDeleted == false },
               q => q.OrderBy(u => u.Id),
               null);
+
+            var company = await _companyRepository.ListAsync(
+                new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false },
+                q => q.OrderBy(u => u.Id),
+                null);
+
+            var department = await _departmentRepository.ListAsync(
+                new Expression<Func<Department, bool>>[] { u => u.IsDeleted == false },
+                q => q.OrderBy(u => u.Id),
+                null);
+
             ViewBag.RiskCategoryId = new SelectList(riskCategory, "Id", "Name", riskIdentification.RiskCategoryId);
+            ViewBag.CompanyId = new SelectList(company, "Id", "Name", riskIdentification.CompanyId);
+            ViewBag.DepartmentId = new SelectList(department, "Id", "Name", riskIdentification.DepartmentId);
             ViewBag.FunctionId = new SelectList(function, "Name", "Name",riskIdentification.FunctionId);
             ViewBag.RiskImpactId = new SelectList(riskImpact.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name", riskIdentification.RiskImpactId);
             ViewBag.RiskLikelihoodId = new SelectList(likelihood.Select(l => new { Id = l.Id, Name = $"{l.Rate} - {l.Name}" }), "Id", "Name", riskIdentification.RiskLikelihoodId);

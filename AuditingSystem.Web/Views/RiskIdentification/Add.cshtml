@@ -47,6 +47,16 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="form-group">
+                                <label for="FunctionId">Company</label>
+                                @Html.DropDownList("CompanyId", null, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId" })
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="FunctionId">Department</label>
+                                @Html.DropDownList("DepartmentId", null, "-- Select One --", new { @class = "form-control", @id = "Department", @name = "DepartmentId" })
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
                                 <label for="FunctionId">Function</label>
                                 @Html.DropDownList("FunctionId", null, "-- Select One --", new { @class = "form-control", @id = "Function", @name = "FunctionId" })
                                 <span asp-validation-for="FunctionId" class="text-danger"></span>
@@ -100,23 +110,14 @@
                     Name: $("#Name").val(),
                     Description: htmlDescription,
                     RiskCategoryId: $("#RiskCategory").val(),
+                    CompanyId: $("#Company").val(),
+                    DepartmentId: $("#Department").val(),
                     RiskImpactId: $("#RiskImpact").val(),
                     RiskLikelihoodId: $("#RiskLikelihood").val(),
                     RiskRatingRationalization: htmlRiskRatingRationalization,
                     InherentRiskRating: $("#InherentRiskRating").val()
                 };
 
-                swal({
-                    title: "Saving...",
-                    text: "Please wait.",
-                    allowOutsideClick: false,
-                    showConfirmButton: false, // إخفاء زر التأكيد
-                    showCancelButton: false, // إخفاء زر الإلغاء
-                    showCloseButton: false, // إخفاء زر الإغلاق
-                    onBeforeOpen: () => {
-                        swal.showLoading(); // إضافة شريط التقدم
-                    }
-                });
 
                 setTimeout(function () {
                     $.ajax({
@@ -124,21 +125,24 @@
                         type: 'POST',
                         data: formData,
                         success: function (result) {
-                            swal.close(); // إغلاق SweetAlert بعد النجاح
-                            swal({
-                                title: "Success",
-                                text: "Your data has been saved",
-                                icon: "success",
-                                position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
-                                allowOutsideClick: false,
-                                showConfirmButton: false, // إخفاء زر التأكيد
-                                showCancelButton: false, // إخفاء زر الإلغاء
-                                showCloseButton: false // إخفاء زر الإغلاق
-                            }).then(function () {
-                                var riskIdentificationId = result.id;
-                                window.location.href = '/Control/Add?riskIdentificationId=' + riskIdentificationId;
-                            });
+                            // swal.close(); // إغلاق SweetAlert بعد النجاح
+                            // swal({
+                            //     title: "Success",
+                            //     text: "Your data has been saved",
+                            //     icon: "success",
+                            //     position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                            //     timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                            //     allowOutsideClick: false,
+                            //     showConfirmButton: false, // إخفاء زر التأكيد
+                            //     showCancelButton: false, // إخفاء زر الإلغاء
+                            //     showCloseButton: false // إخفاء زر الإغلاق
+                            // }).then(function () {
+                            //     var riskIdentificationId = result.id;
+                            //     window.location.href = '/Control/Add?riskIdentificationId=' + riskIdentificationId;
+                            // });
+                            var riskIdentificationId = result.id;
+                            window.location.href = '/Control/Add?riskIdentificationId=' + riskIdentificationId;
+
                         },
                         error: function (error) {
                             swal({
@@ -177,6 +181,12 @@
                     Name: {
                         required:true
                     },
+                    CompanyId: {
+                        required:true
+                    },
+                    DepartmentId: {
+                        required: true
+                    },
                     RiskCategoryId: {
                         required: true
                     },
@@ -202,6 +212,12 @@
                     },
                     Name:{
                         required: "The Name field is required"
+                    },
+                    CompanyId: {
+                        required: "The Company field is required"
+                    },
+                    DepartmentId: {
+                        required: "The Department field is required"
                     },
                     RiskCategoryId: {
                         required: "The Risk Category field is required"
@@ -242,6 +258,8 @@
                     var formData = {
                         Code: $("#Code").val(),
                         Name: $("#Name").val(),
+                        CompanyId: $("#Company").val(),
+                        DepartmentId: $("#Department").val(),
                         Description: htmlDescription,
                         RiskCategoryId: $("#RiskCategory").val(),
                         RiskImpactId: $("#RiskImpact").val(),

@@ -28,6 +28,9 @@
                     <table style="width:2200px;" id="tableList" class="table table-striped table-bordered tableList">
                         <thead>
                             <tr>
+                                <th>Code</th>
+                                <th>Company</th>
+                                <th>Department</th>
                                 <th>Risk Title</th>
                                 <th>Risk Category</th>
                                 <th>Risk Description</th>
@@ -50,6 +53,9 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td>@item.RiskIdentification.Code.@item.Control.Code</td>
+                                    <td>@item.RiskIdentification.Company.Name</td>
+                                    <td>@item.RiskIdentification.Department.Name</td>
                                     <td>@item.RiskIdentification.Name</td>
                                     <td style="background-color:@item.RiskCategory.BGColor;color:@item.RiskCategory.FontColor">@item.RiskCategory.Name</td>
                                     <td style="width: 200px;">@Html.Raw(item.RiskIdentification.Description)</td>

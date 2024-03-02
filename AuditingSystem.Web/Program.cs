@@ -1,4 +1,5 @@
 using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldWork;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Lockups;
@@ -65,6 +66,10 @@ builder.Services.AddScoped<IBaseRepository<FinalAuditPlan, int>, BaseRepository<
 builder.Services.AddScoped<IBaseRepository<FinalAuditPlanList, int>, BaseRepository<FinalAuditPlanList, int>>();
 builder.Services.AddScoped<IBaseRepository<Permission, int>, BaseRepository<Permission, int>>();
 builder.Services.AddScoped<IBaseRepository<RolesPermissions, int>, BaseRepository<RolesPermissions, int>>();
+
+builder.Services.AddScoped<IBaseRepository<AuditProgram, int>, BaseRepository<AuditProgram, int>>();
+builder.Services.AddScoped<IBaseRepository<AuditProgramList, int>, BaseRepository<AuditProgramList, int>>();
+
 builder.Services.AddScoped<IDashboard_ActualBudgetPlanperMonth, Dashboard_ActualBudgetPlanperMonth>();
 
 

@@ -395,7 +395,7 @@
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true))
                                         {
                                             <li>
-                                                <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/7AuditProgramsFinanceandPurchasing.xlsx','AuditProgram.xlsx')"><i class="fa-solid fa-circle"></i>Audit Programs</a>
+                                                <a class="nav-link navSub_Sub" href="/Reports/7AuditProgramsFinanceandPurchasing.xlsx" download="AuditProgram.xlsx" ><i class="fa-solid fa-circle"></i>Audit Programs</a>
                                             </li>
                                         }
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "List of Information" && p.View == true))

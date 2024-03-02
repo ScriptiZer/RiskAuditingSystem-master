@@ -4,6 +4,7 @@ using AuditingSystem.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuditingSystem.Database.Migrations
 {
     [DbContext(typeof(AuditingSystemDbContext))]
-    partial class AuditingSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240302201050_addCompanyandDepartmentforRiskAssessments")]
+    partial class addCompanyandDepartmentforRiskAssessments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

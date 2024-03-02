@@ -98,11 +98,11 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
             ViewBag.ControlTypeId = new SelectList(controlType, "Id", "Name");
             ViewBag.ControlProcessId = new SelectList(controlProcess, "Id", "Name");
             ViewBag.ControlFrequencyId = new SelectList(controlFrequency, "Id", "Name");
-            ViewBag.ControlEffectivenessId = new SelectList(controlEffectivenesss.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name");
+            ViewBag.ControlEffectivenessId = new SelectList(controlEffectivenesss.Select(r => new { Id = r.Id, Name = $"{r.Name}" }), "Id", "Name");
             ViewBag.RiskIdentificationId = new SelectList(
                 riskIdentification.Select(r => new {
                     Id = r.Id,
-                    DisplayText = $"{r.Code} - {r.Name}"
+                    DisplayText = $"{r.Name}"
                 }),
                 "Id",
                 "DisplayText"
