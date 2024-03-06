@@ -13,6 +13,7 @@ namespace AuditingSystem.Entities
 {
     public abstract class Base
     {
+        [AllowHtml]
         public virtual string? Name { get; set; }
         public virtual string? Code { get; set; }
 

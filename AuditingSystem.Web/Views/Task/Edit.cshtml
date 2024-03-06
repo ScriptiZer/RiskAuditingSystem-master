@@ -11,6 +11,15 @@
             <div class="card-body">
                 <h4 class="card-title">Edit Task</h4>
                 <form class="forms-sample" id="EditForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Code">Code</label>
+                                <input asp-for="Code" type="text" class="form-control" id="Code" name="Code" placeholder="Industry Code">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label>Objective</label>
                         @Html.DropDownList("ObjectiveId", ViewBag.ObjectiveId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Objective", @name="ObjectiveId" })
@@ -48,6 +57,9 @@
                     },
                     Name: {
                         required: true
+                    },
+                    Code: {
+                        required: true
                     }
                 },
                 messages: {
@@ -56,6 +68,9 @@
                     },
                     Name: {
                         required: "The Name field is required"
+                    },
+                    Code: {
+                        required: "The Code field is required"
                     }
                 },
                 errorPlacement: function (error, element) {
@@ -80,6 +95,7 @@
                 if ($("#EditForm").valid()) {
                     var formData = {
                         Name: $("#Name").val(),
+                        Code: $("#Code").val(),
                         ObjectiveId: $("#Objective").val(),
                         Description: htmlDescription
                     };

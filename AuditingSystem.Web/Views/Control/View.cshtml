@@ -36,7 +36,7 @@
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="Name">Name</label>
-                                <input disabled type="text" class="form-control" id="Name" name="Name" placeholder="Control Name" asp-for="Name">
+                                <textarea disabled type="text" class="form-control" id="Name" name="Name" placeholder="Control Name" asp-for="Name"></textarea>
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="form-group">
@@ -78,6 +78,7 @@
     <script>
         $(document).ready(function () {
             $('#Description').summernote();
+            $('#Name').summernote();
 
             $("#ControlEffectiveness").change(function () {
                 var selectedText = $("#ControlEffectiveness option:selected").text();
@@ -162,11 +163,12 @@
 
             $("#saveButton").click(function () {
                 var htmlDescription = $('#Description').summernote('code');
+                var htmlName = $('#Name').summernote('code');
 
                 if ($("#EditForm").valid()) {
                     var formData = {
                         Code: $("#Code").val(),
-                        Name: $("#Name").val(),
+                        Name: htmlName,
                         Description: htmlDescription,
                         ControlTypeId: $("#ControlType").val(),
                         ControlProcessId: $("#ControlProcess").val(),

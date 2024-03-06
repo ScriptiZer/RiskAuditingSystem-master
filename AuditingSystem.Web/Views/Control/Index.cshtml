@@ -51,7 +51,7 @@
                     </ul>
                 </div>
                 <div class="table-responsive">
-                    <table style="width:1600px;" id="tableList" class="table table-striped table-hover table-bordered tableList">
+                    <table style="width:2500px" id="tableList" class="table table-striped table-bordered tableList">
                         <thead>
                             <tr>
                                 <th>Code</th>
@@ -73,13 +73,13 @@
                                 {
                                     <tr id="tr">
                                         <td>@item.Code</td>
-                                        <td>@item.Name</td>
+                                        <td>@Html.Raw(item.Name)</td>
                                         <td>@Html.Raw(item.Description)</td>
                                         <td style="background-color:@item.ControlType.BGColor; color:@item.ControlType.FontColor;">@item.ControlType.Name</td>
                                         <td style="background-color:@item.ControlProcess.BGColor; color:@item.ControlProcess.FontColor;">@item.ControlProcess.Name</td>
                                         <td style="background-color:@item.ControlFrequency.BGColor; color:@item.ControlFrequency.FontColor;">@item.ControlFrequency.Name</td>
                                         <td style="background-color:@item.ControlEffectiveness.BGColor; color:@item.ControlEffectiveness.FontColor;">@item.ControlEffectiveness.Name</td>
-                                        <td>@item.RiskIdentification.Name</td>
+                                        <td>@Html.Raw(item.RiskIdentification.Name)</td>
                                         <td>@item.ControlEffectivenessRating</td>
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true && (p.Edit == false && p.Delete == false)))
                                         {
@@ -148,23 +148,23 @@
 </div>
 
 @section Scripts{
-    <script src="https://cdn.rawgit.com/dobtco/jquery-resizable-columns/v1.0.9/jquery.resizableColumns.min.js"></script>
+    @* <script src="https://cdn.rawgit.com/dobtco/jquery-resizable-columns/v1.0.9/jquery.resizableColumns.min.js"></script> *@
 
     <script>
-        $("td,th")
-            .css({
-                position: "relative"
-            })
-            .prepend("<div class='resizer'></div>")
-            .resizable({
-                resizeHeight: false,
-                handleSelector: "",
-                onDragStart: function (e, $el, opt) {
-                    if (!$(e.target).hasClass("resizer"))
-                        return false;
-                    return true;
-                }
-            });
+        // $("td,th")
+        //     .css({
+        //         position: "relative"
+        //     })
+        //     .prepend("<div class='resizer'></div>")
+        //     .resizable({
+        //         resizeHeight: false,
+        //         handleSelector: "",
+        //         onDragStart: function (e, $el, opt) {
+        //             if (!$(e.target).hasClass("resizer"))
+        //                 return false;
+        //             return true;
+        //         }
+        //     });
         var table = $('.tableList');
 
 

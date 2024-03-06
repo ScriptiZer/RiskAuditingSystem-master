@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.AuditProcess;
+﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.RiskAssessments;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,14 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
     {
         private readonly IBaseRepository<Activity, int> _activityRepository;
         private readonly IBaseRepository<Function, int> _functionRepository;
+        private readonly AuditingSystemDbContext db;
         public ActivityController(
             IBaseRepository<Activity, int> activityRepository,
-            IBaseRepository<Function, int> functionRepository)
+            IBaseRepository<Function, int> functionRepository, AuditingSystemDbContext db)
         {
             _activityRepository = activityRepository;
             _functionRepository = functionRepository;
+            this.db = db;
         }
 
         [HttpGet]
@@ -36,10 +39,10 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             //    q => q.OrderBy(u => u.Function.Code),
             //    c=>c.Function, c=> c.Function.Department, c=>c.Function.Department.Company, c=>c.Objectives);
 
-            var activities = await _activityRepository.ListAsync(
-      new Expression<Func<Activity, bool>>[] { u => u.IsDeleted == false, c => c.Function != null, c => c.Function.Department.Code != null, c => c.Function.Department.Company.Code != null },
-      q => q.OrderBy(u => u.Function.Code), c => c.Function, c => c.Function.Department, c => c.Function.Department.Company, c => c.Objectives);
-
+            //      var activities = await _activityRepository.ListAsync(
+            //new Expression<Func<Activity, bool>>[] { u => u.IsDeleted == false, c => c.Function != null, c => c.Function.Department.Code != null, c => c.Function.Department.Company.Code != null },
+            //q => q.OrderBy(u => u.Function.Code), c => c.Function, c => c.Function.Department, c => c.Function.Department.Company, c => c.Objectives);
+            var activities = db.Activities.Include(i => i.Function).Include(d => d.Objectives).ThenInclude(o => o.Tasks).ThenInclude(p => p.Practices);
             string apiurl = "https://onyx3.azurewebsites.net/activities/GetAllactivities";
             using (HttpClient client = new HttpClient())
             {

@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.AuditProcess;
+﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,12 +14,15 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
     {
         private readonly IBaseRepository<Tasks, int> _tasksRepository;
         private readonly IBaseRepository<Objective, int> _objectiveRepository;
+        private readonly AuditingSystemDbContext db;
         public TaskController(
             IBaseRepository<Tasks, int> tasksRepository,
-            IBaseRepository<Objective, int> objectiveRepository)
+            IBaseRepository<Objective, int> objectiveRepository,
+            AuditingSystemDbContext db)
         {
             _tasksRepository = tasksRepository;
             _objectiveRepository = objectiveRepository;
+            this.db = db;
         }
 
         [HttpGet]
@@ -29,13 +33,15 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            var tasks = await _tasksRepository.ListAsync(
-                  new Expression<Func<Tasks, bool>>[] { c => c.IsDeleted == false,
-                      c => c.Objective.Code != null,c => c.Objective.Activity.Code != null, c => c.Objective.Activity.Function.Code != null, c => c.Objective.Activity.Function.Department.Code != null,
-                  c => c.Objective.Activity.Function.Department.Company.Code != null },
-                  q => q.OrderBy(u => u.Objective.Code),
-                  c => c.Objective,c => c.Objective.Activity, c => c.Objective.Activity.Function, c => c.Objective.Activity.Function.Department, 
-                  c => c.Objective.Activity.Function.Department.Company, c => c.Practices);
+            //var tasks = await _tasksRepository.ListAsync(
+            //      new Expression<Func<Tasks, bool>>[] { c => c.IsDeleted == false,
+            //          c => c.Objective.Code != null,c => c.Objective.Activity.Code != null, c => c.Objective.Activity.Function.Code != null, c => c.Objective.Activity.Function.Department.Code != null,
+            //      c => c.Objective.Activity.Function.Department.Company.Code != null },
+            //      q => q.OrderBy(u => u.Objective.Code),
+            //      c => c.Objective,c => c.Objective.Activity, c => c.Objective.Activity.Function, c => c.Objective.Activity.Function.Department, 
+            //      c => c.Objective.Activity.Function.Department.Company, c => c.Practices);
+
+            var tasks = db.Tasks.Include(i => i.Objective).Include(d => d.Practices);
 
             string apiurl = "https://onyx3.azurewebsites.net/tasks/GetAlltasks";
             using (HttpClient client = new HttpClient())

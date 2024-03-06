@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.AuditProcess;
+﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,12 +14,15 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
     {
         private readonly IBaseRepository<Department, int> _departmentRepository;
         private readonly IBaseRepository<Function, int> _functionRepository;
+        private readonly AuditingSystemDbContext db;
         public FunctionController(
             IBaseRepository<Function, int> functionRepository,
-            IBaseRepository<Department, int> departmentRepository)
+            IBaseRepository<Department, int> departmentRepository,
+            AuditingSystemDbContext db)
         {
             _functionRepository = functionRepository;
             _departmentRepository = departmentRepository;
+            this.db = db;
         }
 
         [HttpGet]
@@ -29,11 +33,12 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            var functions = await _functionRepository.ListAsync(
-                  new Expression<Func<Function, bool>>[] { u => u.IsDeleted == false },
-                  q => q.OrderBy(u => u.Department.Code),
-                  c => c.Department, c=>c.Department.Company, a=>a.Activities);
-
+            //var functions = await _functionRepository.ListAsync(
+            //      new Expression<Func<Function, bool>>[] { u => u.IsDeleted == false },
+            //      q => q.OrderBy(u => u.Department.Code),
+            //      c => c.Department, c=>c.Department.Company, a=>a.Activities);
+            var functions = db.Functions.Include(i => i.Department).Include(d => d.Activities)
+                .ThenInclude(a => a.Objectives).ThenInclude(o => o.Tasks).ThenInclude(p => p.Practices);
 
             string apiurl = "https://onyx3.azurewebsites.net/functions/GetAllfunctions";
             using (HttpClient client = new HttpClient())

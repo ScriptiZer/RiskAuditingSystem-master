@@ -63,6 +63,9 @@
         background-color: rgba(0, 0, 0, 0.7);
     }
 
+    .tableWidth {
+        width: max-content !important
+    }
     .modal-content {
         background-color: #fefefe;
         margin: 2% auto;
@@ -161,7 +164,7 @@
                         </div>
                         <div class="table-responsive scrollable-table-container" style="margin:0;padding-left: 0;" id="tableContainer">
 
-                            <table style="width: max-content;" id="tableList" class="tableList table table-striped table-bordered">
+                            <table style="width: max-content;" id="tableList" class="tableList table table-striped table-bordered" data-departments="@group.DepartmentName">
                                 <thead>
                                     <tr>
                                         <th rowspan="3"></th>
@@ -173,7 +176,6 @@
                                                 @year
                                             </th>
                                         }
-                                        <th colspan="7">Years of Recent Reviews</th>
                                         <th colspan="3">Man Days</th>
                                     </tr>
                                     <tr>
@@ -185,10 +187,6 @@
                                                 <th data-departments="@group.DepartmentName" data-years="@year" colspan="2">@quarter.Quarter</th>
                                             }
                                         }
-                                        <th rowspan="2">One Year Ago</th>
-                                        <th rowspan="2">Two Year Ago</th>
-                                        <th rowspan="2">Three Year Ago</th>
-                                        <th colspan="4">Type of Review</th>
                                         <th rowspan="2">Insource</th>
                                         <th rowspan="2">Outsource</th>
                                         <th rowspan="2">Manager</th>
@@ -202,10 +200,6 @@
                                                 <th data-departments="@group.DepartmentName" data-years="@year">Actual</th>
                                             }
                                         }
-                                        <th>IA</th>
-                                        <th>Gov Audit</th>
-                                        <th>ELC</th>
-                                        <th>Rpetitive Findings</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -280,90 +274,6 @@
                                                     userIndex++;
                                                 }
                                             }
-                                            <td>
-                                                @{
-                                                    var isChecked = "";
-                                                    if (item.IsOneYear == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="One Year Ago" data-size="small" id="IsOneYear" name="IsOneYear" class="IsOneYear" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IsOneYear" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    isChecked = "";
-                                                    if (item.IsTwoYear == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="Two Year Ago" data-size="small" id="IsTwoYear" name="IsTwoYear" class="IsTwoYear" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IsTwoYear" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    isChecked = "";
-                                                    if (item.IsThreeYear == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="Three Year Ago" data-size="small" id="IsThreeYear" name="IsThreeYear" class="IsThreeYear" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IsThreeYear" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    isChecked = "";
-                                                    if (item.IA == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="IA" data-size="small" id="IA" name="IA" class="IA" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.IA" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    isChecked = "";
-                                                    if (item.GovAudit == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="Gov Audit" data-size="small" id="GovAudit" name="GovAudit" class="GovAudit" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.GovAudit" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    isChecked = "";
-                                                    if (item.ELC == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="ELC" data-size="small" id="ELC" name="ELC" class="ELC" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.ELC" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
-                                            <td>
-                                                @{
-                                                    isChecked = "";
-                                                    if (item.RpetitiveFindings == true)
-                                                    {
-                                                        isChecked = "checked";
-                                                    }
-                                                }
-                                                <center>
-                                                    <input @isView @isChecked title="Repetitive Findings" data-size="small" id="RpetitiveFindings" name="RpetitiveFindings" class="RpetitiveFindings" type="checkbox" data-toggle="toggle" data-style="ios" value="@item.RpetitiveFindings" data-on="Yes" data-off="No">
-                                                </center>
-                                            </td>
 
                                             <td id="insource" class="insource">
                                                 <center>
@@ -475,6 +385,7 @@
                 var selectedYear = $(this).data("years");
                 var selectedDepartment = $(this).data("departments");
                 $(this).toggleClass("colorLabel");
+                $('#tableList[ data-departments="' + selectedDepartment + '"]').toggleClass("tableWidth");
 
                 showColumnsForYear(selectedYear, selectedDepartment);
 

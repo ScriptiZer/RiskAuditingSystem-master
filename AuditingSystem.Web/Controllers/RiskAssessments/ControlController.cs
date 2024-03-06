@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AuditingSystem.Web.Controllers.RiskAssessments
@@ -98,12 +99,15 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
             ViewBag.ControlTypeId = new SelectList(controlType, "Id", "Name");
             ViewBag.ControlProcessId = new SelectList(controlProcess, "Id", "Name");
             ViewBag.ControlFrequencyId = new SelectList(controlFrequency, "Id", "Name");
-            ViewBag.ControlEffectivenessId = new SelectList(controlEffectivenesss.Select(r => new { Id = r.Id, Name = $"{r.Name}" }), "Id", "Name");
+            ViewBag.ControlEffectivenessId = new SelectList(controlEffectivenesss.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name");
+            var riskIdentificationList = riskIdentification.Select(r => new
+            {
+                Id = r.Id,
+                DisplayText = RemoveHtmlTags(r.Name), // إزالة العناصر HTML
+            }).ToList();
+
             ViewBag.RiskIdentificationId = new SelectList(
-                riskIdentification.Select(r => new {
-                    Id = r.Id,
-                    DisplayText = $"{r.Name}"
-                }),
+                riskIdentificationList,
                 "Id",
                 "DisplayText"
             );
@@ -125,9 +129,9 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
                 if (controls != null)
                 {
                     var controlTypes = await _controlTypeRepository.ListAsync(
-               new Expression<Func<ControlType, bool>>[] { u => u.IsDeleted == false },
-               q => q.OrderBy(u => u.Name),
-               null);
+                       new Expression<Func<ControlType, bool>>[] { u => u.IsDeleted == false },
+                       q => q.OrderBy(u => u.Name),
+                       null);
 
                     var controlProcesses = await _controlProcessRepository.ListAsync(
                         new Expression<Func<ControlProcess, bool>>[] { u => u.IsDeleted == false },
@@ -153,14 +157,16 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
                     ViewBag.ControlProcessId = new SelectList(controlProcesses, "Id", "Name", controls.ControlProcessId);
                     ViewBag.ControlFrequencyId = new SelectList(controlFrequencies, "Id", "Name", controls.ControlFrequencyId);
                     ViewBag.ControlEffectivenessId = new SelectList(controlEffectivenesss.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name", controls.ControlEffectivenessId);
-                    
+                    var riskIdentificationLista = riskIdentifications.Select(r => new
+                    {
+                        Id = r.Id,
+                        DisplayText = RemoveHtmlTags(r.Name), 
+                    }).ToList();
+
                     ViewBag.RiskIdentificationId = new SelectList(
-                        riskIdentifications.Select(r => new {
-                            Id = r.Id,
-                            DisplayText = $"{r.Code} - {r.Name}"
-                        }),
+                        riskIdentificationLista,
                         "Id",
-                        "DisplayText", controls.RiskIdentificationId
+                        "DisplayText"
                     );
                     return View(controls);
 
@@ -198,10 +204,21 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
             ViewBag.ControlProcessId = new SelectList(controlProcess, "Id", "Name", control.ControlProcessId);
             ViewBag.ControlFrequencyId = new SelectList(controlFrequency, "Id", "Name", control.ControlFrequencyId);
             ViewBag.ControlEffectivenessId = new SelectList(controlEffectiveness.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name", control.ControlEffectivenessId);
-            ViewBag.RiskIdentificationId = new SelectList(riskIdentification, "Id", "Name", control.RiskIdentificationId);
+            //ViewBag.RiskIdentificationId = new SelectList(riskIdentification, "Id", "Name", control.RiskIdentificationId);
+            var riskIdentificationList = riskIdentification.Select(r => new
+            {
+                Id = r.Id,
+                DisplayText = RemoveHtmlTags(r.Name),
+            }).ToList();
 
+            ViewBag.RiskIdentificationId = new SelectList(
+                riskIdentificationList,
+                "Id",
+                "DisplayText"
+            );
             return View(control);
         }
+
 
         public async Task<IActionResult> View(int id, int? riskIdentificationId)
         {
@@ -245,14 +262,16 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
                     ViewBag.ControlProcessId = new SelectList(controlProcesses, "Id", "Name", controls.ControlProcessId);
                     ViewBag.ControlFrequencyId = new SelectList(controlFrequencies, "Id", "Name", controls.ControlFrequencyId);
                     ViewBag.ControlEffectivenessId = new SelectList(controlEffectivenesss.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name", controls.ControlEffectivenessId);
+                    var riskIdentificationLists = riskIdentifications.Select(r => new
+                    {
+                        Id = r.Id,
+                        DisplayText = RemoveHtmlTags(r.Name),
+                    }).ToList();
 
                     ViewBag.RiskIdentificationId = new SelectList(
-                        riskIdentifications.Select(r => new {
-                            Id = r.Id,
-                            DisplayText = $"{r.Code} - {r.Name}"
-                        }),
+                        riskIdentificationLists,
                         "Id",
-                        "DisplayText", controls.RiskIdentificationId
+                        "DisplayText"
                     );
                     return View(controls);
 
@@ -293,6 +312,17 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
             ViewBag.RiskIdentificationId = new SelectList(riskIdentification, "Id", "Name", control.RiskIdentificationId);
 
             return View(control);
+        }
+
+        private string RemoveHtmlTags(string input)
+        {
+            // Replace &nbsp; with a space
+            string cleanedText = Regex.Replace(input, "&nbsp;", " ");
+
+            // Remove other HTML tags
+            cleanedText = Regex.Replace(cleanedText, "<.*?>", "");
+
+            return cleanedText;
         }
 
     }

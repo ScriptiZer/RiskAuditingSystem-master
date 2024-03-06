@@ -60,7 +60,7 @@
                             <tbody>
                                 @if (Model != null)
                                 {
-                                    foreach (var item in Model)
+                                    foreach (var item in Model.OrderBy(o => Convert.ToInt32(o.Code)))
                                     {
                                         <tr v-for="item in items" :key="item.id">
 

@@ -203,7 +203,7 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
 
             var year = await _yearRepository.ListAsync(
                 new Expression<Func<Year, bool>>[] { u => u.IsDeleted == false },
-                q => q.OrderBy(u => u.Id),
+                q => q.OrderBy(u => u.Name),
                 null);
 
             ViewBag.IndustryId = new SelectList(industry, "Id", "Name", company?.IndustryId);

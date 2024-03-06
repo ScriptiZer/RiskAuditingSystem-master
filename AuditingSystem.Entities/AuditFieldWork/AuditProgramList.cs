@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Entities.Lockups;
+using AuditingSystem.Entities.RiskAssessments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,13 @@ namespace AuditingSystem.Entities.AuditFieldWork
     {
         public virtual int Id { get; set; }
         public virtual int AuditProgramId { get; set; }
-        public virtual string? MajorProcess { get; set; }
-        public virtual string? SubProcess { get; set; }
-        public virtual int RiskCategoryId { get; set; }
-        public virtual string? RiskDescription { get; set; }
-        public virtual string? ControlDescription { get; set; }
-        public virtual string? TestDescription { get; set; }
         public virtual AuditProgram? AuditProgram { get; set; }
-        public virtual RiskCategory? RiskCategory { get; set; }
+
+        public virtual int RiskIdenticationId { get; set; }
+        public virtual RiskIdentification? RiskIdentification { get; set; }
+
+        public virtual int ControlId { get; set; }
+        public virtual Control? Control { get; set; }
 
     }
 }

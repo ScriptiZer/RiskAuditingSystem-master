@@ -61,7 +61,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.OrderBy(d =>
+                            {
+                               int code;
+                               return int.TryParse(d.Code, out code) ? code : 0;
+                            }))
                             {
                                 <tr id="tr">
                                     

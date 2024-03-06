@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldWork;
 using AuditingSystem.Entities.RiskAssessments;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,22 @@ namespace AuditingSystem.Web.Controllers.api.RiskAssessment
         private readonly IBaseRepository<Control, int> _controlRepository;
         private readonly IBaseRepository<RiskAssessmentList, int> _riskAssessmentListRepository;
         private readonly IBaseRepository<RiskIdentification, int> _riskIdentificationRepository;
+        private readonly IBaseRepository<AuditProgram, int> _auditProgramRepository;
+        private readonly IBaseRepository<AuditProgramList, int> _auditProgramListRepository;
 
         public ControlsController(
             IBaseRepository<Control, int> controlRepository,
             IBaseRepository<RiskAssessmentList, int> riskAssessmentListRepository,
-            IBaseRepository<RiskIdentification, int> riskIdentificationRepository)
+            IBaseRepository<RiskIdentification, int> riskIdentificationRepository,
+            IBaseRepository<AuditProgram, int> auditProgramRepository,
+            IBaseRepository<AuditProgramList, int> auditProgramListRepository)
         {
             _controlRepository = controlRepository ?? throw new ArgumentNullException(nameof(controlRepository));
             _riskAssessmentListRepository = riskAssessmentListRepository ?? throw new ArgumentNullException(nameof(riskAssessmentListRepository));
             _riskIdentificationRepository = riskIdentificationRepository ?? throw new ArgumentNullException(nameof(riskIdentificationRepository));
+            _auditProgramRepository = auditProgramRepository ?? throw new ArgumentNullException(nameof(auditProgramRepository));
+            _auditProgramListRepository = auditProgramListRepository ?? throw new ArgumentNullException(nameof(auditProgramListRepository)); ;
+
         }
 
         [HttpGet]
@@ -90,6 +98,31 @@ namespace AuditingSystem.Web.Controllers.api.RiskAssessment
                         riskAssessment.ResidualRiskRating = "No major concern";
 
                     await _riskAssessmentListRepository.CreateAsync(riskAssessment);
+
+
+                    var programChick = await _auditProgramRepository.FindByAsync
+                                        (i => i.CompanyId == inherentRisk.CompanyId && i.DepartmentId == inherentRisk.DepartmentId);
+
+                    if (programChick == null)
+                    {
+                        var auditProgram = new AuditProgram()
+                        {
+                            CompanyId = inherentRisk.CompanyId,
+                            DepartmentId = inherentRisk.DepartmentId
+                        };
+                        await _auditProgramRepository.CreateAsync(auditProgram);
+                    }
+
+                    var programData = await _auditProgramRepository.FindByAsync
+                    (i => i.CompanyId == inherentRisk.CompanyId && i.DepartmentId == inherentRisk.DepartmentId);
+
+                    var auditProgramList = new AuditProgramList()
+                    {
+                        AuditProgramId = programData.Id,
+                        RiskIdenticationId = Convert.ToInt32(controlEntity.RiskIdentificationId),
+                        ControlId = controlEntity.Id
+                    };
+                    await _auditProgramListRepository.CreateAsync(auditProgramList);
 
                     return NoContent();
                 }

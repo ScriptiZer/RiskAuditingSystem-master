@@ -1,0 +1,286 @@
+﻿@model AuditingSystem.Entities.AuditFieldWork.AuditProgram
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
+@{
+    ViewData["Title"] = "Add";
+}
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit Audit Program</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Company">Company</label>
+                                @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId" })
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Company">Auditor</label>
+                                @Html.DropDownList("AuditorId", ViewBag.AuditorId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Auditor", @name = "AuditorId" })
+                                <span asp-validation-for="AuditorId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Department">Department</label>
+                                @Html.DropDownList("DepartmentId", ViewBag.DepartmentId, "-- Select One --", new { @class = "form-control", @id = "Department", @name = "DepartmentId" })
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Company">Actual Date</label>
+                                <input asp-for="ActualDate" title="ActualDate" type="text" name="ActualDate" class="ActualDate form-control" id="ActualDate" />
+                                <span asp-validation-for="ActualDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="Period">Period</label>
+                                <input asp-for="Period" title="Period" type="text" name="Period" class="Period form-control" id="Period" />
+                                <span asp-validation-for="Period" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Audit Program List Management View</h4>
+                    </div>
+                </div>
+                <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
+                    <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
+                        <li class="nav-item nav-search d-none d-lg-block">
+                            <div class="input-group">
+                                <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="table-responsive">
+                    <table id="tableList" class="table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Risk Title</th>
+                                <th>Identification Description</th>
+                                <th>Risk Category</th>
+                                <th>Inherent Risk Rating</th>
+                                <th>Control Name</th>
+                                <th>Control Description</th>
+                                <th>Control Type</th>
+                                <th>Control Process</th>
+                                <th>Control Frequency</th>
+                                <th>Control Effectiveness</th>
+                                <th>Control Effectiveness Rating</th>
+                                @* <th>Residual Risk Rating</th> *@
+                                <th>Test Description</th>
+                                <th>Reference</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.auditProgramList)
+                            {
+                                <tr id="tr">
+                                    <td>@Html.Raw(item.RiskIdentification.Name)</td>
+                                    <td>@Html.Raw(item.RiskIdentification.Description)</td>
+                                    <td>@item.RiskCategory.Name</td>
+                                    <td>@item.RiskIdentification.InherentRiskRating</td>
+                                    <td>@Html.Raw(item.Control.Name)</td>
+                                    <td>@Html.Raw(item.Control.Description)</td>
+                                    <td>@item.ControlType.Name</td>
+                                    <td>@item.ControlProcess.Name</td>
+                                    <td>@item.ControlFrequency.Name</td>
+                                    <td>@item.ControlEffectiveness.Name</td>
+                                    <td>@item.Control.ControlEffectivenessRating</td>
+                                    @* <td>@item.RiskAssessmentList.ResidualRiskRating</td> *@
+                                    <td></td>
+                                    <td></td>
+                                  @*   @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Edit == true))
+                                    {
+                                        <td>
+                                            <a asp-action="Edit" asp-controller="User" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Delete == true))
+                                    {
+                                        <td>
+                                            <a data-actions-id="@item.Id" title="Delete" class="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
+                                    } *@
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <br />
+                <br />
+                <br />
+                <div class="float-end">
+                    <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                    <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#Company").prop("disabled", true);
+            $("#Department").prop("disabled", true);
+
+            $(".ActualDate").datepicker();
+            $(".Period").datepicker();
+
+            $('#Description').summernote();
+
+            function formatDate(dateString) {
+                if (dateString) {
+                    var date = new Date(dateString);
+                    return date.toISOString();
+                } else {
+                    return null;
+                }
+            }
+
+            $("#EditForm").validate({
+                rules: {
+                    AuditorId: {
+                        required: true
+                    },
+                    ActualDate: {
+                        required: true
+                    },
+                    Period: {
+                        required: true
+                    }
+                },
+                messages: {
+                    AuditorId: {
+                        required: "The Auditor field is required"
+                    },
+                    ActualDate: {
+                        required: "The Actual Date field is required"
+                    },
+                    Period: {
+                        required: "The Period field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select")) {
+                        error.insertAfter(element.siblings("span"));
+                    } else if (element.is("textarea")) {
+                        error.insertAfter(element);
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/AuditProgram/Index';
+            });
+
+            $("#saveButton").click(function () {
+
+                if ($("#EditForm").valid()) {
+                    var formData = {
+                        AuditorId: $("#Auditor").val(),
+                        ActualDate: formatDate($("#ActualDate").val()) || null,
+                        Period: formatDate($("#Period").val()) || null
+                    };
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false, // إخفاء زر التأكيد
+                        showCancelButton: false, // إخفاء زر الإلغاء
+                        showCloseButton: false, // إخفاء زر الإغلاق
+                        onBeforeOpen: () => {
+                            swal.showLoading(); // إضافة شريط التقدم
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/AuditPrograms/" + @Model.Id,
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false, // إخفاء زر التأكيد
+                                    showCancelButton: false, // إخفاء زر الإلغاء
+                                    showCloseButton: false // إخفاء زر الإغلاق
+                                }).then(function () {
+                                    window.location.href = '/AuditProgram/Index';
+                                });
+                            },
+                            error: function (error) {
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
+                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false, // إخفاء زر التأكيد
+                                        showCancelButton: false, // إخفاء زر الإلغاء
+                                        showCloseButton: false // إخفاء زر الإغلاق
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+}

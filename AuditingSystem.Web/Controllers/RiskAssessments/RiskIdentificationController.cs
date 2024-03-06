@@ -100,7 +100,7 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
             ViewBag.RiskCategoryId = new SelectList(riskCategory, "Id", "Name");
             ViewBag.CompanyId = new SelectList(company, "Id", "Name");
             ViewBag.DepartmentId = new SelectList(department, "Id", "Name");
-            ViewBag.FunctionId = new SelectList(function, "Name", "Name");
+            ViewBag.FunctionId = new SelectList(function, "Id", "Name");
             ViewBag.RiskImpactId = new SelectList(riskImpact.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name");
             ViewBag.RiskLikelihoodId = new SelectList(likelihood.Select(l => new { Id = l.Id, Name = $"{l.Rate} - {l.Name}" }), "Id", "Name");
 
@@ -179,7 +179,7 @@ namespace AuditingSystem.Web.Controllers.RiskAssessments
             ViewBag.RiskCategoryId = new SelectList(riskCategory, "Id", "Name", riskIdentification.RiskCategoryId);
             ViewBag.CompanyId = new SelectList(company, "Id", "Name", riskIdentification.CompanyId);
             ViewBag.DepartmentId = new SelectList(department, "Id", "Name", riskIdentification.DepartmentId);
-            ViewBag.FunctionId = new SelectList(function, "Name", "Name",riskIdentification.FunctionId);
+            ViewBag.FunctionId = new SelectList(function, "Id", "Name",riskIdentification.FunctionId);
             ViewBag.RiskImpactId = new SelectList(riskImpact.Select(r => new { Id = r.Id, Name = $"{r.Rate} - {r.Name}" }), "Id", "Name", riskIdentification.RiskImpactId);
             ViewBag.RiskLikelihoodId = new SelectList(likelihood.Select(l => new { Id = l.Id, Name = $"{l.Rate} - {l.Name}" }), "Id", "Name", riskIdentification.RiskLikelihoodId);
 

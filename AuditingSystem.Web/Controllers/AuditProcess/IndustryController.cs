@@ -32,7 +32,7 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             var industries = await _industryRepository.ListAsync(
                   new Expression<Func<Industry, bool>>[] { u => u.IsDeleted == false },
                   q => q.OrderBy(u => u.ParentIndustryId),
-                  i => i.ParentIndustry);
+                  i => i.ParentIndustry, c=>c.Companies);
 
             var model = industries.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             ViewBag.TotalRow = industries.Count();

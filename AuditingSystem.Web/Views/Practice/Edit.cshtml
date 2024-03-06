@@ -14,6 +14,15 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label for="Code">Code</label>
+                                <input asp-for="Code" type="text" class="form-control" id="Code" name="Code" placeholder="Industry Code">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label>Task</label>
                                 @Html.DropDownList("TaskId", ViewBag.TaskId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Task", @name="TaskId" })
                                 <span asp-validation-for="TaskId" class="text-danger"></span>
@@ -58,6 +67,9 @@
                     },
                     Name: {
                         required: true
+                    },
+                    Code: {
+                        required: true
                     }
                 },
                 messages: {
@@ -66,6 +78,9 @@
                     },
                     Name: {
                         required: "The Name field is required"
+                    },
+                    Code: {
+                        required: "The Code field is required"
                     }
                 },
                 errorPlacement: function (error, element) {
@@ -90,6 +105,7 @@
                 if ($("#EditForm").valid()) {
                     var formData = {
                         Name: $("#Name").val(),
+                        Code: $("#Code").val(),
                         TaskId: $("#Task").val(),
                         Description: htmlDescription
                     };

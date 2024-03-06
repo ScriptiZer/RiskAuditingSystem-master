@@ -29,14 +29,14 @@
                     <div class="col-md-6">
                         <h4 class="card-title">Audit Program Management View</h4>
                     </div>
-                    <div class="col-md-6 text-end">
-                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && p.Add == true))
+                  @*   <div class="col-md-6 text-end">
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Add == true))
                         {
                             <a class="btn btn-primary me-2" href="~/AuditProgram/Add">
                                 <i class="fa-solid fa-plus"></i> Add New Audit Program
                             </a>
                         }
-                    </div>
+                    </div> *@
                 </div>
                 <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
                     <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
@@ -56,9 +56,6 @@
                                 </th>
                                 <th>
                                     Department
-                                </th>
-                                <th>
-                                    Auditor
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.ActualDate)
@@ -81,33 +78,30 @@
                                         @Html.DisplayFor(modelItem => item.Department.Name)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.User.Name)
-                                    </td>
-                                    <td>
                                         @Html.DisplayFor(modelItem => item.ActualDate)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Period)
                                     </td>
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && (p.Edit == false && p.Delete == false)))
                                     {
                                         <td>
                                             <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
                                         </td>
                                     }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && (p.Edit == false && p.Delete == true)))
                                     {
                                         <td>
                                             <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
                                         </td>
                                     }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && p.Edit == true))
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Edit == true))
                                     {
                                         <td>
-                                            <a asp-action="Edit" asp-controller="User" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                            <a asp-action="Edit" asp-controller="AuditProgram" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
                                         </td>
                                     }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && p.Delete == true))
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Delete == true))
                                     {
                                         <td>
                                             <a data-actions-id="@item.Id" title="Delete" class="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>

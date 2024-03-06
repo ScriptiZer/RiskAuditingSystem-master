@@ -14,6 +14,15 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label for="Code">Code</label>
+                                <input disabled asp-for="Code" type="text" class="form-control" id="Code" name="Code" placeholder="Industry Code">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label>Parent Industry</label>
                                 @Html.DropDownList("ParentIndustryId", ViewBag.ParentIndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "ParentIndustryId",@name="ParentIndustryId", disabled="disabled" })
                                 <span asp-validation-for="ParentIndustryId" class="text-danger"></span>

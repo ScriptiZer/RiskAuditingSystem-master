@@ -49,7 +49,11 @@
                         </li>
                     </ul>
                 </div> *@
-                @foreach (var item in Model)
+                @foreach (var item in Model.Where(d => d.Departments.Count() != 0).OrderBy(d =>
+                {
+                   int code;
+                   return int.TryParse(d.Code, out code) ? code : 0;
+                }))
                 {
                     <div class="card mb-5">
                         <table class="table table-hover table-bordered">
@@ -115,13 +119,10 @@
                                         PRACTICE
                                     </th>
 
-                                    <th colspan="3">
-                                        INDUSTRY
-                                    </th>
 
                                 </tr>
 
-                                @foreach (var department in item.Departments.OrderBy(d => d.Code))
+                                @foreach (var department in item.Departments.OrderBy(d => Convert.ToInt32(d.Code)))
                                 {
                                     <tr>
                                         <th colspan="9">
@@ -154,7 +155,7 @@
                                             <td><a title="Delete Department" data-actions-id="@department.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a></td>
                                             }
                                     </tr>
-                                    @foreach (var function in department.Functions.OrderBy(f => f.Code))
+                                    @foreach (var function in department.Functions.OrderBy(f =>Convert.ToInt32(f.Code)))
                                     {
                                         <tr>
                                             <td>
@@ -191,7 +192,7 @@
                                                 }
                                         </tr>
 
-                                        @foreach (var activity in function.Activities.OrderBy(f => f.Code))
+                                        @foreach (var activity in function.Activities.OrderBy(f => Convert.ToInt32(f.Code)))
                                         {
                                             <tr>
                                                 <td>
@@ -231,7 +232,7 @@
                                                     }
                                             </tr>
 
-                                            @foreach (var objective in activity.Objectives.OrderBy(f => f.Code))
+                                            @foreach (var objective in activity.Objectives.OrderBy(f => Convert.ToInt32(f.Code)))
                                             {
                                                 <tr>
                                                     <td>
@@ -274,7 +275,7 @@
                                                         }
 
                                                 </tr>
-                                                @foreach (var task in objective.Tasks.OrderBy(f => f.Code))
+                                                @foreach (var task in objective.Tasks.OrderBy(f => Convert.ToInt32(f.Code)))
                                                 {
                                                     <tr>
                                                         <td>
@@ -321,7 +322,7 @@
                                                             }
                                                         
                                                     </tr>
-                                                    @foreach (var practice in task.Practices.OrderBy(f => f.Code))
+                                                    @foreach (var practice in task.Practices.OrderBy(f => Convert.ToInt32(f.Code)))
                                                     {
                                                         <tr>
                                                             <td>

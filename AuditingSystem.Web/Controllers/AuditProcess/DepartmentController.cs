@@ -1,8 +1,10 @@
-﻿using AuditingSystem.Entities.AuditProcess;
+﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -14,14 +16,17 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
         private readonly IBaseRepository<Department, int> _departmentRepository;
         private readonly IBaseRepository<Company, int> _companyRepository;
         private readonly IBaseRepository<User, int> _userRepository;
+        private readonly AuditingSystemDbContext db;
         public DepartmentController(
             IBaseRepository<Company, int> companyRepository,
             IBaseRepository<Department, int> departmentRepository, 
-            IBaseRepository<User, int> userRepository)
+            IBaseRepository<User, int> userRepository,
+            AuditingSystemDbContext db)
         {
             _companyRepository = companyRepository;
             _departmentRepository = departmentRepository;
             _userRepository = userRepository;
+            this.db = db;
         }
 
         [HttpGet]
@@ -32,10 +37,12 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            var departments = await _departmentRepository.ListAsync(
-                new Expression<Func<Department, bool>>[] { u => u.IsDeleted == false },
-                q => q.OrderBy(u => u.Company.Code),
-                c => c.Company, f=>f.Functions);
+            //var departments = await _departmentRepository.ListAsync(
+            //    new Expression<Func<Department, bool>>[] { u => u.IsDeleted == false },
+            //    q => q.OrderBy(u => u.Company.Code),
+            //    c => c.Company, f=>f.Functions);
+            var departments = db.Departments.Include(i => i.Company).Include(d => d.Functions).ThenInclude(f => f.Activities)
+                .ThenInclude(a => a.Objectives).ThenInclude(o => o.Tasks).ThenInclude(p => p.Practices);
 
             string apiurl = "https://onyx3.azurewebsites.net/departments/GetAlldepartments";
             using (HttpClient client = new HttpClient())

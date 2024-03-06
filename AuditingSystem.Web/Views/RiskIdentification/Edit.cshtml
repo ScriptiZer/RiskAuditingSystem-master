@@ -16,19 +16,16 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <input type="hidden" value="@Model.Id" id="controlId" />
                                 <label for="Code">Code</label>
+                                <input type="hidden" id="RiskIdentificationId" value="@Model.Id" />
                                 <input type="text" class="form-control" id="Code" name="Code" placeholder="Generate Code" asp-for="Code">
                                 <span asp-validation-for="Code" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label for="RiskCategoryId">Risk Category</label>
-                                @Html.DropDownList("RiskCategoryId",  ViewBag.RiskCategoryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskCategory" , @name="RiskCategoryId"})
-                                <span asp-validation-for="RiskCategoryId" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="RiskLikelihoodId">Risk Like lihood</label>
-                                @Html.DropDownList("RiskLikelihoodId", ViewBag.RiskLikelihoodId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskLikelihood" , @name="RiskLikelihoodId"})
-                                <span asp-validation-for="RiskLikelihoodId" class="text-danger"></span>
+                                <label for="Name">Risk Title</label>
+                                <textarea type="text" class="form-control" id="Name" name="Name" placeholder="Risk Identification Name" asp-for="Name"></textarea>
+                                <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="RiskRatingRationalization">Risk Rating Rationalization</label>
@@ -43,11 +40,7 @@
 
                         </div>
                         <div class="col-6">
-                            <div class="form-group">
-                                <label for="Name">Risk Title</label>
-                                <input type="text" class="form-control" id="Name" name="Name" placeholder="Risk Identification Name" asp-for="Name">
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
+
                             <div class="form-group">
                                 <label for="FunctionId">Company</label>
                                 @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId" })
@@ -64,9 +57,19 @@
                                 <span asp-validation-for="FunctionId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
+                                <label for="RiskCategoryId">Risk Category</label>
+                                @Html.DropDownList("RiskCategoryId",  ViewBag.RiskCategoryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskCategory" , @name="RiskCategoryId"})
+                                <span asp-validation-for="RiskCategoryId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
                                 <label for="RiskImpactId">Risk Impact</label>
                                 @Html.DropDownList("RiskImpactId", ViewBag.RiskImpactId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskImpact" , @name="RiskImpactId"})
                                 <span asp-validation-for="RiskImpactId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="RiskLikelihoodId">Risk Like lihood</label>
+                                @Html.DropDownList("RiskLikelihoodId", ViewBag.RiskLikelihoodId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskLikelihood" , @name="RiskLikelihoodId"})
+                                <span asp-validation-for="RiskLikelihoodId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label for="InherentRiskRating">Inherent Risk Rating</label>
@@ -93,6 +96,7 @@
         $(document).ready(function () {
             $('#Description').summernote();
             $('#RiskRatingRationalization').summernote();
+            $('#Name').summernote();
 
             $("#Function").change(function () {
                 $("#Name").val($(this).val());
@@ -101,14 +105,17 @@
 
             $("#linkWithControlButton").click(function () {
                 var htmlDescription = $('#Description').summernote('code');
+                var htmlName = $('#Name').summernote('code');
 
                 var htmlRiskRatingRationalization = $('#RiskRatingRationalization').summernote('code');
 
                 var formData = {
+                    Id: $("#RiskIdentificationId").val(),
                     Code: $("#Code").val(),
-                    Name: $("#Name").val(),
+                    Name: htmlName,
                     CompanyId: $("#Company").val(),
                     DepartmentId: $("#Department").val(),
+                    FunctionId: $("#Function").val(),
                     Description: htmlDescription,
                     RiskCategoryId: $("#RiskCategory").val(),
                     RiskImpactId: $("#RiskImpact").val(),
@@ -117,28 +124,11 @@
                     InherentRiskRating: $("#InherentRiskRating").val()
                 };
 
-
-                setTimeout(function () {
                     $.ajax({
                         url: '/RiskIdentification/AddWithLink',
                         type: 'POST',
                         data: formData,
                         success: function (result) {
-                            // swal.close(); // إغلاق SweetAlert بعد النجاح
-                            // swal({
-                            //     title: "Success",
-                            //     text: "Your data has been saved",
-                            //     icon: "success",
-                            //     position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                            //     timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
-                            //     allowOutsideClick: false,
-                            //     showConfirmButton: false, // إخفاء زر التأكيد
-                            //     showCancelButton: false, // إخفاء زر الإلغاء
-                            //     showCloseButton: false // إخفاء زر الإغلاق
-                            // }).then(function () {
-                            //     var riskIdentificationId = result.id;
-                            //     window.location.href = '/Control/Add?riskIdentificationId=' + riskIdentificationId;
-                            // });
                             var riskIdentificationId = result.id;
                             window.location.href = '/Control/Add?riskIdentificationId=' + riskIdentificationId;
 
@@ -148,16 +138,15 @@
                                 title: "Opps...",
                                 text: "Something went wrong!",
                                 icon: "error",
-                                position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                position: "top-end",
+                                timer: 2000, 
                                 allowOutsideClick: false,
-                                showConfirmButton: false, // إخفاء زر التأكيد
-                                showCancelButton: false, // إخفاء زر الإلغاء
-                                showCloseButton: false // إخفاء زر الإغلاق
+                                showConfirmButton: false, 
+                                showCancelButton: false, 
+                                showCloseButton: false 
                             });
                         }
                     });
-                }, 2000);
             });
 
 
@@ -170,45 +159,29 @@
 
             $("#editLinkControlButton").click(function () {
                 var riskIdentificationId = @Model.Id;
-
+                var controlId = $("#controlId").val();
                 
-
-                setTimeout(function () {
                     $.ajax({
                         url: '/Control/Edit',
                         type: 'GET',
                         data: { id: 0, riskIdentificationId: riskIdentificationId },
                         success: function (data) {
-                            // swal.close(); // إغلاق SweetAlert بعد النجاح
-                            // swal({
-                            //     title: "Success",
-                            //     text: "Your data has been saved",
-                            //     icon: "success",
-                            //     position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                            //     timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
-                            //     allowOutsideClick: false,
-                            //     showConfirmButton: false, // إخفاء زر التأكيد
-                            //     showCancelButton: false, // إخفاء زر الإلغاء
-                            //     showCloseButton: false // إخفاء زر الإغلاق
-                            // }).then(function () {
-                                window.location.href = '/Control/Edit/' + data.id + '?riskIdentificationId=' + riskIdentificationId;
-                            //});
+                            window.location.href = '/Control/Edit/' + data.id + '?riskIdentificationId=' + riskIdentificationId;
                         },
                         error: function (error) {
                             swal({
                                 title: "Opps...",
-                                text: "Something went wrong!",
+                                text: "There is no Risk Control associated with this Risk Identification! Please first add Risk Control to it",
                                 icon: "error",
-                                position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                position: "top-end", 
+                                timer: 2000,
                                 allowOutsideClick: false,
-                                showConfirmButton: false, // إخفاء زر التأكيد
-                                showCancelButton: false, // إخفاء زر الإلغاء
-                                showCloseButton: false // إخفاء زر الإغلاق
+                                showConfirmButton: false, 
+                                showCancelButton: false,
+                                showCloseButton: false 
                             });
                         }
                     });
-                }, 2000);
             });
 
 
@@ -224,6 +197,9 @@
                         required: true
                     },
                     DepartmentId: {
+                        required: true
+                    },
+                    FunctionId: {
                         required: true
                     },
                     Description: {
@@ -257,6 +233,9 @@
                     },
                     DepartmentId: {
                         required: "The Department field is required"
+                    },
+                    FunctionId: {
+                        required: "The Function field is required"
                     },
                     Description: {
                         required: "The Description field is required"
@@ -293,14 +272,16 @@
 
             $("#saveButton").click(function () {
                 var htmlDescription = $('#Description').summernote('code');
+                var htmlName = $('#Name').summernote('code');
 
                 var htmlRiskRatingRationalization = $('#RiskRatingRationalization').summernote('code');
                 if ($("#EditForm").valid()) {
                     var formData = {
                         Code: $("#Code").val(),
-                        Name: $("#Name").val(),
+                        Name: htmlName,
                         CompanyId: $("#Company").val(),
                         DepartmentId: $("#Department").val(),
+                        FunctionId: $("#Function").val(),
                         Description: htmlDescription,
                         RiskCategoryId: $("#RiskCategory").val(),
                         RiskImpactId: $("#RiskImpact").val(),

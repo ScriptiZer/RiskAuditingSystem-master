@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.AuditProcess;
+﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,12 +14,15 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
     {
         private readonly IBaseRepository<Activity, int> _activityRepository;
         private readonly IBaseRepository<Objective, int> _objectiveRepository;
+        private readonly AuditingSystemDbContext db;
         public ObjectiveController(
             IBaseRepository<Activity, int> activityRepository,
-            IBaseRepository<Objective, int> objectiveRepository)
+            IBaseRepository<Objective, int> objectiveRepository, 
+            AuditingSystemDbContext db)
         {
             _activityRepository = activityRepository;
             _objectiveRepository = objectiveRepository;
+            this.db = db;
         }
 
         [HttpGet]
@@ -29,10 +33,12 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            var objectives = await _objectiveRepository.ListAsync(
-                  new Expression<Func<Objective, bool>>[] { u => u.IsDeleted == false, a=>a.Activity.Name !=null },
-                  q => q.OrderBy(u => u.Activity.Code),
-                  c => c.Activity, c=>c.Activity.Function, c => c.Activity.Function.Department, c => c.Activity.Function.Department.Company, c=>c.Tasks);
+            //var objectives = await _objectiveRepository.ListAsync(
+            //      new Expression<Func<Objective, bool>>[] { u => u.IsDeleted == false, a=>a.Activity.Name !=null },
+            //      q => q.OrderBy(u => u.Activity.Code),
+            //      c => c.Activity, c=>c.Activity.Function, c => c.Activity.Function.Department, c => c.Activity.Function.Department.Company, c=>c.Tasks);
+
+            var objectives = db.Objectives.Include(i => i.Activity).Include(d => d.Tasks).ThenInclude(p => p.Practices);
 
             string apiurl = "https://onyx3.azurewebsites.net/objectives/Getallobjectives";
             using (HttpClient client = new HttpClient())
