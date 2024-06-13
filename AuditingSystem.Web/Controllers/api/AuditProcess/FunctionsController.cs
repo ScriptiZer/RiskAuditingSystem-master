@@ -1,4 +1,6 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldTests;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -13,13 +15,18 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
     public class FunctionsController : ControllerBase
     {
         private readonly IBaseRepository<Function, int> _functionRepository;
+        private readonly IBaseRepository<AuditResources, int> _auditResourcesRepository;
+        private readonly IBaseRepository<DraftAuditPlan, int> _draftAuditPlanRepository;
         private readonly AuditingSystemDbContext db;
 
         public FunctionsController(IBaseRepository<Function, int> functionRepository,
-            AuditingSystemDbContext db)
+            AuditingSystemDbContext db,
+            IBaseRepository<AuditResources, int> auditResourcesRepository)
         {
             _functionRepository = functionRepository ?? throw new ArgumentNullException(nameof(functionRepository));
             this.db = db;
+            _auditResourcesRepository = auditResourcesRepository;
+
         }
 
         [HttpGet]
@@ -62,12 +69,26 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     .OrderByDescending(x => x.Id)
                     .FirstOrDefault();
 
+                    function.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    function.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    function.CreationDate = DateTime.Now;
+                    function.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
                         function.Id = existingRecord.Id + 1;
                         function.Source = existingRecord.Source;
                         await _functionRepository.CreateAsync(function);
+                        //var auditResource = new AuditResources();
+                        //auditResource.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                        //auditResource.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                        //auditResource.CreationDate = DateTime.Now;
+                        //auditResource.CurrentYear = DateTime.Now.Year;
+                        //auditResource.CompanyId = function.CompanyId;
+                        //auditResource.DepartmentId = function.DepartmentId.ToString();
+                        //auditResource.FunctionId = function.Id.ToString();
+                        //auditResource.IsDeleted = false;
+                        //await _auditResourcesRepository.CreateAsync(auditResource);
                         return NoContent();
                     }
                     else
@@ -75,6 +96,27 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         function.Id = increment;
                         function.Source = "System";
                         await _functionRepository.CreateAsync(function);
+                        var auditResource = new AuditResources();
+                        auditResource.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                        auditResource.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                        auditResource.CreationDate = DateTime.Now;
+                        auditResource.CurrentYear = DateTime.Now.Year;
+                        auditResource.CompanyId = function.CompanyId;
+                        auditResource.DepartmentId = function.DepartmentId.ToString();
+                        auditResource.FunctionId = function.Id.ToString();
+                        auditResource.IsDeleted = false;
+                        await _auditResourcesRepository.CreateAsync(auditResource);
+
+                        var auditDraft = new DraftAuditPlan();
+                        auditDraft.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                        auditDraft.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                        auditDraft.CreationDate = DateTime.Now;
+                        auditDraft.CurrentYear = DateTime.Now.Year;
+                        auditDraft.CompanyId = function.CompanyId;
+                        auditDraft.DepartmentId = function.DepartmentId;
+                        auditDraft.FunctionId = function.Id;
+                        auditDraft.IsDeleted = false;
+                        await _draftAuditPlanRepository.CreateAsync(auditDraft);
                         return NoContent();
                     }
                 }
@@ -101,9 +143,13 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound(new { error = $"Function with ID {id} not found" });
                     }
 
-                    // تحديث الخصائص
+                    existingFunction.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingFunction.UpdatedDate = DateTime.Now;
+                    existingFunction.Code = updatedFunction.Code;
                     existingFunction.Name = updatedFunction.Name;
                     existingFunction.Description = updatedFunction.Description;
+                    existingFunction.IndustryId = updatedFunction.IndustryId;
+                    existingFunction.CompanyId = updatedFunction.CompanyId;
                     existingFunction.DepartmentId = updatedFunction.DepartmentId;
 
                     await _functionRepository.UpdateAsync(existingFunction);

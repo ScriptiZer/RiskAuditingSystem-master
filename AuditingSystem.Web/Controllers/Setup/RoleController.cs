@@ -83,7 +83,10 @@ namespace AuditingSystem.Web.Controllers.Setup
                         View = item.View,
                         Add = item.Add,
                         Edit = item.Edit,
-                        Delete = item.Delete
+                        Delete = item.Delete,
+                        ExportToPDF = item.ExportToPDF,
+                        ExportToWord = item.ExportToWord,
+                        ExportToExcel = item.ExportToExcel
                     };
 
                     rolesPermissions.Add(rolePermission);
@@ -129,7 +132,10 @@ namespace AuditingSystem.Web.Controllers.Setup
                         View = item.View,
                         Add = item.Add,
                         Edit = item.Edit,
-                        Delete = item.Delete
+                        Delete = item.Delete,
+                        ExportToPDF = item.ExportToPDF,
+                        ExportToWord = item.ExportToWord,
+                        ExportToExcel = item.ExportToExcel
                     };
 
                     rolesPermissions.Add(rolePermission);

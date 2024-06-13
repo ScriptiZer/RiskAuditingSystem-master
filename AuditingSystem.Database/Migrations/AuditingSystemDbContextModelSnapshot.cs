@@ -22,6 +22,92 @@ namespace AuditingSystem.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("AuditingSystem.Entities.AuditFieldTests.Finding", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Findings");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditFieldTests.Observation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Observations");
+                });
+
             modelBuilder.Entity("AuditingSystem.Entities.AuditFieldWork.AuditProgram", b =>
                 {
                     b.Property<int>("Id")
@@ -36,17 +122,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("AuditorId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
@@ -63,8 +155,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<DateTime?>("Period")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -94,17 +186,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("AuditProgramId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("ControlId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -115,14 +213,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RiskIdenticationId")
                         .HasColumnType("int");
 
                     b.Property<int?>("RiskIdentificationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
+                    b.Property<string>("TestResult")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -152,17 +256,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BudgetType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -185,8 +295,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<decimal?>("TotalEstmated")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -223,17 +333,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("BudgetId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -253,8 +369,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Quarter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -277,17 +393,26 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("AssignedToUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("DepartmentId")
                         .HasColumnType("nvarchar(max)");
@@ -316,8 +441,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<DateTime?>("PlanStartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -326,6 +451,8 @@ namespace AuditingSystem.Database.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AssignedToUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -353,14 +480,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("AuditResourcesId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -377,8 +510,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("ResourceType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -414,17 +547,17 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<DateTime?>("ActualStartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("AssignedToEndActualId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AssignedToStartActualId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("AuditResourceId")
                         .HasColumnType("int");
 
                     b.Property<int?>("AuditResourcesId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("PlanEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PlanStartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("QuarterId")
                         .HasColumnType("nvarchar(max)");
@@ -469,17 +602,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("AuditResourcesListId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
@@ -526,8 +665,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<bool?>("RpetitiveFindings")
                         .HasColumnType("bit");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -558,14 +697,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("Actual")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -585,8 +730,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Quarter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -609,29 +754,32 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("AuditResourcesId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DraftAuditPlanId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DratAuditPlanId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("FunctionId")
                         .HasColumnType("int");
@@ -651,19 +799,19 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("Outsource")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuditResourcesId");
+
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("DraftAuditPlanId");
 
                     b.HasIndex("FunctionId");
 
@@ -678,17 +826,23 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool?>("Actual")
-                        .HasColumnType("bit");
+                    b.Property<int?>("Actual")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -702,14 +856,14 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("Plan")
-                        .HasColumnType("bit");
+                    b.Property<int?>("Plan")
+                        .HasColumnType("int");
 
                     b.Property<string>("Quarter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -729,19 +883,34 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("FunctionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IndustryId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsDeleted")
@@ -753,15 +922,21 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepartmentId");
+
                     b.HasIndex("FunctionId");
+
+                    b.HasIndex("IndustryId");
 
                     b.ToTable("Activities");
                 });
@@ -774,17 +949,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("ActivityId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
@@ -813,8 +994,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -860,17 +1041,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BudgetPlanYear")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactNo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -902,8 +1089,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -920,22 +1107,31 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Head")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IndustryId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsDeleted")
@@ -947,8 +1143,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -956,6 +1152,8 @@ namespace AuditingSystem.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("IndustryId");
 
                     b.ToTable("Departments");
                 });
@@ -965,14 +1163,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int?>("DaysNumber")
                         .HasColumnType("int");
@@ -983,6 +1190,9 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("IndustryId")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -992,15 +1202,19 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("IndustryId");
 
                     b.ToTable("Functions");
                 });
@@ -1010,14 +1224,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1034,8 +1254,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1055,17 +1275,35 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("ActivityId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FunctionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IndustryId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
@@ -1076,8 +1314,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1085,6 +1323,14 @@ namespace AuditingSystem.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ActivityId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("FunctionId");
+
+                    b.HasIndex("IndustryId");
 
                     b.ToTable("Objectives");
                 });
@@ -1094,14 +1340,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1118,8 +1370,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1136,17 +1388,38 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("ActivityId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FunctionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IndustryId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
@@ -1160,17 +1433,427 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("FunctionId");
+
+                    b.HasIndex("IndustryId");
+
                     b.HasIndex("ObjectiveId");
 
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditReports.ClientActionPlans", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DraftAuditReportsId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ManagementAcceptance")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DraftAuditReportsId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ClientActionPlans");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditReports.DraftAuditReports", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FindingId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FunctionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ObservationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Recomendation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RiskCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RiskImpact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Significance")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("FindingId");
+
+                    b.HasIndex("FunctionId");
+
+                    b.HasIndex("ObservationId");
+
+                    b.HasIndex("RiskCategoryId");
+
+                    b.ToTable("DraftAuditReports");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditReports.FinalAuditReports", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("ClientActionPlansId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DraftAuditPlanId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientActionPlansId");
+
+                    b.HasIndex("DraftAuditPlanId");
+
+                    b.ToTable("FinalAuditReports");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.FirstDuty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SODTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SODTypeId");
+
+                    b.ToTable("FirstDuties");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.FirstSecondDuties", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FirstDutyId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Mitigation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Result")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Risk")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SODTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SecondDutyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FirstDutyId");
+
+                    b.HasIndex("SODTypeId");
+
+                    b.HasIndex("SecondDutyId");
+
+                    b.ToTable("FirstSecondDuties");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.SecondDuty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SODTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SODTypeId");
+
+                    b.ToTable("SecondDuties");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.SODType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SODTypes");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.Lockups.ControlEffectiveness", b =>
@@ -1184,14 +1867,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BGColor")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1208,8 +1897,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("Rate")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1230,14 +1919,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BGColor")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1251,8 +1946,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1273,14 +1968,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BGColor")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1294,8 +1995,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1316,14 +2017,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BGColor")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1337,8 +2044,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1346,6 +2053,49 @@ namespace AuditingSystem.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ControlTypes");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.Lockups.OperationBudgetType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OperationBudgetTypes");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.Lockups.RiskCategory", b =>
@@ -1359,14 +2109,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("BGColor")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1380,8 +2136,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1399,14 +2155,20 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1420,8 +2182,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("Rate")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1439,14 +2201,20 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1460,8 +2228,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("Rate")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1479,8 +2247,8 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ControlEffectivenessId")
                         .HasColumnType("int");
@@ -1497,11 +2265,17 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("ControlTypeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1515,8 +2289,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("RiskIdentificationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1544,22 +2318,31 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ControlId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsTransfer")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -1568,14 +2351,29 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("ResidualRiskRating")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ResidualRiskRatingNumber")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RiskAssessmentListId")
                         .HasColumnType("int");
 
                     b.Property<int?>("RiskIdentificationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("TransferByCompany")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TransferByUser")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TransferDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("TransferToYear")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1599,17 +2397,23 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
@@ -1622,6 +2426,9 @@ namespace AuditingSystem.Database.Migrations
 
                     b.Property<int>("InherentRiskRating")
                         .HasColumnType("int");
+
+                    b.Property<string>("InherentRiskStatus")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
@@ -1641,8 +2448,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("RiskRatingRationalization")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1672,25 +2479,31 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("BalancefromPreviousYear")
+                    b.Property<int?>("BalancefromPreviousYear")
                         .HasColumnType("int");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
+
                     b.Property<int?>("DaysNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("DaysNumberInYear")
+                    b.Property<int?>("DaysNumberInYear")
                         .HasColumnType("int");
 
                     b.Property<int?>("DepartmentId")
@@ -1699,7 +2512,7 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EstimatedSickLeaves")
+                    b.Property<int?>("EstimatedSickLeaves")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("FromDate")
@@ -1708,7 +2521,7 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("FunctionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HolidaysNumber")
+                    b.Property<int?>("HolidaysNumber")
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsDeleted")
@@ -1717,20 +2530,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NoofInternationalHlidays")
+                    b.Property<int?>("NoofInternationalHlidays")
                         .HasColumnType("int");
 
-                    b.Property<int>("NoofLeavesDays")
+                    b.Property<int?>("NoofLeavesDays")
                         .HasColumnType("int");
 
-                    b.Property<int>("SpecialWorkingHours")
+                    b.Property<int?>("SpecialWorkingHours")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ToDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1738,10 +2551,10 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Weekends")
+                    b.Property<int?>("Weekends")
                         .HasColumnType("int");
 
-                    b.Property<int>("WorkingDays")
+                    b.Property<int?>("WorkingDays")
                         .HasColumnType("int");
 
                     b.Property<int?>("YearId")
@@ -1773,14 +2586,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<bool?>("Add")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Delete")
                         .HasColumnType("bit");
@@ -1791,14 +2610,23 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<bool?>("Edit")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("ExportToExcel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("ExportToPDF")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("ExportToWord")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1819,14 +2647,20 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1846,8 +2680,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1870,14 +2704,20 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1888,8 +2728,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1910,14 +2750,20 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<bool?>("Add")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Delete")
                         .HasColumnType("bit");
@@ -1926,6 +2772,15 @@ namespace AuditingSystem.Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("Edit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("ExportToExcel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("ExportToPDF")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("ExportToWord")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsDeleted")
@@ -1940,8 +2795,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -1966,11 +2821,10 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CompanyId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("ConfirmPassword")
@@ -1978,27 +2832,30 @@ namespace AuditingSystem.Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContactNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<int>("DaysNumber")
                         .HasColumnType("int");
 
                     b.Property<int?>("DepartmentId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsDeleted")
@@ -2011,16 +2868,17 @@ namespace AuditingSystem.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ResourceType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("RoleId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -2044,17 +2902,23 @@ namespace AuditingSystem.Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Code")
+                        .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreatedByCompany")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -2068,8 +2932,8 @@ namespace AuditingSystem.Database.Migrations
                     b.Property<string>("Quarter")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -2155,6 +3019,10 @@ namespace AuditingSystem.Database.Migrations
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditPlan.AuditResources", b =>
                 {
+                    b.HasOne("AuditingSystem.Entities.Setup.User", "AssignedToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedToUserId");
+
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
@@ -2166,6 +3034,8 @@ namespace AuditingSystem.Database.Migrations
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
                         .WithMany()
                         .HasForeignKey("FunctionId1");
+
+                    b.Navigation("AssignedToUser");
 
                     b.Navigation("Company");
 
@@ -2258,6 +3128,10 @@ namespace AuditingSystem.Database.Migrations
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditPlan.FinalAuditPlan", b =>
                 {
+                    b.HasOne("AuditingSystem.Entities.AuditPlan.AuditResources", "AuditResources")
+                        .WithMany()
+                        .HasForeignKey("AuditResourcesId");
+
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
@@ -2266,19 +3140,15 @@ namespace AuditingSystem.Database.Migrations
                         .WithMany()
                         .HasForeignKey("DepartmentId");
 
-                    b.HasOne("AuditingSystem.Entities.AuditPlan.DraftAuditPlan", "DraftAuditPlan")
-                        .WithMany()
-                        .HasForeignKey("DraftAuditPlanId");
-
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
                         .WithMany()
                         .HasForeignKey("FunctionId");
 
+                    b.Navigation("AuditResources");
+
                     b.Navigation("Company");
 
                     b.Navigation("Department");
-
-                    b.Navigation("DraftAuditPlan");
 
                     b.Navigation("Function");
                 });
@@ -2294,11 +3164,29 @@ namespace AuditingSystem.Database.Migrations
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.Activity", b =>
                 {
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId");
+
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
                         .WithMany("Activities")
                         .HasForeignKey("FunctionId");
 
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Industry", "Industry")
+                        .WithMany()
+                        .HasForeignKey("IndustryId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Department");
+
                     b.Navigation("Function");
+
+                    b.Navigation("Industry");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.AuditUniverse", b =>
@@ -2367,16 +3255,34 @@ namespace AuditingSystem.Database.Migrations
                         .WithMany("Departments")
                         .HasForeignKey("CompanyId");
 
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Industry", "Industry")
+                        .WithMany()
+                        .HasForeignKey("IndustryId");
+
                     b.Navigation("Company");
+
+                    b.Navigation("Industry");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.Function", b =>
                 {
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
                         .WithMany("Functions")
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Industry", "Industry")
+                        .WithMany()
+                        .HasForeignKey("IndustryId");
+
+                    b.Navigation("Company");
+
                     b.Navigation("Department");
+
+                    b.Navigation("Industry");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.Industry", b =>
@@ -2394,7 +3300,31 @@ namespace AuditingSystem.Database.Migrations
                         .WithMany("Objectives")
                         .HasForeignKey("ActivityId");
 
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
+                        .WithMany()
+                        .HasForeignKey("FunctionId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Industry", "Industry")
+                        .WithMany()
+                        .HasForeignKey("IndustryId");
+
                     b.Navigation("Activity");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Function");
+
+                    b.Navigation("Industry");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.Practice", b =>
@@ -2408,11 +3338,149 @@ namespace AuditingSystem.Database.Migrations
 
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.Tasks", b =>
                 {
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Activity", "Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
+                        .WithMany()
+                        .HasForeignKey("FunctionId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Industry", "Industry")
+                        .WithMany()
+                        .HasForeignKey("IndustryId");
+
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Objective", "Objective")
                         .WithMany("Tasks")
                         .HasForeignKey("ObjectiveId");
 
+                    b.Navigation("Activity");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Function");
+
+                    b.Navigation("Industry");
+
                     b.Navigation("Objective");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditReports.ClientActionPlans", b =>
+                {
+                    b.HasOne("AuditingSystem.Entities.AuditReports.DraftAuditReports", "DraftAuditReports")
+                        .WithMany()
+                        .HasForeignKey("DraftAuditReportsId");
+
+                    b.HasOne("AuditingSystem.Entities.Setup.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("DraftAuditReports");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditReports.DraftAuditReports", b =>
+                {
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditFieldTests.Finding", "Finding")
+                        .WithMany()
+                        .HasForeignKey("FindingId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditProcess.Function", "Function")
+                        .WithMany()
+                        .HasForeignKey("FunctionId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditFieldTests.Observation", "Observation")
+                        .WithMany()
+                        .HasForeignKey("ObservationId");
+
+                    b.HasOne("AuditingSystem.Entities.Lockups.RiskCategory", "RiskCategory")
+                        .WithMany()
+                        .HasForeignKey("RiskCategoryId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Finding");
+
+                    b.Navigation("Function");
+
+                    b.Navigation("Observation");
+
+                    b.Navigation("RiskCategory");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.AuditReports.FinalAuditReports", b =>
+                {
+                    b.HasOne("AuditingSystem.Entities.AuditReports.ClientActionPlans", "ClientActionPlans")
+                        .WithMany()
+                        .HasForeignKey("ClientActionPlansId");
+
+                    b.HasOne("AuditingSystem.Entities.AuditPlan.DraftAuditPlan", "DraftAuditPlan")
+                        .WithMany()
+                        .HasForeignKey("DraftAuditPlanId");
+
+                    b.Navigation("ClientActionPlans");
+
+                    b.Navigation("DraftAuditPlan");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.FirstDuty", b =>
+                {
+                    b.HasOne("AuditingSystem.Entities.FollowUp.SODType", "SODType")
+                        .WithMany()
+                        .HasForeignKey("SODTypeId");
+
+                    b.Navigation("SODType");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.FirstSecondDuties", b =>
+                {
+                    b.HasOne("AuditingSystem.Entities.FollowUp.FirstDuty", "FirstDuty")
+                        .WithMany("FirstSecondDuties")
+                        .HasForeignKey("FirstDutyId");
+
+                    b.HasOne("AuditingSystem.Entities.FollowUp.SODType", "SODType")
+                        .WithMany("FirstSecondDuties")
+                        .HasForeignKey("SODTypeId");
+
+                    b.HasOne("AuditingSystem.Entities.FollowUp.SecondDuty", "SecondDuty")
+                        .WithMany("FirstSecondDuties")
+                        .HasForeignKey("SecondDutyId");
+
+                    b.Navigation("FirstDuty");
+
+                    b.Navigation("SODType");
+
+                    b.Navigation("SecondDuty");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.SecondDuty", b =>
+                {
+                    b.HasOne("AuditingSystem.Entities.FollowUp.SODType", "SODType")
+                        .WithMany()
+                        .HasForeignKey("SODTypeId");
+
+                    b.Navigation("SODType");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.RiskAssessments.Control", b =>
@@ -2577,21 +3645,15 @@ namespace AuditingSystem.Database.Migrations
                 {
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Company", "Company")
                         .WithMany("User")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("AuditingSystem.Entities.AuditProcess.Department", "Department")
                         .WithMany("Users")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DepartmentId");
 
                     b.HasOne("AuditingSystem.Entities.Setup.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Company");
 
@@ -2680,6 +3742,21 @@ namespace AuditingSystem.Database.Migrations
             modelBuilder.Entity("AuditingSystem.Entities.AuditProcess.Tasks", b =>
                 {
                     b.Navigation("Practices");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.FirstDuty", b =>
+                {
+                    b.Navigation("FirstSecondDuties");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.SecondDuty", b =>
+                {
+                    b.Navigation("FirstSecondDuties");
+                });
+
+            modelBuilder.Entity("AuditingSystem.Entities.FollowUp.SODType", b =>
+                {
+                    b.Navigation("FirstSecondDuties");
                 });
 
             modelBuilder.Entity("AuditingSystem.Entities.RiskAssessments.RiskAssessmentList", b =>

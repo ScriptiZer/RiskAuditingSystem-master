@@ -13,6 +13,7 @@ namespace AuditingSystem.Services.ViewModels
     {
         public  Company? Company { get; set; }
         public  Department? Department { get; set; }
+        public  Function? Function { get; set; }
         public  RiskAssessmentList? RiskAssessmentList { get; set; }
         public RiskIdentification? RiskIdentification { get; set; }
         public RiskCategory? RiskCategory { get; set; }

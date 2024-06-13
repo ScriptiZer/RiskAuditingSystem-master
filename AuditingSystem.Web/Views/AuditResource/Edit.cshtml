@@ -23,6 +23,7 @@
                         </div>
                         <div class="col-4">
                             <div class="form-group">
+                                <input type="hidden" value="@Model.DepartmentId" id="DeptId" />
                                 <label for="Department">Department</label>
                                 @Html.DropDownList("DepartmentId", ViewBag.DepartmentId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Department" , @name="DepartmentId"})
                                 <span asp-validation-for="DepartmentId" class="text-danger"></span>
@@ -30,13 +31,8 @@
                         </div>
                         <div class="col-4">
                             <div class="form-group">
+                                <input type="hidden" value="@Model.FunctionId" id="FuncId" />
                                 <label for="Function">Function</label>
-                               @*  <select asp-for="FunctionId" id="Function" class="form-control" multiple>
-                                    @foreach (var function in ViewBag.FunctionId as SelectList)
-                                    {
-                                        <option value="@function.Value" selected="@(Model.FunctionId != null && Model.FunctionId.Split(',').Contains(function.Value.ToString()))">@function.Text</option>
-                                    }
-                                </select> *@
                                 <div class="form-group">
                                     @Html.DropDownList("FunctionId", ViewBag.FunctionId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Function" , @name="FunctionId"})
                                     <span asp-validation-for="FunctionId" class="text-danger"></span>
@@ -58,21 +54,6 @@
                         <div class="col-12"></div>
                         <div class="col-12"></div>
 
-@* 
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="TotalPlan">Total Plan</label>
-                                <input value="0" class="form-control" asp-for="TotalPlan" name="TotalPlan" id="TotalPlan" readonly="readonly" />
-                                <span asp-validation-for="TotalPlan" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label for="TotalActual">Total Actual</label>
-                                <input value="0" class="form-control" asp-for="TotalActual" name="TotalActual" id="TotalActual" readonly="readonly" />
-                                <span asp-validation-for="TotalActual" class="text-danger"></span>
-                            </div>
-                        </div> *@
                     </div>
 
                     <div class="form-group">
@@ -97,43 +78,43 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            // var company = $("#Company").val();
-            // var department = $("#Department").val();
-            // $.ajax({
-            //     url: "/AuditResource/GetDepartmentsByCompany",
-            //     data: { companyId: company },
-            //     type: "GET",
-            //     success: function (data) {
-            //         $("#Department").prop("disabled", false);
+            $.ajax({
+                url: "/AuditResource/GetDepartmentsByCompany",
+                data: { companyId: $("#Company").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Department").prop("disabled", false);
 
-            //         var options = '<option value="">-- Select One --</option>';
+                    var options = '<option value="">-- Select One --</option>';
 
-            //         if (data && data["$values"]) {
-            //             data["$values"].forEach(function (item) {
-            //                 options += '<option value="' + item.id + '">' + item.name + '</option>';
-            //             });
-            //             $("#Department").html(options);
-            //             $("#Function").html('<option value="">-- Select One --</option>');
-            //         }
-            //     }
-            // });
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#DeptId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Department").html(options);
+                        $("#Function").html('<option value="">-- Select One --</option>');
+                    }
+                }
+            });
+            $.ajax({
+                url: "/AuditResource/GetFunctionsByDepartment",
+                data: { departmentId: $("#Department").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Function").prop("disabled", false);
 
-            // $.ajax({
-            //     url: "/AuditResource/GetFunctionsByDepartment",
-            //     data: { departmentId: department },
-            //     type: "GET",
-            //     success: function (data) {
-            //         $("#Function").prop("disabled", false);
-
-            //         var options = '<option value="">-- Select One --</option>';
-            //         if (data && data["$values"]) {
-            //             data["$values"].forEach(function (item) {
-            //                 options += '<option value="' + item.id + '">' + item.name + '</option>';
-            //             });
-            //             $("#Function").html(options);
-            //         }
-            //     }
-            // });
+                    var options = '<option value="">-- Select One --</option>';
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#FuncId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Function").html(options);
+                    }
+                }
+            });
+          
             $(".StartDate").datepicker();
             $(".EndDate").datepicker();
             $("#Company").change(function () {
@@ -230,7 +211,6 @@
                         PlanStartDate: $(".StartDate").val() || null,
                         PlanEndDate: $(".EndDate").val() || null
                     };
-                    alert("formData.PlanStartDate: " + formData.PlanStartDate + " formData.PlanEndDate: " + formData.PlanStartDate);
                     swal({
                         title: "Saving...",
                         text: "Please wait.",
@@ -267,17 +247,29 @@
                                 });
                             },
                             error: function (error) {
-                                if (error.responseJSON && error.responseJSON.errors) {
+                                if (error.responseJSON && error.responseJSON.error === "DuplicateData") {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Company, Department, and Function information has already been added!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                } else {
                                     swal({
                                         title: "Opps...",
                                         text: "Something went wrong!",
                                         icon: "error",
-                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        position: "top-end",
+                                        timer: 2000,
                                         allowOutsideClick: false,
-                                        showConfirmButton: false, // إخفاء زر التأكيد
-                                        showCancelButton: false, // إخفاء زر الإلغاء
-                                        showCloseButton: false // إخفاء زر الإغلاق
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
                                     });
                                 }
                             }

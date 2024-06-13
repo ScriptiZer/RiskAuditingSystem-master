@@ -20,15 +20,15 @@ namespace AuditingSystem.Entities.Setup
         public virtual int? DaysNumber { get; set; }
 
 
-        public virtual int DaysNumberInYear { get; set; }
-        public virtual int Weekends { get; set; }
-        public virtual int HolidaysNumber { get; set; }
-        public virtual int NoofInternationalHlidays { get; set; }
-        public virtual int NoofLeavesDays { get; set; }
-        public virtual int SpecialWorkingHours { get; set; }
-        public virtual int EstimatedSickLeaves { get; set; }
-        public virtual int BalancefromPreviousYear { get; set; }
-        public virtual int WorkingDays { get; set; }
+        public virtual int? DaysNumberInYear { get; set; }
+        public virtual int? Weekends { get; set; }
+        public virtual int? HolidaysNumber { get; set; }
+        public virtual int? NoofInternationalHlidays { get; set; }
+        public virtual int? NoofLeavesDays { get; set; }
+        public virtual int? SpecialWorkingHours { get; set; }
+        public virtual int? EstimatedSickLeaves { get; set; }
+        public virtual int? BalancefromPreviousYear { get; set; }
+        public virtual int? WorkingDays { get; set; }
 
         public virtual Company? Company { get; set; }
         public virtual Department? Department { get; set; }

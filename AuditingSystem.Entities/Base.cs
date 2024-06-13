@@ -15,15 +15,18 @@ namespace AuditingSystem.Entities
     {
         [AllowHtml]
         public virtual string? Name { get; set; }
-        public virtual string? Code { get; set; }
+        public virtual int? Code { get; set; }
 
 
         [AllowHtml]
         public virtual string? Description { get; set; }
         public virtual bool? IsDeleted { get; set; } = false;
-        public virtual string? CreatedBy { get; set; }
+        public virtual int? CreatedBy { get; set; }
         public virtual DateTime? CreationDate { get; set; }
-        public virtual string? UpdatedBy { get; set; }
+        public virtual int? UpdatedBy { get; set; }
         public virtual DateTime? UpdatedDate { get; set; }
+        public virtual int? CurrentYear { get; set; }
+        public virtual int? CreatedByCompany { get; set; }
+
     }
 }

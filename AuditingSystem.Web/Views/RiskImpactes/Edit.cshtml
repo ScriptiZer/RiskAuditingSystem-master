@@ -11,18 +11,24 @@
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Edit Role</h4>
-                <form class="forms-sample" id="AddForm">
+                <h4 class="card-title">Edit Risk Impact</h4>
+                <form class="forms-sample" id="EditForm">
 
-
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input asp-for="Name" type="text" class="form-control" id="Name" name="Name" placeholder="Risk Impact Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
                    
                     <div class="form-group">
                         <label for="Rate">Rate</label>
-                        <input type="text" class="form-control" id="Rate" name="Rate" placeholder="Rate">
+                        <input asp-for="Rate" type="text" class="form-control" id="Rate" name="Rate" placeholder="Rate">
                         <span asp-validation-for="Rate" class="text-danger"></span>
                     </div>
-                    <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
-                    <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                    <div class="float-end mt-2">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -37,11 +43,17 @@
                 rules: {
                     Name: {
                         required: true
+                    },
+                    Rate: {
+                        required: true
                     }
                 },
                 messages: {
                     Name: {
                         required: "The Name field is required"
+                    },
+                    Rate: {
+                        required: "The Rate field is required"
                     }
                 },
                 errorPlacement: function (error, element) {
@@ -63,28 +75,62 @@
 
                 if ($("#EditForm").valid()) {
                     var formData = {
-
-                        Rate: $("#Rate").val(),
-                
+                        Name: $("#Name").val(),
+                        Rate: parseInt($("#Rate").val())
                     };
-                    $.ajax({
-                        url: "/api/RiskImpacts/@Model.Id",
-                        method: "PUT",
-                        dataType: 'json',
-                        contentType: "application/json",
-                        data: JSON.stringify(formData),
-                        success: function (response) {
-                            alert("The Role is modified successfully.");
-                            window.location.href = '/RiskImpactes/Index';
-                        },
-                        error: function (error) {
-                            if (error.responseJSON && error.responseJSON.errors) {
-                                $.each(error.responseJSON.errors, function (key, value) {
-                                    $("#" + key).siblings(".text-danger").text(value);
-                                });
-                            }
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        showCancelButton: false,
+                        showCloseButton: false,
+                        onBeforeOpen: () => {
+                            swal.showLoading();
                         }
                     });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/RiskImpacts/@Model.Id",
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close();
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end",
+                                    timer: 2000,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    showCloseButton: false
+                                }).then(function () {
+                                    window.location.href = '/RiskImpactes/Index';
+                                });
+                            },
+                            error: function (error) {
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
                 }
             });
         });

@@ -50,6 +50,9 @@
                                     <th><center>Add</center></th>
                                     <th><center>Edit</center></th>
                                     <th><center>Delete</center></th>
+                                    <th><center>Export to PDF</center></th>
+                                    <th><center>Export to Word</center></th>
+                                    <th><center>Export to Excel</center></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,6 +111,42 @@
                                             }
                                             <center>
                                                 <input @isChecked title="Delete" data-size="small" id="Delete" name="Delete" class="Delete" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            @{
+                                                isChecked = "";
+                                                if (rolePermission.ExportToPDF == true)
+                                                {
+                                                    isChecked = "checked";
+                                                }
+                                            }
+                                            <center>
+                                                <input @isChecked title="Export to PDF" data-size="small" id="ExporttoPDF" name="ExporttoPDF" class="ExporttoPDF" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            @{
+                                                isChecked = "";
+                                                if (rolePermission.ExportToWord == true)
+                                                {
+                                                    isChecked = "checked";
+                                                }
+                                            }
+                                            <center>
+                                                <input @isChecked title="Export to Word" data-size="small" id="ExporttoWord" name="ExporttoWord" class="ExporttoWord" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            @{
+                                                isChecked = "";
+                                                if (rolePermission.ExportToExcel == true)
+                                                {
+                                                    isChecked = "checked";
+                                                }
+                                            }
+                                            <center>
+                                                <input @isChecked title="Export to Excel" data-size="small" id="ExporttoExcel" name="ExporttoExcel" class="ExporttoExcel" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
                                             </center>
                                         </td>
                                     </tr>
@@ -172,11 +211,11 @@
                         title: "Saving...",
                         text: "Please wait.",
                         allowOutsideClick: false,
-                        showConfirmButton: false, // إخفاء زر التأكيد
-                        showCancelButton: false, // إخفاء زر الإلغاء
-                        showCloseButton: false, // إخفاء زر الإغلاق
+                        showConfirmButton: false, 
+                        showCancelButton: false, 
+                        showCloseButton: false, 
                         onBeforeOpen: () => {
-                            swal.showLoading(); // إضافة شريط التقدم
+                            swal.showLoading(); 
                         }
                     });
 
@@ -187,13 +226,19 @@
                             var addPermission = $(this).find(".Add").prop("checked");
                             var editPermission = $(this).find(".Edit").prop("checked");
                             var deletePermission = $(this).find(".Delete").prop("checked");
+                            var exporttoPDFPermission = $(this).find(".ExporttoPDF").prop("checked");
+                            var exporttoWordPermission = $(this).find(".ExporttoWord").prop("checked");
+                            var exporttoExcelPermission = $(this).find(".ExporttoExcel").prop("checked");
 
                             var permissionData = {
                                 Id: permissionId,
                                 View: viewPermission,
                                 Add: addPermission,
                                 Edit: editPermission,
-                                Delete: deletePermission
+                                Delete: deletePermission,
+                                ExportToPDF: exporttoPDFPermission,
+                                ExportToWord: exporttoWordPermission,
+                                ExportToExcel: exporttoExcelPermission
                             };
 
                             formData.Permissions.push(permissionData);
@@ -205,17 +250,17 @@
                             contentType: "application/json",
                             data: JSON.stringify(formData),
                             success: function (response) {
-                                swal.close(); // إغلاق SweetAlert بعد النجاح
+                                swal.close();
                                 swal({
                                     title: "Success",
                                     text: "Your data has been saved",
                                     icon: "success",
-                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                    position: "top-end", 
+                                    timer: 2000, 
                                     allowOutsideClick: false,
-                                    showConfirmButton: false, // إخفاء زر التأكيد
-                                    showCancelButton: false, // إخفاء زر الإلغاء
-                                    showCloseButton: false // إخفاء زر الإغلاق
+                                    showConfirmButton: false, 
+                                    showCancelButton: false, 
+                                    showCloseButton: false 
                                 }).then(function () {
                                     window.location.href = '/Role/Index';
                                 });
@@ -226,12 +271,12 @@
                                         title: "Opps...",
                                         text: "Something went wrong!",
                                         icon: "error",
-                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        position: "top-end", 
+                                        timer: 2000, 
                                         allowOutsideClick: false,
-                                        showConfirmButton: false, // إخفاء زر التأكيد
-                                        showCancelButton: false, // إخفاء زر الإلغاء
-                                        showCloseButton: false // إخفاء زر الإغلاق
+                                        showConfirmButton: false, 
+                                        showCancelButton: false,
+                                        showCloseButton: false 
                                     });
                                 }
                             }

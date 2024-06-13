@@ -42,20 +42,31 @@
                         <div class="col-6">
 
                             <div class="form-group">
-                                <label for="FunctionId">Company</label>
-                                @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId" })
+                                <label asp-for="CompanyId">Company</label>
+                                <select asp-for="CompanyId" asp-items="@(ViewBag.CompanyId as SelectList)" class="form-control" id="Company" name="CompanyId">
+                                    <option value="">-- Select One --</option>
+                                </select>
                                 <span asp-validation-for="CompanyId" class="text-danger"></span>
                             </div>
+
                             <div class="form-group">
-                                <label for="FunctionId">Department</label>
-                                @Html.DropDownList("DepartmentId", ViewBag.DepartmentId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Department", @name = "DepartmentId" })
+                                <label asp-for="DepartmentId">Department</label>
+                                <input type="hidden" value="@Model.DepartmentId" id="DeptId" />
+                                <select asp-for="DepartmentId" asp-items="@(ViewBag.DepartmentId as SelectList)" class="form-control" id="Department" name="DepartmentId">
+                                    <option value="">-- Select One --</option>
+                                </select>
                                 <span asp-validation-for="DepartmentId" class="text-danger"></span>
                             </div>
+
                             <div class="form-group">
-                                <label for="FunctionId">Function</label>
-                                @Html.DropDownList("FunctionId", ViewBag.FunctionId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Function", @name = "FunctionId" })
+                                <label asp-for="FunctionId">Function</label>
+                                <input type="hidden" value="@Model.FunctionId" id="FuncId" />
+                                <select asp-for="FunctionId" asp-items="@(ViewBag.FunctionId as SelectList)" class="form-control" id="Function" name="FunctionId">
+                                    <option value="">-- Select One --</option>
+                                </select>
                                 <span asp-validation-for="FunctionId" class="text-danger"></span>
                             </div>
+
                             <div class="form-group">
                                 <label for="RiskCategoryId">Risk Category</label>
                                 @Html.DropDownList("RiskCategoryId",  ViewBag.RiskCategoryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskCategory" , @name="RiskCategoryId"})
@@ -76,6 +87,11 @@
                                 <input disabled type="text" class="form-control" id="InherentRiskRating" name="InherentRiskRating" placeholder="Inherent Risk Rating" asp-for="InherentRiskRating">
                                 <span asp-validation-for="InherentRiskRating" class="text-danger"></span>
                             </div>
+                            <div class="form-group">
+                                <label for="InherentRiskStatus">Inherent Risk Status</label>
+                                <input asp-for="InherentRiskStatus" type="text" class="form-control" id="InherentRiskStatus" name="InherentRiskStatus" readonly placeholder="Inherent Risk Status">
+                                <span asp-validation-for="InherentRiskStatus" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -94,6 +110,90 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
+            //  $("#Department").prop("disabled", true);
+            // $("#Function").prop("disabled", true);
+            var comp = $("#Company").val();
+            var dept = $("#Department").val();
+            $.ajax({
+                url: "/RiskIdentification/GetDepartmentsByCompany",
+                data: { CompanyId: comp },
+                type: "GET",
+                success: function (data) {
+                    $("#Department").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#DeptId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Department").html(options);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: "/RiskIdentification/GetFunctionsByDepartment",
+                data: { departmentId: dept },
+                type: "GET",
+                success: function (data) {
+                    $("#Function").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#FuncId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Function").html(options);
+                    }
+                }
+            });
+
+            $("#Company").change(function () {
+                var CompanyId = $(this).val();
+                $.ajax({
+                    url: "/RiskIdentification/GetDepartmentsByCompany",
+                    data: { CompanyId: CompanyId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Department").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Department").html(options);
+                        }
+                    }
+                });
+            });
+
+            $("#Department").change(function () {
+                var departmentId = $(this).val();
+                $.ajax({
+                    url: "/RiskIdentification/GetFunctionsByDepartment",
+                    data: { departmentId: departmentId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Function").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Function").html(options);
+                        }
+                    }
+                });
+            });
+
             $('#Description').summernote();
             $('#RiskRatingRationalization').summernote();
             $('#Name').summernote();
@@ -121,11 +221,12 @@
                     RiskImpactId: $("#RiskImpact").val(),
                     RiskLikelihoodId: $("#RiskLikelihood").val(),
                     RiskRatingRationalization: htmlRiskRatingRationalization,
-                    InherentRiskRating: $("#InherentRiskRating").val()
+                    InherentRiskRating: $("#InherentRiskRating").val(),
+                    InherentRiskStatus: $("#InherentRiskStatus").val()
                 };
 
                     $.ajax({
-                        url: '/RiskIdentification/AddWithLink',
+                        url: '/RiskIdentification/Edit_AddWithLink',
                         type: 'POST',
                         data: formData,
                         success: function (result) {
@@ -133,19 +234,33 @@
                             window.location.href = '/Control/Add?riskIdentificationId=' + riskIdentificationId;
 
                         },
-                        error: function (error) {
+                    error: function (error) {
+                        if (error.responseJSON && error.responseJSON.error === "DuplicateData") {
+                            swal({
+                                title: "Opps...",
+                                text: "Company and Department information has already been added!",
+                                icon: "error",
+                                position: "top-end",
+                                timer: 2000,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                showCloseButton: false
+                            });
+                        } else {
                             swal({
                                 title: "Opps...",
                                 text: "Something went wrong!",
                                 icon: "error",
                                 position: "top-end",
-                                timer: 2000, 
+                                timer: 2000,
                                 allowOutsideClick: false,
-                                showConfirmButton: false, 
-                                showCancelButton: false, 
-                                showCloseButton: false 
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                showCloseButton: false
                             });
                         }
+                    }
                     });
             });
 
@@ -155,35 +270,137 @@
                 var riskLikelihoodRate = parseInt($("#RiskLikelihood option:selected").text().split('-')[0].trim()) || 0;
                 var sum = riskImpactRate + riskLikelihoodRate;
                 $("#InherentRiskRating").val(sum);
+                if ($("#InherentRiskRating").val() >= 9) {
+                    $("#InherentRiskStatus").val("Critical");
+                } else if ($("#InherentRiskRating").val() >= 7) {
+                    $("#InherentRiskStatus").val("High");
+                } else if ($("#InherentRiskRating").val() >= 5) {
+                    $("#InherentRiskStatus").val("Medium");
+                } else {
+                    $("#InherentRiskStatus").val("Low");
+                }
             });
 
             $("#editLinkControlButton").click(function () {
-                var riskIdentificationId = @Model.Id;
-                var controlId = $("#controlId").val();
-                
-                    $.ajax({
-                        url: '/Control/Edit',
-                        type: 'GET',
-                        data: { id: 0, riskIdentificationId: riskIdentificationId },
-                        success: function (data) {
-                            window.location.href = '/Control/Edit/' + data.id + '?riskIdentificationId=' + riskIdentificationId;
-                        },
-                        error: function (error) {
-                            swal({
-                                title: "Opps...",
-                                text: "There is no Risk Control associated with this Risk Identification! Please first add Risk Control to it",
-                                icon: "error",
-                                position: "top-end", 
-                                timer: 2000,
-                                allowOutsideClick: false,
-                                showConfirmButton: false, 
-                                showCancelButton: false,
-                                showCloseButton: false 
-                            });
-                        }
-                    });
+                swal({
+                    title: "Saving...",
+                    text: "Please wait.",
+                    allowOutsideClick: false,
+                    showConfirmButton: false, 
+                    showCancelButton: false, 
+                    showCloseButton: false, 
+                    onBeforeOpen: () => {
+                        swal.showLoading(); 
+                    }
+                });
+
+                if ($("#EditForm").valid()) {
+                    setTimeout(function () {
+                        firstFunction();
+                        secondFunction();
+                    }, 2000);
+                }
             });
 
+
+            function firstFunction() {
+                var htmlDescription = $('#Description').summernote('code');
+                var htmlName = $('#Name').summernote('code');
+                var htmlRiskRatingRationalization = $('#RiskRatingRationalization').summernote('code');
+                var formData = {
+                    Code: $("#Code").val(),
+                    Name: htmlName,
+                    CompanyId: $("#Company").val(),
+                    DepartmentId: $("#Department").val(),
+                    FunctionId: $("#Function").val(),
+                    Description: htmlDescription,
+                    RiskCategoryId: $("#RiskCategory").val(),
+                    RiskImpactId: $("#RiskImpact").val(),
+                    RiskLikelihoodId: $("#RiskLikelihood").val(),
+                    RiskRatingRationalization: htmlRiskRatingRationalization,
+                    InherentRiskRating: $("#InherentRiskRating").val(),
+                    InherentRiskStatus: $("#InherentRiskStatus").val()
+                };
+
+                $.ajax({
+                    url: "/api/RiskIdentifications/" + @Model.Id,
+                    method: "PUT",
+                    dataType: 'json',
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        console.log("Edit Risk Identification is done!");
+                    },
+                    error: function (error) {
+                        if (error.responseJSON && error.responseJSON.error === "DuplicateData") {
+                            swal({
+                                title: "Opps...",
+                                text: "Company and Department information has already been added!",
+                                icon: "error",
+                                position: "top-end",
+                                timer: 2000,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                showCloseButton: false
+                            });
+                        } else {
+                            swal({
+                                title: "Opps...",
+                                text: "Something went wrong!",
+                                icon: "error",
+                                position: "top-end",
+                                timer: 2000,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                showCloseButton: false
+                            });
+                        }
+                    }
+                });
+            }
+
+            function secondFunction() {
+                var riskIdentificationId = @Model.Id;
+                var controlId = $("#controlId").val();
+
+                $.ajax({
+                    url: '/Control/Edit',
+                    type: 'GET',
+                    data: { id: 0, riskIdentificationId: riskIdentificationId },
+                    success: function (data) {
+                        window.location.href = '/Control/Edit/' + data.id + '?riskIdentificationId=' + riskIdentificationId;
+                    },
+                    error: function (error) {
+                        if (error.responseJSON && error.responseJSON.error === "DuplicateData") {
+                            swal({
+                                title: "Opps...",
+                                text: "Company and Department information has already been added!",
+                                icon: "error",
+                                position: "top-end",
+                                timer: 2000,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                showCloseButton: false
+                            });
+                        } else {
+                            swal({
+                                title: "Opps...",
+                                text: "Something went wrong!",
+                                icon: "error",
+                                position: "top-end",
+                                timer: 2000,
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                showCloseButton: false
+                            });
+                        }
+                    }
+                });
+            }
 
             $("#EditForm").validate({
                 rules: {
@@ -287,7 +504,8 @@
                         RiskImpactId: $("#RiskImpact").val(),
                         RiskLikelihoodId: $("#RiskLikelihood").val(),
                         RiskRatingRationalization: htmlRiskRatingRationalization,
-                        InherentRiskRating: $("#InherentRiskRating").val()
+                        InherentRiskRating: $("#InherentRiskRating").val(),
+                        InherentRiskStatus: $("#InherentRiskStatus").val()
                     };
 
                     swal({
@@ -326,17 +544,29 @@
                                 });
                             },
                             error: function (error) {
-                                if (error.responseJSON && error.responseJSON.errors) {
+                                if (error.responseJSON && error.responseJSON.error === "DuplicateData") {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Company and Department information has already been added!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                } else {
                                     swal({
                                         title: "Opps...",
                                         text: "Something went wrong!",
                                         icon: "error",
-                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        position: "top-end",
+                                        timer: 2000,
                                         allowOutsideClick: false,
-                                        showConfirmButton: false, // إخفاء زر التأكيد
-                                        showCancelButton: false, // إخفاء زر الإلغاء
-                                        showCloseButton: false // إخفاء زر الإغلاق
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
                                     });
                                 }
                             }

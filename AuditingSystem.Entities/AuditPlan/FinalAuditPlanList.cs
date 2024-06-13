@@ -14,7 +14,7 @@ namespace AuditingSystem.Entities.AuditPlan
 
         public virtual string? Year { get; set; }
         public virtual string? Quarter { get; set; }
-        public virtual bool? Plan { get; set; }
-        public virtual bool? Actual { get; set; }
+        public virtual int? Plan { get; set; }
+        public virtual int? Actual { get; set; }
     }
 }

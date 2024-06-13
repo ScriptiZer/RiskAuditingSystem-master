@@ -23,7 +23,23 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label for="Industry">Industry</label>
+                                @Html.DropDownList("IndustryId", ViewBag.IndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Industry" , @name="IndustryId"})
+                                <span asp-validation-for="IndustryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="Company">Company</label>
+                                <input type="hidden" value="@Model.CompanyId" id="comId" />
+                                @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company" , @name="CompanyId"})
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label>Department</label>
+                                <input type="hidden" value="@Model.DepartmentId" id="DeptId" />
                                 @Html.DropDownList("DepartmentId", ViewBag.DepartmentId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Department", @name="DepartmentId" })
                                 <span asp-validation-for="DepartmentId" class="text-danger"></span>
                             </div>
@@ -58,9 +74,94 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
+            $.ajax({
+                url: "/Function/GetCompanyByIndustry",
+                data: { industryId: $("#Industry").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Company").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#comId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Company").html(options);
+                    }
+                }
+            });
+            $.ajax({
+                url: "/Function/GetDepartmentsByCompany",
+                data: { companyId: $("#Company").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Department").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#DeptId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Department").html(options);
+                    }
+                }
+            });
+
+            $("#Industry").change(function () {
+                var industryId = $(this).val();
+                $.ajax({
+                    url: "/Function/GetCompanyByIndustry",
+                    data: { industryId: industryId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Company").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Company").html(options);
+                        }
+                    }
+                });
+            });
+
+            $("#Company").change(function () {
+                var companyId = $(this).val();
+                $.ajax({
+                    url: "/Function/GetDepartmentsByCompany",
+                    data: { companyId: companyId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Department").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Department").html(options);
+                        }
+                    }
+                });
+            });
+
                $('#Description').summernote();
             $("#EditForm").validate({
                 rules: {
+                    IndustryId: {
+                        required: true
+                    },
+                    CompanyId: {
+                        required: true
+                    },
                     DepartmentId: {
                         required: true
                     },
@@ -72,6 +173,12 @@
                     }
                 },
                 messages: {
+                    IndustryId: {
+                        required: "The Industry field is required"
+                    },
+                    CompanyId: {
+                        required: "The Company field is required"
+                    },
                     DepartmentId: {
                         required: "The Department field is required"
                     },
@@ -105,6 +212,8 @@
                     var formData = {
                         Name: $("#Name").val(),
                         Code: $("#Code").val(),
+                        IndustryId: $("#Industry").val(),
+                        CompanyId: $("#Company").val(),
                         DepartmentId: $("#Department").val(),
                         Description: htmlDescription
                     };

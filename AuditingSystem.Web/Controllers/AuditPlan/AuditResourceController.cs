@@ -1,6 +1,7 @@
 ﻿using AuditingSystem.Database;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using AuditingSystem.Web.ViewModels;
@@ -61,7 +62,120 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
             _db = db;
             _memoryCache = memoryCache;
         }
+        /*
+          public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
 
+                if (userId == null)
+                    return RedirectToAction("Login", "Account");
+
+                var getCompany = await _userRepository.FindByAsync(Convert.ToInt32(userId));
+
+                var list = await _auditResources.ListAsync(
+                    new Expression<Func<AuditResources, bool>>[] { u => u.IsDeleted == false, a => a.CompanyId == getCompany.CompanyId },
+                    q => q.OrderBy(u => u.Id),
+                    c => c.Company,
+                    c => c.AuditResourcesList);
+
+                var companyViewModelList = list.Select(auditResource => new AuditProcessVM
+                {
+                    ResourceId = auditResource.Id,
+                    CompanyName = auditResource.Company?.Name,
+                    DepartmentName = GetDepartmentName(auditResource.DepartmentId),
+                    Functions = GetFunctionNames(auditResource.FunctionId),
+                    PlanStartDate = auditResource.PlanStartDate,
+                    PlanEndDate = auditResource.PlanEndDate,
+                    Description = auditResource.Description
+                }).ToList();
+
+                // Flatten the grouped data into a single list of items
+                var flattenedData = companyViewModelList.Select(group => group).ToList();
+
+                // Apply pagination to the flattened data
+                var pagedData = flattenedData.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                // Re-group the paged data by DepartmentName for display purposes
+                var groupedPagedData = pagedData.GroupBy(auditResource => auditResource.DepartmentName).ToList();
+
+                ViewBag.TotalRow = flattenedData.Count();
+                ViewBag.CurrentPage = page;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalPages = (int)Math.Ceiling(flattenedData.Count() / (double)pageSize);
+                ViewBag.DepartmentGroups = groupedPagedData;
+
+                var userGroupedData = GetAuditResourceData();
+                ViewBag.UserGroupedData = userGroupedData;
+
+                var startEndDateGroupedData = GetAuditResourceStartEndDateData();
+                ViewBag.StartEndDateGroupedData = startEndDateGroupedData;
+
+                var companyIds = getCompany.CompanyId;
+                var companiesWithYearsAndQuarters = await _db.Companies
+                    .Include(c => c.Years).ThenInclude(y => y.Quarters)
+                    .Where(u => u.IsDeleted == false)
+                    .OrderBy(u => u.Id)
+                    .ToListAsync();
+
+                var companiesWithInAndOutsources = await _db.Companies
+                    .Include(c => c.User)
+                    .Where(u => u.IsDeleted == false && u.Id == companyIds)
+                    .OrderBy(u => u.Id)
+                    .ToListAsync();
+
+                if (companiesWithInAndOutsources.Any())
+                {
+                    var company = companiesWithInAndOutsources.First();
+                    var insourceIds = _splitRepository.SplitData(company.Insources);
+                    var outsourceIds = _splitRepository.SplitData(company.Outsources);
+                    var managerIds = _splitRepository.SplitData(company.Manager);
+
+                    if (insourceIds.Any())
+                    {
+                        var insourceUsers = await _db.Users
+                            .Where(u => insourceIds.Contains(u.Id))
+                            .ToListAsync();
+                        var outsourceUsers = await _db.Users
+                            .Where(u => outsourceIds.Contains(u.Id))
+                            .ToListAsync();
+                        var managerUsers = await _db.Users
+                            .Where(u => managerIds.Contains(u.Id))
+                            .ToListAsync();
+
+                        ViewBag.InsourceUsers = insourceUsers;
+                        ViewBag.OutsourceUsers = outsourceUsers;
+                        ViewBag.ManagerUsers = managerUsers;
+                    }
+                }
+
+                var yearQuarterDictionary = new Dictionary<string, List<YearQuarter>>();
+
+                foreach (var company in companiesWithYearsAndQuarters)
+                {
+                    foreach (var year in company.Years.OrderBy(y => Convert.ToInt32(y.Name)).TakeLast(3))
+                    {
+                        var quarters = year.Quarter.Split(',').ToList();
+                        var yearQuarters = new List<YearQuarter>();
+                        foreach (var quarter in quarters)
+                        {
+                            yearQuarters.Add(new YearQuarter { YearId = year.Id, Quarter = quarter });
+                        }
+                        yearQuarterDictionary.Add(year.Name, yearQuarters);
+                    }
+                }
+
+                ViewBag.yearQuarterDictionary = yearQuarterDictionary;
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+        }
+         */
         public async Task<IActionResult> Index()
         {
             try
@@ -83,6 +197,7 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
                 var companyViewModelList = list.Select(auditResource => new AuditProcessVM
                 {
                     ResourceId = auditResource.Id,
+                    AssignedToUserId = auditResource.AssignedToUserId,
                     CompanyName = auditResource.Company?.Name,
                     DepartmentName = GetDepartmentName(auditResource.DepartmentId),
                     Functions = GetFunctionNames(auditResource.FunctionId),
@@ -90,6 +205,16 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
                     PlanEndDate = auditResource.PlanEndDate,
                     Description= auditResource.Description
                 }).ToList();
+
+                var AssignedToUserId = _db.Users.Where(c => c.CompanyId == getCompany.CompanyId);
+                ViewBag.AssignedToUserId = new SelectList(
+                    AssignedToUserId
+                        .OrderBy(r => r.ResourceType)
+                        .ThenBy(r => r.Name)
+                        .Select(r => new { Id = r.Id, Name = $"{r.ResourceType} - {r.Name}" }),
+                    "Id",
+                    "Name"
+                );
 
                 var groupedData = companyViewModelList.GroupBy(auditResource => auditResource.DepartmentName);
 
@@ -142,7 +267,7 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
 
                 foreach (var company in companiesWithYearsAndQuarters)
                 {
-                    foreach (var year in company.Years.TakeLast(3))
+                    foreach (var year in company.Years.OrderBy(y=>Convert.ToInt32(y.Name)).TakeLast(3))
                     {
                         var quarters = year.Quarter.Split(',').ToList();
                         var yearQuarters = new List<YearQuarter>();
@@ -245,7 +370,7 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
 
                 foreach (var company in companiesWithYearsAndQuarters)
                 {
-                    foreach (var year in company.Years)
+                    foreach (var year in company.Years.OrderBy(y => Convert.ToInt32(y.Name)))
                     {
                         var quarters = year.Quarter.Split(',').ToList();
                         var yearQuarters = new List<YearQuarter>();
@@ -293,12 +418,12 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
                     AuditResourceId = group.Key.AuditResourceId,
                     YearId = group.Key.YearId,
                     QuarterId = group.Key.QuarterId,
-                    //PlanStartDate = group.Min(item => item.PlanStartDate),
-                    //PlanEndDate = group.Max(item => item.PlanEndDate),
+                    PlanStartDate = group.Min(item => item.PlanStartDate),
+                    PlanEndDate = group.Max(item => item.PlanEndDate),
                     ActualStartDate = group.Min(item => item.ActualStartDate),
                     ActualEndDate = group.Max(item => item.ActualEndDate),
-                    AssignedToStartActualId = group.Min(item => item.AssignedToStartActualId),
-                    AssignedToEndActualId = group.Max(item => item.AssignedToEndActualId)
+                    //AssignedToStartActualId = group.Min(item => item.AssignedToStartActualId),
+                    //AssignedToEndActualId = group.Max(item => item.AssignedToEndActualId)
                 })
                 .ToList<dynamic>();
 
@@ -326,7 +451,7 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
             {
                 var getCompany = await _userRepository.FindByAsync(Convert.ToInt32(userId));
                 var companies = _companyRepository.ListAsync(
-                      new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false, C => C.Id == getCompany.CompanyId },
+                      new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false },
                       q => q.OrderBy(u => u.Id),
                       null).Result;
                 var departments = _departmentRepository.ListAsync(

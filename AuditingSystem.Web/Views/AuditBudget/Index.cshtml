@@ -1,7 +1,25 @@
 ﻿@model IEnumerable<AuditingSystem.Web.ViewModels.GetBudgetListVM>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
 @{
     ViewData["Title"] = "Audit Budget List";
 }
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+
 
 <style>
     .colorLabel {
@@ -79,7 +97,7 @@
 </style>
 <style>
     .scrollable-table-container {
-        max-height: 400px;
+        max-height: 700px;
         overflow-y: auto;
     }
     /* Add some custom styles for the tabs */
@@ -112,6 +130,12 @@
                         <h4 class="card-title">Audit Budget Management View</h4>
                     </div>
                     <div class="col-md-6 text-end">
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Budget" && p.View == true && p.Add == true))
+                        {
+                            <a class="btn btn-primary me-2" href="~/AuditBudget/Add">
+                                <i class="fa-solid fa-plus"></i> Add New Audit Budget
+                            </a>
+                        }
                     </div>
                 </div>
                 <br />
@@ -123,7 +147,7 @@
 
 
                 <div class="">
-                    @foreach (var group in Model.GroupBy(x => x.AuditBudget.ResourceType))
+                    @foreach (var group in Model.GroupBy(x => x.AuditBudget.ResourceType != null))
                     {
                         <div style="vertical-align: middle;
                             line-height: 1;
@@ -135,14 +159,15 @@
                             justify-content: space-between;
                             align-items: center; ">
                             <div style="flex: 1;">
-                                <h5 style="font-weight: 900;    margin-left: 20px;">@group.Key</h5>
+                                @* <h5 style="font-weight: 900;    margin-left: 20px;">@group.Key</h5> *@
                             </div>
                             <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
                                 @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
                                 {
                                     <div class="year-tab" data-departments="@group.Key" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
                                         height: 55px;
-                                        width: 70px;
+                                        width: 90px;
+                                        text-align: center;
                                         box-sizing: border-box;
                                         /* margin-right: -14px; */
                                         background-color: #cdd8e7;
@@ -170,7 +195,7 @@
                                 <thead>
                                     <tr>
                                         <th rowspan="4"></th>
-                                        <th colspan="2" style="text-align:center;">Items</th>
+                                        <th colspan="@(group.Key == false?2:1)" style="text-align:center;">Items</th>
                                         <th rowspan="4">Estimated</th>
                                         <th rowspan="4">Actual</th>
                                         <th rowspan="4">Variance</th>
@@ -180,13 +205,19 @@
                                                 @year
                                             </th>
                                         }
-                                        <th style="display:none;" rowspan="4">Actions</th>
+                                       @*  <th style="" rowspan="4">Action</th> *@
                                     </tr>
 
                                     <tr>
-                                        <th rowspan="3">Budget Type</th>
-                                        <th rowspan="3">Auditors</th>
-
+                                        @if (group.Key == false)
+                                        {
+                                            <th rowspan="3">Budget Type</th>
+                                            <th rowspan="3">Auditors</th>
+                                        }
+                                        else if (group.Key == true)
+                                        {
+                                            <th rowspan="3">Title</th>
+                                        }
                                         @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
                                         {
                                             foreach (var quarter in ViewBag.yearQuarterDictionary[year])
@@ -230,7 +261,9 @@
                                     @foreach (var item in group)
                                     {
                                         <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
-                                            <h6 class="card-title m-3">@item.User.Name</h6>
+                                            <h6 class="card-title m-3">
+                                                @(item.User?.Name)
+                                            </h6>
 
                                             <div class="card-body">
                                                 <textarea cols="50" rows="5" data-budgetId="@item.AuditBudget.Id" class="form-control">@Html.Raw(item.AuditBudget.Description)</textarea>
@@ -261,21 +294,31 @@
                                                     <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
                                                 </a>
                                             </td>
-                                            <td>
-                                                <select title="Budget Type" data-index="@index" class="BudgetType form-control" asp-for="@item.AuditBudget.BudgetType">
-                                                    <option value="">-- Select One --</option>
-                                                    <option value="Salary">Salary</option>
-                                                    <option value="Other">Other</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                @item.User.Name
-                                            </td>
+
+                                            @if (group.Key == false)
+                                            {
+                                                <td>
+                                                    <select title="Budget Type" data-index="@index" class="BudgetType form-control" asp-for="@item.AuditBudget.BudgetType">
+                                                        <option value="">-- Select One --</option>
+                                                        <option value="Salary">Salary</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    @(item.User?.Name) - @item.User?.ResourceType
+                                                </td>
+                                            }
+                                            else if (group.Key == true)
+                                            {
+                                                <td>
+                                                    @(item.AuditBudget.ResourceType)
+                                                </td>
+                                            }
                                             <td>
                                                 <center> <input id="estimated" title="Estimated" data-index="@index" class="estimated" value="@item.AuditBudget.TotalEstmated" type="number" min="0" /></center>
                                             </td>
                                             <td>
-                                                <center> <input readonly id="actual" title="Actual" class="actual" value="@item.AuditBudget.TotalActual" type="number" min="0" /></center>
+                                                <center> <input id="actual" title="Actual" class="actual" value="@item.AuditBudget.TotalActual" type="number" min="0" /></center>
                                             </td>
                                             <td>
                                                 <center> <input title="Variance" readonly="readonly" class="variance" value="@item.AuditBudget.Variance" type="number" min="0" /></center>
@@ -298,7 +341,7 @@
 
                                                         <td data-departments="@group.Key" data-years="@year" style="text-align:center;">
                                                             <center>
-                                                                <input title="@item.User.Name - @year - @quarter.Quarter - @month - Estimated"
+                                                                <input title="@(item.User?.Name) - @year - @quarter.Quarter - @month - Estimated"
                                                                        type="number" min="0" name="estimated-@userIndex" data-index="@index"
                                                                        data-year="@year" data-quarter="@quarter.Quarter" data-month="@month" class="estimated"
                                                                        value="@(budgetGroupData?.Estimated ?? 0)" />
@@ -307,7 +350,7 @@
 
                                                         <td data-departments="@group.Key" data-years="@year" style="text-align:center;">
                                                             <center>
-                                                                <input title="@item.User.Name - @year - @quarter.Quarter - @month - Actual"
+                                                                <input title="@(item.User?.Name) - @year - @quarter.Quarter - @month - Actual"
                                                                        type="number" min="0" name="actual-@userIndex" data-index="@index"
                                                                        data-year="@year" data-quarter="@quarter.Quarter" data-month="@month" class="actual"
                                                                        value="@(budgetGroupData?.Actual ?? 0)" />
@@ -319,14 +362,14 @@
                                             }
 
                                             <td style="display:none;">
-                                                <a id="btnSave-@userIndex-@index" class="showAlertButton btnSave" title="Add Data" data-budgetId="@item.AuditBudget.Id" data-id="@index" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                                <button id="btnSave-@userIndex-@index" class="showAlertButton btnSave btn btn-primary" title="Add Data" data-budgetId="@item.AuditBudget.Id" data-id="@index" href="#"> <i class="fa-solid fa-floppy-disk"></i> Save</button>
                                             </td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
-                        <div class="row" style=" margin-bottom: 50px;">
+                        <div class="row" style=" margin-bottom: 100px;">
                             <div class="col-md-3"></div>
                             <div class="col-md-3">
                                 <label>Equation Total Estimated</label>
@@ -341,13 +384,27 @@
                                 <input type="text" readonly="readonly" data-group="@group.Key" class="TotalEquationVariance form-control" />
                             </div>
                         </div>
-
                     }
                 </div>
-                <div class="modal-footer float-end">
-                    <button class="btn btn-primary" id="saveAllButton">
-                        <i class="fa-solid fa-save"></i> Save All
-                    </button>
+                <div class="row" style="">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                        <label>Equation Total Estimated Budget</label>
+                        <input type="text" readonly="readonly" class="form-control" id="TotalEstimatedBudget" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Equation Total Actual Budget</label>
+                        <input type="text" readonly="readonly" class="form-control" id="TotalActualBudget" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Equation Total Variance Budget</label>
+                        <input type="text" readonly="readonly" class="form-control" id="TotalVarianceBudget" />
+                    </div>
+                </div>
+                <div class="modal-footer" style="position: fixed; left: 0; right: 0; bottom: 0; background-color: #ffffff; z-index: 9; ">
+                <button class="btn btn-primary" id="saveAllButton">
+                <i class="fa-solid fa-save"></i> Save All
+                </button>
                 </div>
             </div>
         </div>
@@ -404,7 +461,13 @@
             $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
         }
 
+
+
         $(document).ready(function () {
+            
+
+            ///////////////
+
             $(document).on("click", ".year-tab", function () {
                 var selectedYear = $(this).data("years");
                 var selectedDepartment = $(this).data("departments");
@@ -472,8 +535,29 @@
             });
 
             $(document).on("click", "#saveAllButton", function () {
+
+
+                swal({
+                    title: "Saving...",
+                    text: "Please wait.",
+                    allowOutsideClick: false,
+                    showConfirmButton: false, // إخفاء زر التأكيد
+                    showCancelButton: false, // إخفاء زر الإلغاء
+                    showCloseButton: false, // إخفاء زر الإغلاق
+                    onBeforeOpen: () => {
+                        swal.showLoading(); // إضافة شريط التقدم
+                    }
+                });
+
+
+
                 $(".btnSave").each(function () {
+                    var bId = $(this);
+                    var index = $(this).data("id");
                     var row = $(this).closest("tr");
+                    var totalRequests = $(this).length;
+                    var successfulResponses = 0;
+
                     var formData = {
                         TotalEstmated: row.find(".estimated").val(),
                         TotalActual: row.find(".actual").val(),
@@ -481,65 +565,96 @@
                         BudgetType: row.find(".BudgetType").val()
                     };
 
-                    var bId = $(this);
-                    var index = $(this).data("id");
 
-                    $.ajax({
-                        url: "/api/AuditBudgets/" + bId.attr("data-BudgetId"),
-                        method: "PUT",
-                        dataType: 'json',
-                        contentType: "application/json",
-                        data: JSON.stringify(formData),
-                        success: function (response) {
-                            console.log("Server response:", response);
-                            console.log("The Save is Successfully for estimated, actual, and variance");
-                        },
-                        error: function (error) {
-                            console.error("Error:", error);
-                            if (error.responseJSON && error.responseJSON.errors) {
-                                $.each(error.responseJSON.errors, function (key, value) {
-                                    row.find("#" + key).siblings(".text-danger").text(value);
-                                });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/AuditBudgets/" + bId.attr("data-BudgetId"),
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                console.log("Server response:", response);
+                                console.log("The Save is Successfully for estimated, actual, and variance");
+                            },
+                            error: function (error) {
+                                console.error("Error:", error);
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    $.each(error.responseJSON.errors, function (key, value) {
+                                        row.find("#" + key).siblings(".text-danger").text(value);
+                                    });
+                                }
                             }
-                        }
-                    });
-
-                    var auditBudgetList = [];
-                    for (var userIndex = 0; userIndex < 12; userIndex++) {
-                        var estimated = $("input[name='estimated-" + userIndex + "'][data-index='" + index + "']").val();
-                        var actual = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").val();
-                        var company = $("input[name='company-" + userIndex + "'][data-index='" + index + "']").val();
-                        var firstInput = $("input[name='estimated-" + userIndex + "'][data-index='" + index + "']");
-                        var year = firstInput.data("year");
-                        var quarter = firstInput.data("quarter");
-                        var month = firstInput.data("month");
-                        var budgetId = bId.attr("data-budgetId");
-
-                        auditBudgetList.push({
-                            Estimated: estimated,
-                            Actual: actual,
-                            Year: year,
-                            Quarter: quarter,
-                            Month: month,
-                            BudgetId: budgetId,
-                            CompanyId: company
                         });
-                    }
 
-                    $.ajax({
-                        type: "POST",
-                        url: "/api/AuditBudgets/AddBudgetList",
-                        contentType: "application/json; charset=utf-8",
-                        data: JSON.stringify(auditBudgetList),
-                        success: function (data) {
-                            console.log("Audit resources added successfully:", data);
-                            var BudgetId = data.length > 0 ? data[0].BudgetId : null;
-                            alert("The save data is successfully");
-                        },
-                        error: function (error) {
-                            console.error("An error occurred while adding audit resources:", error.responseText);
+                        var auditBudgetList = [];
+                        for (var userIndex = 0; userIndex < 12; userIndex++) {
+                            var estimated = $("input[name='estimated-" + userIndex + "'][data-index='" + index + "']").val();
+                            var actual = $("input[name='actual-" + userIndex + "'][data-index='" + index + "']").val();
+                            var company = $("input[name='company-" + userIndex + "'][data-index='" + index + "']").val();
+                            var firstInput = $("input[name='estimated-" + userIndex + "'][data-index='" + index + "']");
+                            var year = firstInput.data("year");
+                            var quarter = firstInput.data("quarter");
+                            var month = firstInput.data("month");
+                            var budgetId = bId.attr("data-budgetId");
+
+                            auditBudgetList.push({
+                                Estimated: estimated,
+                                Actual: actual,
+                                Year: year,
+                                Quarter: quarter,
+                                Month: month,
+                                BudgetId: budgetId,
+                                CompanyId: company
+                            });
                         }
-                    });
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/AuditBudgets/AddBudgetList",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify(auditBudgetList),
+                            success: function (data) {
+                                console.log("Audit resources added successfully:", data);
+                                var BudgetId = data.length > 0 ? data[0].BudgetId : null;
+                                successfulResponses++;
+                                if (successfulResponses === totalRequests) {
+                                    swal({
+                                        title: "Success",
+                                        text: "Your data has been saved",
+                                        icon: "success",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                successfulResponses++;
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    if (successfulResponses === totalRequests) {
+                                        swal.close();
+                                        swal({
+                                            title: "Opps...",
+                                            text: "Something went wrong!",
+                                            icon: "error",
+                                            position: "top-end",
+                                            timer: 2000,
+                                            allowOutsideClick: false,
+                                            showConfirmButton: false,
+                                            showCancelButton: false,
+                                            showCloseButton: false
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    }, 2000);
+
                 });
             });
 
@@ -582,28 +697,72 @@
                     var totalVariance = totalEstimated - totalActual;
                     $('.TotalEquationVariance[data-group="' + groupKey + '"]').val(totalVariance.toFixed(2));
                 });
+
+                var subTotalEquationEstimated = 0.0;
+                var subTotalEquationActual = 0.0;
+                var subTotalEquationVariance = 0.0;
+
+                $(".TotalEquationEstimated").each(function () {
+                    subTotalEquationEstimated += parseFloat($(this).val()) || 0;
+                });
+                $(".TotalEquationActual").each(function () {
+                    subTotalEquationActual += parseFloat($(this).val()) || 0;
+                });
+                $(".TotalEquationVariance").each(function () {
+                    subTotalEquationVariance += parseFloat($(this).val()) || 0;
+                });
+
+                $("#TotalEstimatedBudget").val(subTotalEquationEstimated);
+                $("#TotalActualBudget").val(subTotalEquationActual);
+                $("#TotalVarianceBudget").val(subTotalEquationVariance);
+
+
+
+                $(document).on("input change", ".TotalEquationEstimated", function () {
+                    subTotalEquationEstimated = 0.0;
+                    $(".TotalEquationEstimated").each(function () {
+                        subTotalEquationEstimated += parseFloat($(this).val()) || 0;
+                    });
+                    $("#TotalEstimatedBudget").val(subTotalEquationEstimated);
+                });
+
+                $(document).on("input change", ".TotalEquationActual", function () {
+                    subTotalEquationActual = 0.0;
+                    $(".TotalEquationActual").each(function () {
+                        subTotalEquationActual += parseFloat($(this).val()) || 0;
+                    });
+                    $("#TotalActualBudget").val(subTotalEquationActual);
+                });
+
+                $(document).on("input change", ".TotalEquationVariance", function () {
+                    subTotalEquationVariance = 0.0;
+                    $(".TotalEquationVariance").each(function () {
+                        subTotalEquationVariance += parseFloat($(this).val()) || 0;
+                    });
+                    $("#TotalVarianceBudget").val(subTotalEquationVariance);
+                });
             }
 
 
         @functions {
-        string GetMonthesForQuarter(string quarter)
-        {
-            switch (quarter)
+            string GetMonthesForQuarter(string quarter)
             {
-                case "Q1":
-                    return $"Jan,Feb,Mar";
-                case "Q2":
-                    return $"Apr,May,Jun";
-                case "Q3":
-                    return $"Jul,Aug,Sep";
-                case "Q4":
-                    return $"Oct,Nov,Dec";
-                default:
-                    return "";
+                switch (quarter)
+                {
+                    case "Q1":
+                        return $"Jan,Feb,Mar";
+                    case "Q2":
+                        return $"Apr,May,Jun";
+                    case "Q3":
+                        return $"Jul,Aug,Sep";
+                    case "Q4":
+                        return $"Oct,Nov,Dec";
+                    default:
+                        return "";
+                }
             }
         }
-        }
-            });
+    });
 
 </script>
 }

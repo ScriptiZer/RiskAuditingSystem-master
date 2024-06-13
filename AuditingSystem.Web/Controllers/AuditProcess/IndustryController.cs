@@ -40,79 +40,79 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling(industries.Count() / (double)pageSize);
 
-            string apiurl = "https://onyx3.azurewebsites.net/Industries/GetIndustries";
-            using (HttpClient client = new HttpClient())
-            {
-                string requestBody = "{}";
-                StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(apiurl, content);
+            //string apiurl = "https://onyx3.azurewebsites.net/Industries/GetIndustries";
+            //using (HttpClient client = new HttpClient())
+            //{
+            //    string requestBody = "{}";
+            //    StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+            //    HttpResponseMessage response = await client.PostAsync(apiurl, content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        string responseBody = await response.Content.ReadAsStringAsync();
 
-                    // Parse JSON response using JObject
-                    JObject json = JObject.Parse(responseBody);
+            //        // Parse JSON response using JObject
+            //        JObject json = JObject.Parse(responseBody);
 
-                    // Create APIIndustry entities and add them to the repository
-                    foreach (var item in json["items"])
-                    {
-                        int id = (int)item["id"];
-                        string name = (string)item["industry"];
-                        int? parentId = item["parentId"]?.ToObject<int?>() ?? null;
-                        string code = (string)item["code"];
+            //        // Create APIIndustry entities and add them to the repository
+            //        foreach (var item in json["items"])
+            //        {
+            //            int id = (int)item["id"];
+            //            string name = (string)item["industry"];
+            //            int? parentId = item["parentId"]?.ToObject<int?>() ?? null;
+            //            string code = (string)item["code"];
 
-                        // Check if the APIIndustry with the given id already exists
-                        var existingApiIndustry = await _industryRepository.FindByAsync(id);
-                        if (existingApiIndustry == null)
-                        {
-                            // Check if parentId is not null
-                            if (parentId != null)
-                            {
-                                // Check if there is a record in the ParentIndustry table with the same id
-                                var existingParentIndustry = await _industryRepository.FindByAsync(parentId.Value);
+            //            // Check if the APIIndustry with the given id already exists
+            //            var existingApiIndustry = await _industryRepository.FindByAsync(id);
+            //            if (existingApiIndustry == null)
+            //            {
+            //                // Check if parentId is not null
+            //                if (parentId != null)
+            //                {
+            //                    // Check if there is a record in the ParentIndustry table with the same id
+            //                    var existingParentIndustry = await _industryRepository.FindByAsync(parentId.Value);
 
-                                // Create a new APIIndustry and add it to the repository
-                                var newApiIndustry = new Industry
-                                {
-                                    Id = id,
-                                    Name = name,
-                                    Code = code,
-                                    Source = "API",
-                                    ParentIndustryId = existingParentIndustry != null ? existingParentIndustry.Id : null,
-                                    CreatedBy = "Admin",
-                                    CreationDate = DateTime.Now,
-                                    UpdatedBy = "Admin",
-                                    UpdatedDate = DateTime.Now,
-                                    IsDeleted = false
-                                    // Set other properties if needed
-                                };
-                                await _industryRepository.CreateAsync(newApiIndustry);
-                            }
-                            else
-                            {
-                                // Create a new APIIndustry without a ParentIndustryId and add it to the repository
-                                var newApiIndustry = new Industry
-                                {
-                                    Id = id,
-                                    Name = name,
-                                    Code = code,
-                                    Source = "API",
-                                    ParentIndustryId = parentId,
-                                    CreatedBy = "Admin",
-                                    CreationDate = DateTime.Now,
-                                    UpdatedBy = "Admin",
-                                    UpdatedDate = DateTime.Now,
-                                    IsDeleted = false
-                                    // Set other properties if needed
-                                };
-                                await _industryRepository.CreateAsync(newApiIndustry);
-                            }
-                        }
+            //                    // Create a new APIIndustry and add it to the repository
+            //                    var newApiIndustry = new Industry
+            //                    {
+            //                        Id = id,
+            //                        Name = name,
+            //                        Code = code,
+            //                        Source = "API",
+            //                        ParentIndustryId = existingParentIndustry != null ? existingParentIndustry.Id : null,
+            //                        CreatedBy = "Admin",
+            //                        CreationDate = DateTime.Now,
+            //                        UpdatedBy = "Admin",
+            //                        UpdatedDate = DateTime.Now,
+            //                        IsDeleted = false
+            //                        // Set other properties if needed
+            //                    };
+            //                    await _industryRepository.CreateAsync(newApiIndustry);
+            //                }
+            //                else
+            //                {
+            //                    // Create a new APIIndustry without a ParentIndustryId and add it to the repository
+            //                    var newApiIndustry = new Industry
+            //                    {
+            //                        Id = id,
+            //                        Name = name,
+            //                        Code = code,
+            //                        Source = "API",
+            //                        ParentIndustryId = parentId,
+            //                        CreatedBy = "Admin",
+            //                        CreationDate = DateTime.Now,
+            //                        UpdatedBy = "Admin",
+            //                        UpdatedDate = DateTime.Now,
+            //                        IsDeleted = false
+            //                        // Set other properties if needed
+            //                    };
+            //                    await _industryRepository.CreateAsync(newApiIndustry);
+            //                }
+            //            }
                         
-                    }
-                }
-            }
+            //        }
+            //    }
+            //}
 
             return View(model);
         }

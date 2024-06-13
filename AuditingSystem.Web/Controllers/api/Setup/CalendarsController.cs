@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Setup;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,10 @@ namespace AuditingSystem.Web.Controllers.api.Setup
             {
                 if (ModelState.IsValid)
                 {
+                    calendar.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    calendar.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    calendar.CreationDate = DateTime.Now;
+                    calendar.CurrentYear = DateTime.Now.Year;
                     await _calendarRepository.CreateAsync(calendar);
                     return NoContent();
                 }
@@ -87,6 +92,8 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                         return NotFound();
                     }
 
+                    existingCalendar.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingCalendar.UpdatedDate = DateTime.Now;
                     existingCalendar.Name = updatedCalendar.Name;
                     existingCalendar.Description = updatedCalendar.Description;
                     existingCalendar.CompanyId = updatedCalendar.CompanyId;

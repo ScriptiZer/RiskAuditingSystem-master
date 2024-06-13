@@ -7,7 +7,7 @@
 
 @{
     ViewData["DeleteTitle"] = "Industries";
-    ViewData["DeleteTitle"] = "Industry List";
+    ViewData["Title"] = "Industry List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @{
@@ -23,7 +23,6 @@
                 });
     }
 }
-
 
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
@@ -61,11 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.OrderBy(d =>
-                            {
-                               int code;
-                               return int.TryParse(d.Code, out code) ? code : 0;
-                            }))
+                            @foreach (var item in Model)
                             {
                                 <tr id="tr">
                                     
@@ -73,25 +68,25 @@
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true && (p.Edit == false && p.Delete == false)))
                                     {
                                         <td>
-                                            <a asp-action="View" asp-controller="Industry" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                            <a class="btn btn-primary" asp-action="View" asp-controller="Industry" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i> View Industry</a>
                                         </td>
                                     }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true && (p.Edit == false && p.Delete == true)))
                                     {
                                         <td>
-                                            <a asp-action="View" asp-controller="Industry" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                            <a class="btn btn-primary" asp-action="View" asp-controller="Industry" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i> View Industry</a>
                                         </td>
                                     }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true && p.Edit == true))
                                     {
                                         <td>
-                                            <a asp-action="Edit" asp-controller="Industry" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                            <a class="btn btn-primary" asp-action="Edit" asp-controller="Industry" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"> </i>Edit Industry</a>
                                         </td>
                                     }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true && p.Delete == true))
                                     {
                                         <td>
-                                            <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                            <button class="btn btn-danger text-white" data-actions-id="@item.Id" title="Delete" id="btnDelete"><i class="fa-solid fa-trash text-white"></i> Delete Industry</button>
                                         </td>
                                     }
 

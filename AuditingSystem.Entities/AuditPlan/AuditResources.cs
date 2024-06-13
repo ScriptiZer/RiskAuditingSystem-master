@@ -17,9 +17,10 @@ namespace AuditingSystem.Entities.AuditPlan
         public virtual string? FunctionId { get; set; } // 21,22,23,24,...
         public virtual DateTime? PlanStartDate { get; set; }
         public virtual DateTime? PlanEndDate { get; set; }
+        public int? AssignedToUserId { get; set; }
 
+        public User? AssignedToUser { get; set; }
         public virtual IEnumerable<AuditResourcesList>? AuditResourcesList { get; set; }
-
         public virtual Company? Company { get; set; }
         public virtual Department? Department { get; set; }
         public virtual Function? Function { get; set; }

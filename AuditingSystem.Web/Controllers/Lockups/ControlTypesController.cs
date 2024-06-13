@@ -34,6 +34,11 @@ namespace AuditingSystem.Web.Controllers.Lockups
         {
             return View(await _controletype.FindByAsync(id));
         }
+
+        public async Task<IActionResult> View(int id)
+        {
+            return View(await _controletype.FindByAsync(id));
+        }
     }
 
 }

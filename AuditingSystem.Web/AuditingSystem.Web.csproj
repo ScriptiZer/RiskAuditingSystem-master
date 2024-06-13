@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,25 +7,51 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\ControlEffectivenessc\View.cshtml" />
+    <Content Remove="Views\ControlFrequencyss\View.cshtml" />
+    <Content Remove="Views\ControlProcesses\View.cshtml" />
+    <Content Remove="Views\ControlTypes\View.cshtml" />
+    <Content Remove="Views\RiskCategorysscs\View.cshtml" />
+    <Content Remove="Views\RiskImpactes\View.cshtml" />
+    <Content Remove="Views\RiskLikehoodes\View.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Views\ControlEffectivenessc\Add.cshtml" />
+    <None Include="Views\ControlEffectivenessc\View.cshtml" />
     <None Include="Views\ControlEffectivenessc\Edit.cshtml" />
     <None Include="Views\ControlEffectivenessc\Index.cshtml" />
     <None Include="Views\ControlFrequencyss\Add.cshtml" />
+    <None Include="Views\ControlFrequencyss\View.cshtml" />
     <None Include="Views\ControlFrequencyss\Edit.cshtml" />
     <None Include="Views\ControlFrequencyss\Index.cshtml" />
     <None Include="Views\ControlProcesses\Add.cshtml" />
+    <None Include="Views\ControlProcesses\View.cshtml" />
     <None Include="Views\ControlProcesses\Edit.cshtml" />
     <None Include="Views\ControlProcesses\Index.cshtml" />
     <None Include="Views\ControlTypes\Add.cshtml" />
+    <None Include="Views\ControlTypes\View.cshtml" />
     <None Include="Views\ControlTypes\Edit.cshtml" />
     <None Include="Views\ControlTypes\Index.cshtml" />
+    <None Include="Views\Control\Add.cshtml" />
+    <None Include="Views\Control\Edit.cshtml" />
+    <None Include="Views\Control\Index.cshtml" />
+    <None Include="Views\Control\View.cshtml" />
+    <None Include="Views\RiskAssessment\Index.cshtml" />
     <None Include="Views\RiskCategorysscs\Add.cshtml" />
+    <None Include="Views\RiskCategorysscs\View.cshtml" />
     <None Include="Views\RiskCategorysscs\Edit.cshtml" />
     <None Include="Views\RiskCategorysscs\Index.cshtml" />
+    <None Include="Views\RiskIdentification\Add.cshtml" />
+    <None Include="Views\RiskIdentification\Edit.cshtml" />
+    <None Include="Views\RiskIdentification\Index.cshtml" />
+    <None Include="Views\RiskIdentification\View.cshtml" />
     <None Include="Views\RiskImpactes\Add.cshtml" />
+    <None Include="Views\RiskImpactes\View.cshtml" />
     <None Include="Views\RiskImpactes\Edit.cshtml" />
     <None Include="Views\RiskImpactes\Index.cshtml" />
     <None Include="Views\RiskLikehoodes\Add.cshtml" />
+    <None Include="Views\RiskLikehoodes\View.cshtml" />
     <None Include="Views\RiskLikehoodes\Edit.cshtml" />
     <None Include="Views\RiskLikehoodes\Index.cshtml" />
     <None Include="wwwroot\css\.DS_Store" />
@@ -146,7 +172,7 @@
     <None Include="wwwroot\scss\_variables.scss" />
     <None Include="wwwroot\scss\_vertical-wrapper.scss" />
     <None Include="wwwroot\vendors\.DS_Store" />
-    <None Include="wwwroot\vendors\chart.js\Chart.min.js" />
+    <None Include="wwwroot\vendors\chart\Chart.min.js" />
     <None Include="wwwroot\vendors\js\vendor.bundle.base.js" />
     <None Include="wwwroot\vendors\mdi\fonts\materialdesignicons-webfont.svg" />
     <None Include="wwwroot\vendors\mdi\fonts\materialdesignicons-webfont.woff2" />
@@ -184,10 +210,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="Views\Company\Index.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="Views\Control\Index.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -239,14 +261,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="Views\RiskAssessment\Index.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="Views\RiskIdentification\Index.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="Views\Task\Add.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -272,14 +286,10 @@
     <_ContentIncludedByDefault Remove="Views\Calendar\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Company\Add.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Company\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Control\Add.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Control\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Industry\Add.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Industry\Edit.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Objective\Add.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Objective\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\RiskIdentification\Add.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\RiskIdentification\Edit.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -300,22 +310,6 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Objective\Edit.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Control\Add.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Control\Edit.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\RiskIdentification\Add.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\RiskIdentification\Edit.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

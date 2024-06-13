@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
             {
                 if (ModelState.IsValid)
                 {
+                    control.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    control.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    control.CreationDate = DateTime.Now;
+                    control.CurrentYear = DateTime.Now.Year;
                     await _controlefrequncy.CreateAsync(control);
                     return NoContent();
                 }
@@ -84,7 +89,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                     }
 
 
-
+                    existingefreq.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingefreq.UpdatedDate = DateTime.Now;
+                    existingefreq.Name = control.Name;
+                    existingefreq.Description = control.Description;
                     existingefreq.BGColor = control.BGColor;
                     existingefreq.FontColor = control.FontColor;
                     await _controlefrequncy.UpdateAsync(existingefreq);

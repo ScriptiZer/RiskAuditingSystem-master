@@ -14,14 +14,16 @@ namespace AuditingSystem.Web.Controllers
         private readonly IAccountRepository _accountRepository;
         private readonly PermissionService _permissionService;
         private readonly IUserContext _userContext;
+        private readonly AuditingSystemDbContext db;
 
 
         public AccountController(IAccountRepository accountRepository, PermissionService permissionService,
-            IUserContext userContext)
+            IUserContext userContext, AuditingSystemDbContext db)
         {
             _accountRepository = accountRepository;
             _permissionService = permissionService;
             _userContext = userContext;
+            this.db = db;
         }
 
         public IActionResult Login()
@@ -32,16 +34,19 @@ namespace AuditingSystem.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(User user)
         {
-            (int? userId, string userName) = _accountRepository.Login(user);
+            //(int? userId, string userName) = _accountRepository.Login(user);
 
-            if (userId.HasValue)
+            var usr = _accountRepository.Login(user.Email, user.Password);
+            if (usr != null)
             {
-                HttpContext.Session.SetInt32("UserId", userId.Value);
-                HttpContext.Session.SetString("UserName", userName);
+                var com = db.Companies.Find(usr.CompanyId);
+                HttpContext.Session.SetInt32("UserId", usr.Id);
+                HttpContext.Session.SetString("UserName", usr.Name);
+                HttpContext.Session.SetInt32("CompanyId", com.Id);
 
-                _userContext.UserName = userName;
+                _userContext.UserName = usr.Name;
 
-                string roleName = _accountRepository.GetUserRoleName(userName);
+                string roleName = _accountRepository.GetUserRoleName(usr.Name);
 
                 _userContext.UserPermissions = _permissionService.GetPermissionsForUserRole(roleName);
 
@@ -56,6 +61,33 @@ namespace AuditingSystem.Web.Controllers
 
             return View();
         }
+        //[HttpPost]
+        //public async Task<IActionResult> Login(User user)
+        //{
+        //    (int? userId, string userName) = _accountRepository.Login(user);
+
+        //    if (userId.HasValue)
+        //    {
+        //        HttpContext.Session.SetInt32("UserId", userId.Value);
+        //        HttpContext.Session.SetString("UserName", userName);
+
+        //        _userContext.UserName = userName;
+
+        //        string roleName = _accountRepository.GetUserRoleName(userName);
+
+        //        _userContext.UserPermissions = _permissionService.GetPermissionsForUserRole(roleName);
+
+        //        HttpContext.Session.SetString("UserPermissions", JsonConvert.SerializeObject(_userContext.UserPermissions, new JsonSerializerSettings
+        //        {
+        //            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        //        }));
+
+
+        //        return RedirectToAction("Dashboard", "Home");
+        //    }
+
+        //    return View();
+        //}
 
         public async Task<IActionResult> Logout()
         {

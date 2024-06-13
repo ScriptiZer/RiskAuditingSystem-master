@@ -1,11 +1,12 @@
-﻿@model IEnumerable<AuditingSystem.Web.ViewModels.GroupedDraftAuditPlanViewModel>
+﻿@* @model IEnumerable<AuditingSystem.Web.ViewModels.GroupedDraftAuditPlanViewModel> *@
+@* @model IEnumerable<AuditingSystem.Entities.AuditPlan.FinalAuditPlan>
 @using Microsoft.AspNetCore.Http
 @using Newtonsoft.Json;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @inject IUserContext UserContext
 
 @{
-    ViewData["Title"] = "Draft Audit Plan List";
+    ViewData["Title"] = "Final Audit Plan List";
 }
 @{
     var userPermissionsJson = "";
@@ -97,7 +98,7 @@
         }
 
     .scrollable-table-container {
-        max-height: 400px;
+       /*  max-height: 400px; */
         overflow-y: auto;
     }
 
@@ -134,217 +135,167 @@
 
                 @if (Model != null)
                 {
-                    foreach (var group in Model)
-                    {
-                        <div style="vertical-align: middle;
-                                    line-height: 1;
-                                    /* padding: 1.25rem 0.9375rem; */
-                                    border-width: 0 1px;
-                                    background-color: #cfe2ff;
-                                    width: 100%;
-                                    display: flex;
-                                    justify-content: space-between;
-                                    align-items: center; ">
-                            <div style="flex: 1;">
-                                <h5 style="font-weight: 900;    margin-left: 20px;">@group.DepartmentName</h5>
-                            </div>
-                            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
-                                @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                {
-                                    <div data-departments="@group.DepartmentName" class="year-tab" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
-                                                height: 55px;
-                                                width: 70px;
-                                                box-sizing: border-box;
-                                                /* margin-right: -14px; */
-                                                background-color: #cdd8e7;
-                                                padding: 18px;" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
-                                        @year <!--Years Tab-->
-                                    </div>
-                                }
-                            </div>
-                            <a title="@group.DepartmentName Archives" href="~/FinalAuditPlan/Archives?departmentName=@group.DepartmentName">
-                                <div style="cursor: pointer;border:1px solid #bbb;
-                                            height: 55px;
-                                            width: 70px;
-                                            box-sizing: border-box;
-                                            /* margin-right: -14px; */
-                                            background-color: #cdd8e7;
-                                            padding: 18px;display: flex; justify-content: flex-end; align-items: center;">
-
-                                    <i class="fa-solid fa-inbox"></i>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="table-responsive scrollable-table-container" style="margin:0;padding-left: 0;" id="tableContainer">
-
-                            <table style="width: 100%" id="tableList" data-departments="@group.DepartmentName" class="tableList table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th rowspan="3"></th>
-                                        <th rowspan="3">Audit Area</th>
-                                        <th rowspan="3">Scope</th>
-                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                        {
-                                            <th data-departments="@group.DepartmentName" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
-                                                @year
-                                            </th>
-                                        }
-                                        <th colspan="3">Man Days</th>
-                                    </tr>
-                                    <tr>
-
-                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                        {
-                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
-                                            {
-                                                <th data-departments="@group.DepartmentName" data-years="@year" colspan="2">@quarter.Quarter</th>
-                                            }
-                                        }
-                                       
-                                        <th rowspan="2">Insource</th>
-                                        <th rowspan="2">Outsource</th>
-                                        <th rowspan="2">Manager</th>
-                                    </tr>
-                                    <tr>
-                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                        {
-                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
-                                            {
-                                                <th data-departments="@group.DepartmentName" data-years="@year">Plan</th>
-                                                <th data-departments="@group.DepartmentName" data-years="@year">Actual</th>
-                                            }
-                                        }
-                                     
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in group.DraftAuditPlans)
+                    <div class="table-responsive scrollable-table-container" style="margin:0;padding-left: 0;" id="tableContainer">
+                        <table style="width: 100%" id="tableList" class="tableList table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="3"></th>
+                                    <th rowspan="3">Audit Area</th>
+                                    <th rowspan="3">Scope</th>
+                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
                                     {
-                                        <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
-                                            <h6 class="card-title m-3">@item.Department.Name</h6>
+                                        <th data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                            @year
+                                        </th>
+                                    }
+                                    <th colspan="3">Man Days</th>
+                                </tr>
+                                <tr>
 
-                                            <div class="card-body">
-                                                <textarea cols="50" rows="5" data-draftid="@item.Id" class="form-control">@Html.Raw(item.Description)</textarea>
-                                            </div>
+                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                    {
+                                        foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                        {
+                                            <th data-years="@year" colspan="2">@quarter.Quarter</th>
+                                        }
+                                    }
 
-                                            <span class="closeDesc">&times;</span>
-                                            <a title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
-                                               href="#" id="SaveDescription" data-draftid="@item.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
+                                     <th rowspan="2">Insource</th>
+                                    <th rowspan="2">Outsource</th>
+                                    <th rowspan="2">Manager</th>
+                                </tr>
+                                <tr>
+                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                    {
+                                        foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                        {
+                                            <th data-years="@year">Plan</th>
+                                            <th data-years="@year">Actual</th>
+                                        }
+                                    }
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
+                                        <h6 class="card-title m-3">@item.Department.Name</h6>
+
+                                        <div class="card-body">
+                                            <textarea cols="50" rows="5" data-draftid="@item.Id" class="form-control">@Html.Raw(item.Description)</textarea>
                                         </div>
 
-                                        index++;
-                                        <tr id="tr" data-group="@group.DepartmentName">
-                                            @{
-                                                var iconColor = "";
-                                                var title = "";
-                                                if (item.Description != "")
-                                                {
-                                                    iconColor = "#05a536";
-                                                    title = "Edit Note";
-                                                }
-                                                else
-                                                {
-                                                    iconColor = "#0d6efd";
-                                                    title = "Add Note";
-                                                }
-                                            }
-                                            <td>
-                                                <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
-                                                    <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
-                                                </a>
-                                            </td>
+                                        <span class="closeDesc">&times;</span>
+                                        <a title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
+                                           href="#" id="SaveDescription" data-draftid="@item.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
+                                    </div>
 
-                                            <td>@item.Department.Name</td>
-                                            <td>@item.Function.Name</td>
-                                            @{
-                                                int userIndex = 0;
-
-                                            }
-                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                    index++;
+                                    <tr id="tr">
+                                        @{
+                                            var iconColor = "";
+                                            var title = "";
+                                            if (item.Description != "")
                                             {
-                                                foreach (var quarter in ViewBag.yearQuarterDictionary[year])
-                                                {
-                                                    var DraftGroupedData = ViewBag.DraftGroupedData as List<dynamic>;
-                                                    var AuditPlanData = DraftGroupedData?.FirstOrDefault(d => d.DraftAuditPlanId == item.Id && d.Year == year && d.Quarter == quarter.Quarter);
-
-                                                    var setColor = "";
-                                                    if ((AuditPlanData != null && AuditPlanData.Plan != null && AuditPlanData.Plan == 1))
-                                                    {
-                                                        setColor = "#666666";
-                                                    }
-                                                    <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@setColor">
-                                                    </td>
-
-                                                    setColor = "";
-                                                    if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 2)
-                                                    {
-                                                        setColor = "#72C044";
-                                                    }
-                                                    else if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 3)
-                                                    {
-                                                        setColor = "#C00000";
-                                                    }
-                                                    <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@setColor">
-                                                    </td>
-                                                    userIndex++;
-                                                }
+                                                iconColor = "#05a536";
+                                                title = "Edit Note";
                                             }
-                                          
-
-                                            <td id="insource" class="insource">
-                                                <center>
-                                                    @item.Insource
-                                                </center>
-                                            </td>
-                                            <td id="outsource" class="outsource">
-                                                <center>
-                                                    @item.Outsource
-                                                </center>
-                                            </td>
-                                            <td id="manager" class="manager">
-                                                <center>
-                                                    @item.Manager
-                                                </center>
-                                            </td>
-                                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
+                                            else
                                             {
-                                                <td style="display:none;">
-                                                    <a data-id="@index" data-draftId="@item.Id" class="btnSave" id="btnSave" title="Save Data" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                                iconColor = "#0d6efd";
+                                                title = "Add Note";
+                                            }
+                                        }
+                                        <td>
+                                            <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
+                                                <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
+                                            </a>
+                                        </td>
+
+                                        <td>@item.Department.Name</td>
+                                        <td>@item.Function.Name</td>
+                                        @{
+                                            int userIndex = 0;
+
+                                        }
+                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                        {
+                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                            {
+                                                var DraftGroupedData = ViewBag.DraftGroupedData as List<dynamic>;
+                                                var AuditPlanData = DraftGroupedData?.FirstOrDefault(d => d.DraftAuditPlanId == item.Id && d.Year == year && d.Quarter == quarter.Quarter);
+
+                                                var setColor = "";
+                                                if ((AuditPlanData != null && AuditPlanData.Plan != null && AuditPlanData.Plan == 1))
+                                                {
+                                                    setColor = "#666666";
+                                                }
+                                                <td data-years="@year" style="background-color:@setColor">
                                                 </td>
+
+                                                setColor = "";
+                                                if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 2)
+                                                {
+                                                    setColor = "#72C044";
+                                                }
+                                                else if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 3)
+                                                {
+                                                    setColor = "#C00000";
+                                                }
+                                                <td data-years="@year" style="background-color:@setColor">
+                                                </td>
+                                                userIndex++;
                                             }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                        }
+
+
+                                        <td id="insource" class="insource">
+                                            <center>
+                                                @item.Insource
+                                            </center>
+                                        </td>
+                                        <td id="outsource" class="outsource">
+                                            <center>
+                                                @item.Outsource
+                                            </center>
+                                        </td>
+                                        <td id="manager" class="manager">
+                                            <center>
+                                                @item.Manager
+                                            </center>
+                                        </td>
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
+                                        {
+                                            <td style="display:none;">
+                                                <a data-id="@index" data-draftId="@item.Id" class="btnSave" id="btnSave" title="Save Data" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row" style=" margin-bottom: 50px;">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <label>Equation Total Insource</label>
+                            <input type="text" readonly="readonly" class="TotalEquationInsource form-control" />
                         </div>
-
-                        <div class="row" style=" margin-bottom: 50px;">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-3">
-                                <label>Equation Total Insource</label>
-                                <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationInsource form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <label>Equation Total Outsource</label>
-                                <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationOutsource form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <label>Equation Total Manager</label>
-                                <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationManager form-control" />
-                            </div>
+                        <div class="col-md-3">
+                            <label>Equation Total Outsource</label>
+                            <input type="text" readonly="readonly" class="TotalEquationOutsource form-control" />
                         </div>
+                        <div class="col-md-3">
+                            <label>Equation Total Manager</label>
+                            <input type="text" readonly="readonly" class="TotalEquationManager form-control" />
+                        </div>
+                    </div>
 
-                        index++;
+                    index++;
 
-                    }
                 }
-                <div class="float-end">
-                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
-                    {
-                        <button id="saveAllButton" type="button" class="btn btn-primary">Save All</button>
-                    }
-                </div>
-
             </div>
 
         </div>
@@ -392,22 +343,33 @@
             $('#DescCard_' + index).fadeToggle();
         }
 
-        function showColumnsForYear(year, department) {
-            $('#tableList th[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
-            $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
-        }
+
         $(document).ready(function () {
-            $(document).on("click", ".year-tab", function () {
-                var selectedYear = $(this).data("years");
-                var selectedDepartment = $(this).data("departments");
-                $(this).toggleClass("colorLabel");
-                $('#tableList[ data-departments="' + selectedDepartment + '"]').toggleClass("tableWidth");
+            var table = $('.tableList');
 
-                showColumnsForYear(selectedYear, selectedDepartment);
-
+            table.draggable({
+                axis: 'x',
+                cursor: 'grabbing',
+                scroll: false,
+                start: function (event, ui) {
+                    $.ui.ddmanager.current.cancelHelperRemoval = true;
+                }
             });
-            $("th[data-years]").css("display", "none");
-            $("td[data-years]").css("display", "none");
+
+            var totalInsoource = 0;
+            var totalOutSource = 0;
+            var totalManager = 0;
+            $("#tableList tbody tr").each(function () {
+                var inSource = parseFloat($(this).find("td:eq(27)").text()) || 0;
+                var outSource = parseFloat($(this).find("td:eq(28)").text()) || 0;
+                var manager = parseFloat($(this).find("td:eq(29)").text()) || 0;
+                totalInsoource += inSource;
+                totalOutSource += outSource;
+                totalManager += manager;
+            });
+            $(".TotalEquationInsource").val(totalInsoource);
+            $(".TotalEquationOutsource").val(totalOutSource);
+            $(".TotalEquationManager").val(totalManager);
 
             updateAllTotal('insource');
             updateAllTotal('outsource');
@@ -420,6 +382,16 @@
                 revert: false,
                 containment: "document",
                 scroll: false
+            });
+
+
+            $(".tableList ").draggable({
+                axis: 'x',
+                cursor: 'grabbing',
+                scroll: false,
+                start: function (event, ui) {
+                    $.ui.ddmanager.current.cancelHelperRemoval = true;
+                }
             });
 
             $(document).on("click", "#SaveDescription", function () {
@@ -546,8 +518,9 @@
         });
     </script>
 }
+ *@
 
-@* @model IEnumerable<AuditingSystem.Web.ViewModels.GroupedFinalAuditPlanViewModel>
+@model IEnumerable<AuditingSystem.Web.ViewModels.GroupedFinalAuditPlanViewModel>
 @using Microsoft.AspNetCore.Http
 @using Newtonsoft.Json;
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
@@ -716,139 +689,141 @@
 
 
 
-                            <div class="scrollable-table-container scrollable-table-container"  style="margin:0;padding-left: 0;" id="tableContainer">
-                                        <table data-departments="@group.DepartmentName" style="width: 100%;" id="tableList" class="tableList table table-striped table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th rowspan="3"></th>
-                                                    <th rowspan="3">Audit Area</th>
-                                                    <th rowspan="3">Scope</th>
-                                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                                    {
-                                                        <th data-departments="@group.DepartmentName" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
-                                                            @year
-                                                        </th>
-                                                    }
-                                                    <th colspan="3">Man Days</th>
-                                                </tr>
-                                                <tr>
-                                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                                    {
-                                                        foreach (var quarter in ViewBag.yearQuarterDictionary[year])
-                                                        {
-                                                            <th data-departments="@group.DepartmentName" data-years="@year" colspan="2">@quarter.Quarter</th>
-                                                        }
-                                                    }
-                                                    <th rowspan="2">Insource</th>
-                                                    <th rowspan="2">Outsource</th>
-                                                    <th rowspan="2">Manager</th>
-                                                </tr>
-                                                <tr>
-                                                    @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                                    {
-                                                        foreach (var quarter in ViewBag.yearQuarterDictionary[year])
-                                                        {
-                                                            <th data-departments="@group.DepartmentName" data-years="@year">Plan</th>
-                                                            <th data-departments="@group.DepartmentName" data-years="@year">Actual</th>
-                                                        }
-                                                    }
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var item in group.FinalAuditPlans)
+                            <div class="scrollable-table-container scrollable-table-container" style="margin:0;padding-left: 0;" id="tableContainer">
+                                <table data-departments="@group.DepartmentName" style="width: 100%;" id="tableList" class="tableList table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="3"></th>
+                                            <th rowspan="3">Audit Area</th>
+                                            <th rowspan="3">Scope</th>
+                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                            {
+                                                <th data-departments="@group.DepartmentName" data-years="@year" colspan="@(ViewBag.yearQuarterDictionary[year].Count * 2)">
+                                                    @year
+                                                </th>
+                                            }
+                                               @* <th colspan="3">Man Days</th> *@
+                                        </tr>
+                                        <tr>
+                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                            {
+                                                foreach (var quarter in ViewBag.yearQuarterDictionary[year])
                                                 {
-                                                    <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
-                                                        <h6 class="card-title m-3">@item.Department.Name</h6>
-
-                                                        <div class="card-body">
-                                                            <textarea @isView cols="50" rows="5" data-finalId="@item.Id" class="form-control">@Html.Raw(item.Description)</textarea>
-                                                        </div>
-
-                                                        <span class="closeDesc">&times;</span>
-                                                        <a @isView title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
-                                                           href="#" id="SaveDescription" data-finalId="@item.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
-                                                    </div>
-
-                                                    index++;
-                                                    <tr id="tr" data-group="@group.DepartmentName">
-                                                        @{
-                                                            var iconColor = "";
-                                                            var title = "";
-                                                            if (item.Description != "")
-                                                            {
-                                                                iconColor = "#05a536";
-                                                                title = "Edit Note";
-                                                            }
-                                                            else
-                                                            {
-                                                                iconColor = "#0d6efd";
-                                                                title = "Add Note";
-                                                            }
-                                                        }
-                                                        <td>
-                                                            <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
-                                                                <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
-                                                            </a>
-                                                        </td>
-
-                                                        <td>@item.Department.Name</td>
-                                                        <td>@item.Function.Name</td>
-                                                        @{
-                                                            int userIndex = 0;
-
-                                                        }
-                                                        @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
-                                                        {
-
-                                                            foreach (var quarter in ViewBag.yearQuarterDictionary[year])
-                                                            {
-                                                                var finalGroupedData = ViewBag.FinalGroupedData as List<dynamic>;
-                                                                var AuditPlanData = finalGroupedData?.FirstOrDefault(d => d.FinalAuditPlanId == item.Id && d.Year == year && d.Quarter == quarter.Quarter);
-                                                                var isCheck = "";
-                                                                if (AuditPlanData != null && AuditPlanData.Plan != null && AuditPlanData.Plan)
-                                                                {
-                                                                    isCheck = "#666666";
-                                                                }
-                                                                <td data-departments="@group.DepartmentName" data-years="@year"  style="background-color:@isCheck">
-                                                                    
-                                                                </td>
-
-
-                                                                isCheck = "";
-                                                                if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual)
-                                                                {
-                                                                    isCheck = "#72C044";
-                                                                }
-                                                                <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@isCheck">
-                                                                    
-                                                                </td>
-                                                                userIndex++;
-                                                            }
-                                                        }
-                                                       
-
-                                                        <td id="insource" class="insource">
-                                                            <center>
-                                                                @item.Insource
-                                                            </center>
-                                                        </td>
-                                                        <td id="outsource" class="outsource">
-                                                            <center>
-                                                                @item.Outsource
-                                                            </center>
-                                                        </td>
-                                                        <td id="manager" class="manager">
-                                                            <center>
-                                                                @item.Manager
-                                                            </center>
-                                                        </td>
-                                                       
-                                                    </tr>
+                                                    <th data-departments="@group.DepartmentName" data-years="@year" colspan="2">@quarter.Quarter</th>
                                                 }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                            <div class="row">
+                                            }
+                                           @*  <th rowspan="2">Insource</th>
+                                    <th rowspan="2">Outsource</th>
+                                    <th rowspan="2">Manager</th> *@
+                                        </tr>
+                                        <tr>
+                                            @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                            {
+                                                foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                {
+                                                    <th data-departments="@group.DepartmentName" data-years="@year">Plan</th>
+                                                    <th data-departments="@group.DepartmentName" data-years="@year">Actual</th>
+                                                }
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in group.FinalAuditPlans)
+                                        {
+                                            <div class="card cardDesc" id="DescCard_@index" style="display: none; position: absolute; z-index: 999; top: 50%; box-shadow: 0px 0px 6px 0px; border-radius: 10px;">
+                                                <h6 class="card-title m-3">@item.Department.Name</h6>
+
+                                                <div class="card-body">
+                                                    <textarea @isView cols="50" rows="5" data-finalId="@item.Id" class="form-control">@Html.Raw(item.Description)</textarea>
+                                                </div>
+
+                                                <span class="closeDesc">&times;</span>
+                                                <a @isView title="Save Description" style="float: right; margin-top: 10px; margin-right: 5px; margin-bottom: 12px;"
+                                                   href="#" id="SaveDescription" data-finalId="@item.Id" data-index="@index"><i class="fa-solid fa-floppy-disk"></i></a>
+                                            </div>
+
+                                            index++;
+                                            <tr id="tr" data-group="@group.DepartmentName">
+                                                @{
+                                                    var iconColor = "";
+                                                    var title = "";
+                                                    if (item.Description != "")
+                                                    {
+                                                        iconColor = "#05a536";
+                                                        title = "Edit Note";
+                                                    }
+                                                    else
+                                                    {
+                                                        iconColor = "#0d6efd";
+                                                        title = "Add Note";
+                                                    }
+                                                }
+                                                <td>
+                                                    <a title="@title" href="#" onclick="showDescriptionPopup('@(index-1)')">
+                                                        <i style="color:@iconColor" class="fa-brands fa-rocketchat"></i>
+                                                    </a>
+                                                </td>
+
+                                                <td>@item.Department.Name</td>
+                                                <td>@item.Function.Name</td>
+                                                @{
+                                                    int userIndex = 0;
+
+                                                }
+                                                @foreach (var year in ViewBag.yearQuarterDictionary.Keys)
+                                                {
+                                                    foreach (var quarter in ViewBag.yearQuarterDictionary[year])
+                                                    {
+                                                        var finalGroupedData = ViewBag.FinalGroupedData as List<dynamic>;
+                                                        var AuditPlanData = finalGroupedData?.FirstOrDefault(d => d.FinalAuditPlanId == item.Id && d.Year == year && d.Quarter == quarter.Quarter);
+                                                            
+
+                                                        var setColor = "";
+                                                        if ((AuditPlanData != null && AuditPlanData.Plan != null && AuditPlanData.Plan == 1))
+                                                        {
+                                                            setColor = "#666666";
+                                                        }
+                                                        <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@setColor">
+                                                        </td>
+
+                                                        setColor = "";
+                                                        if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 2)
+                                                        {
+                                                            setColor = "#72C044";
+                                                        }
+                                                        else if (AuditPlanData != null && AuditPlanData.Actual != null && AuditPlanData.Actual == 3)
+                                                        {
+                                                            setColor = "#C00000";
+                                                        }
+                                                        <td data-departments="@group.DepartmentName" data-years="@year" style="background-color:@setColor">
+                                                        </td>
+                                                        userIndex++;
+                                                    }
+                                                }
+
+
+                                               @*  <td id="insource" class="insource">
+                                                    <center>
+                                                        @item.Insource
+                                                    </center>
+                                                </td>
+                                                <td id="outsource" class="outsource">
+                                                    <center>
+                                                        @item.Outsource
+                                                    </center>
+                                                </td>
+                                                <td id="manager" class="manager">
+                                                    <center>
+                                                        @item.Manager
+                                                    </center>
+                                                </td> *@
+
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            @* <div class="row">
                                 <div class="col-md-3"></div>
                                 <div class="col-md-3">
                                     <label>Equation Total Insource</label>
@@ -862,8 +837,10 @@
                                     <label>Equation Total Manager</label>
                                     <input type="text" readonly="readonly" data-group="@group.DepartmentName" class="TotalEquationManager form-control" />
                                 </div>
-                            </div>
-                               
+                            </div> *@
+                            <br />
+                            <br />
+                            <br />
                         }
                     }
 
@@ -1017,4 +994,4 @@
             // });
         });
     </script>
-} *@
+}

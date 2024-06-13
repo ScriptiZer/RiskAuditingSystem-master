@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldTests;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,10 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     .OrderByDescending(x => x.Id)
                     .FirstOrDefault();
 
+                    activity.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    activity.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    activity.CreationDate = DateTime.Now;
+                    activity.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
@@ -93,9 +98,14 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound();
                     }
 
-                    // تحديث الخصائص
+                    existingActivity.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingActivity.UpdatedDate = DateTime.Now;
+                    existingActivity.Code = updatedActivity.Code;
                     existingActivity.Name = updatedActivity.Name;
                     existingActivity.Description = updatedActivity.Description;
+                    existingActivity.IndustryId = updatedActivity.IndustryId;
+                    existingActivity.CompanyId = updatedActivity.CompanyId;
+                    existingActivity.DepartmentId = updatedActivity.DepartmentId;
                     existingActivity.FunctionId = updatedActivity.FunctionId;
 
                     await _activityRepository.UpdateAsync(existingActivity);

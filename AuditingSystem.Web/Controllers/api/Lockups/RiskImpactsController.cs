@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
             {
                 if (ModelState.IsValid)
                 {
+                    riskImpact.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    riskImpact.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    riskImpact.CreationDate = DateTime.Now;
+                    riskImpact.CurrentYear = DateTime.Now.Year;
                     await _riskimpact.CreateAsync(riskImpact);
                     return NoContent();
                 }
@@ -83,10 +88,12 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                         return NotFound();
                     }
 
-
+                    existingeriskimpact.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingeriskimpact.UpdatedDate = DateTime.Now;
+                    existingeriskimpact.Name = riskImpact.Name;
                     existingeriskimpact.Rate = riskImpact.Rate;
                    
-                    await _riskimpact.UpdateAsync(riskImpact);
+                    await _riskimpact.UpdateAsync(existingeriskimpact);
 
                     return NoContent();
                 }

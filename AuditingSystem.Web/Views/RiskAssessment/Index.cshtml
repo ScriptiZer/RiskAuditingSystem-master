@@ -1,10 +1,34 @@
 ﻿@model IEnumerable<AuditingSystem.Services.ViewModels.RiskAssessmentVM>
-
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using System.Globalization;
+@using System.Collections;
+@using System.Collections.Generic;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
 @{
     ViewData["Title"] = "Risk Assessment List";
+    ViewData["DeleteTitle"] = "RiskAssessments";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
+<style>
+    .btn-danger, .fa-trash {
+        color: #ffffff;
+    }
+</style>
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
@@ -16,124 +40,200 @@
                 </div>
                 <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
                     <ul class="navbar-nav mr-lg-2" style="width: 100%; margin-top: 5px;" id="SearchList">
-                        <li class="nav-item nav-search d-none d-lg-block">
-                            <div class="input-group">
-                                <input id="Search" type="text" class="form-control" placeholder="Search Here..." aria-label="search" aria-describedby="search">
-                            </div>
-                        </li>
                     </ul>
                 </div>
-                @{
-                    var groupedData = Model.GroupBy(item => new { CompanyName = item.RiskIdentification.Company.Name, DepartmentName = item.RiskIdentification.Department.Name });
 
-                }
-                @foreach (var group in groupedData)
-                {
-                    <div class="row" style="background-color: #cfe2ff; margin-top: 20px;margin-bottom:-10px;">
-                        <div class="col-12">
-                            <h5 style="
-                            margin-bottom: -10px;
-                            height: 70px;
-                            border-radius: 5px;
-                            align-items: center;
-                            font-weight: 900 !important;
-                            text-transform: uppercase;
-                            display: flex;
-                            padding-left: 20px;">
-                                Company: @group.Key.CompanyName<br> Department: @group.Key.DepartmentName
-                            </h5>
+                <div class="row p-3 m-3" style="box-shadow: 0px 2px 5px 0px;">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="CompanyId">Company</label>
+                            <select style="border:1px solid #c1c1c1" class="form-control" id="Company" asp-items="ViewBag.CompanyId">
+                                <option value="">All Companies</option>
+                            </select>
                         </div>
                     </div>
 
-
-                    <div class="table-responsive">
-                        <table style="width:3000px" class="table table-striped table-bordered tableList">
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Company</th>
-                                    <th>Department</th>
-                                    <th>Risk Title</th>
-                                    <th>Risk Category</th>
-                                    <th>Risk Description</th>
-                                    <th>Risk Rating Rationalization</th>
-                                    <th>Risk Impact</th>
-                                    <th>Risk Likelihood</th>
-                                    <th>Inherent Risk Rating</th>
-                                    <th>Control Name</th>
-                                    <th>Control Description</th>
-                                    <th>Control Type</th>
-                                    <th>Control Process</th>
-                                    <th>Control Frequency</th>
-                                    <th>Control Effectiveness</th>
-                                    <th>Control Effectiveness Rating</th>
-                                    <th>Residual Risk Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in group)
-                                {
-                                    <tr>
-                                        <td>@(item.RiskIdentification.Code).@(item.Control.Code)</td>
-                                        <td>@item.RiskIdentification.Company.Name</td>
-                                        <td>@item.RiskIdentification.Department.Name</td>
-                                        <td>@Html.Raw(item.RiskIdentification.Name)</td>
-                                        <td style="background-color:@item.RiskCategory.BGColor;color:@item.RiskCategory.FontColor">@item.RiskCategory.Name</td>
-                                        <td style="width: 200px;">@Html.Raw(item.RiskIdentification.Description)</td>
-                                        <td>@Html.Raw(item.RiskIdentification.RiskRatingRationalization)</td>
-                                        <td>@item.RiskImpact.Rate - @item.RiskImpact.Name</td>
-                                        <td>@item.RiskLikehood.Rate - @item.RiskLikehood.Name</td>
-                                        <td>@item.RiskIdentification.InherentRiskRating</td>
-                                        <td>@Html.Raw(item.Control.Name)</td>
-                                        <td>@Html.Raw(item.Control.Description)</td>
-                                        <td>@item.ControlType.Name</td>
-                                        <td>@item.ControlProcess.Name</td>
-                                        <td>@item.ControlFrequency.Name</td>
-                                        <td>@item.ControlEffectiveness.Rate - @item.ControlEffectiveness.Name</td>
-                                        <td>@item.Control.ControlEffectivenessRating</td>
-                                        @if (item.RiskAssessmentList.ResidualRiskRating == "Active Management")
-                                        {
-                                            <td style="background-color:#C00000;color:#ffffff">@item.RiskAssessmentList.ResidualRiskRating</td>
-                                        }
-                                        else if (item.RiskAssessmentList.ResidualRiskRating == "Continuous Review")
-                                        {
-                                            <td style="background-color:#FF9933">@item.RiskAssessmentList.ResidualRiskRating</td>
-                                        }
-                                        else if (item.RiskAssessmentList.ResidualRiskRating == "Periodic Monitoring")
-                                        {
-                                            <td style="background-color:#FFFF00">@item.RiskAssessmentList.ResidualRiskRating</td>
-                                        }
-                                        else if (item.RiskAssessmentList.ResidualRiskRating == "No major concern")
-                                        {
-                                            <td style="background-color:#66FF33">@item.RiskAssessmentList.ResidualRiskRating</td>
-                                        }
-                                        else
-                                        {
-                                            <td>@item.RiskAssessmentList.ResidualRiskRating</td>
-                                        }
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="DepartmentId">Department</label>
+                            <select style="border:1px solid #c1c1c1" class="form-control" id="Department" asp-items="ViewBag.DepartmentId">
+                                <option value="">All Departments</option>
+                            </select>
+                        </div>
                     </div>
-                }
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Year</label>
+                            <select style="border:1px solid #c1c1c1;" class="form-control" id="Year">
+                                <option value="">All Years</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <div class="table-responsive">
+                    <table style="width:3000px" class="table table-striped table-bordered tableList">
+                        <thead>
+                            <tr>
+                                <th>Transfer to Year</th>
+                                <th>Code</th>
+                                <th>Company</th>
+                                <th>Department</th>
+                                <th>Function</th>
+                                <th>Risk Title</th>
+                                <th>Risk Category</th>
+                                <th>Risk Description</th>
+                                <th>Risk Rating Rationalization</th>
+                                <th>Risk Impact</th>
+                                <th>Risk Likelihood</th>
+                                <th>Inherent Risk Rating</th>
+                                <th>Inherent Risk Status</th>
+                                <th>Control Name</th>
+                                <th>Control Description</th>
+                                <th>Control Type</th>
+                                <th>Control Process</th>
+                                <th>Control Frequency</th>
+                                <th>Control Effectiveness</th>
+                                <th>Control Effectiveness Rating</th>
+                                <th>Residual Risk Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="tr">
+                                    <td>
+                                        <div class="form-group">
+                                            <select style="border:1px solid #c1c1c1;width:80px;" class="form-control" id="UseToYear" data-id="@item.RiskAssessmentList.Id">
+                                                <option value="2024">2024</option>
+                                                <option value="2025">2025</option>
+                                                <option value="2026">2026</option>
+                                                <option value="2027">2027</option>
+                                                <option value="2028">2028</option>
+                                                <option value="2029">2029</option>
+                                                <option value="2030">2030</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>@(item.RiskIdentification.Code)</td>
+                                    <td>@item.RiskIdentification.Company.Name</td>
+                                    <td>@item.RiskIdentification.Department.Name</td>
+                                    <td>@item.RiskIdentification.Function.Name</td>
+                                    <td>@Html.Raw(item.RiskIdentification.Name)</td>
+                                    <td style="text-align:center; background-color:@item.RiskCategory.BGColor;color:@item.RiskCategory.FontColor">@item.RiskCategory.Name</td>
+                                    <td>@Html.Raw(item.RiskIdentification.Description)</td>
+                                    <td>@Html.Raw(item.RiskIdentification.RiskRatingRationalization)</td>
+                                    <td style="text-align:center;">@item.RiskImpact.Rate - @item.RiskImpact.Name</td>
+                                    <td style="text-align:center;">@item.RiskLikehood.Rate - @item.RiskLikehood.Name</td>
+                                    <td style="text-align:center; ">@item.RiskIdentification.InherentRiskRating</td>
+                                    @if (@item.RiskIdentification.InherentRiskStatus == "Low")
+                                    {
+                                        <td style="background-color:green;color:#ffffff;text-align:center;">@item.RiskIdentification.InherentRiskStatus</td>
+                                    }
+                                    else if (@item.RiskIdentification.InherentRiskStatus == "Medium")
+                                    {
+                                        <td style="background-color:#FFFF00;text-align:center;">@item.RiskIdentification.InherentRiskStatus</td>
+                                    }
+                                    else if (@item.RiskIdentification.InherentRiskStatus == "High")
+                                    {
+                                        <td style="background-color:red;color:#ffffff;text-align:center;">@item.RiskIdentification.InherentRiskStatus</td>
+                                    }
+                                    else if (@item.RiskIdentification.InherentRiskStatus == "Critical")
+                                    {
+                                        <td style="background-color:#C00000;color:#ffffff;text-align:center;">@item.RiskIdentification.InherentRiskStatus</td>
+                                    }
+                                    <td>@Html.Raw(item.Control.Name)</td>
+                                    <td>@Html.Raw(item.Control.Description)</td>
+                                    <td style="text-align:center; background-color:@item.ControlType.BGColor;color:@item.ControlType.FontColor">@item.ControlType.Name</td>
+                                    <td style="text-align:center; background-color:@item.ControlProcess.BGColor;color:@item.ControlProcess.FontColor">@item.ControlProcess.Name</td>
+                                    <td style="text-align:center; background-color:@item.ControlFrequency.BGColor;color:@item.ControlFrequency.FontColor">@item.ControlFrequency.Name</td>
+                                    <td style="text-align:center; background-color:@item.ControlEffectiveness.BGColor;color:@item.ControlEffectiveness.FontColor">@item.ControlEffectiveness.Rate - @item.ControlEffectiveness.Name</td>
+                                    <td style="text-align:center;">@item.Control.ControlEffectivenessRating</td>
+                                    @if (item.RiskAssessmentList.ResidualRiskRating == "Active Management")
+                                    {
+                                        <td style="text-align:center; background-color:#C00000;color:#ffffff">@item.RiskAssessmentList.ResidualRiskRatingNumber - @item.RiskAssessmentList.ResidualRiskRating</td>
+                                    }
+                                    else if (item.RiskAssessmentList.ResidualRiskRating == "Continuous Review")
+                                    {
+                                        <td style="text-align:center; background-color:#FF9933">@item.RiskAssessmentList.ResidualRiskRatingNumber - @item.RiskAssessmentList.ResidualRiskRating</td>
+                                    }
+                                    else if (item.RiskAssessmentList.ResidualRiskRating == "Periodic Monitoring")
+                                    {
+                                        <td style="text-align:center; background-color:#FFFF00">@item.RiskAssessmentList.ResidualRiskRatingNumber - @item.RiskAssessmentList.ResidualRiskRating</td>
+                                    }
+                                    else if (item.RiskAssessmentList.ResidualRiskRating == "No major concern")
+                                    {
+                                        <td style="text-align:center; background-color:#66FF33">@item.RiskAssessmentList.ResidualRiskRatingNumber - @item.RiskAssessmentList.ResidualRiskRating</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="">@item.RiskAssessmentList.ResidualRiskRatingNumber - @item.RiskAssessmentList.ResidualRiskRating</td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true && p.Delete == true))
+                                    {
+                                        <td>
+                                            <button class="btn btn-danger" data-actions-id="@item.RiskAssessmentList.Id" title="Delete" id="btnDelete"><i class="fa-solid fa-trash"></i> Delete</button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="text-center">
                     <div class="row">
                         <div class="col-md-6" style="text-align: left; margin-top: 15px;">
-                            <p>
+                            <p id="totalAssessments">
                                 Showing @Model.Count() of @ViewBag.TotalRow entries
                             </p>
                         </div>
                         <div class="col-md-6">
                             <nav aria-label="Page navigation" class="float-end mt-3">
-                                <ul class="pagination">
-                                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                <ul class="pagination" id="pagination">
+                                    <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")" id="prev">
+                                        <a class="page-link" href="?sODTypeId=@ViewBag.sODTypeId&page=@(ViewBag.CurrentPage - 1)&pageSize=@ViewBag.PageSize" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    @for (int i = ViewBag.CurrentPage - 1; i <= Math.Min(ViewBag.CurrentPage + 3, ViewBag.TotalPages); i++)
                                     {
-                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                                            <a class="page-link" href="?page=@i&pageSize=@ViewBag.PageSize">@i</a>
+                                        if (i > 0)
+                                        {
+                                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                                <a class="page-link" href="?sODTypeId=@ViewBag.sODTypeId&page=@i&pageSize=@ViewBag.PageSize">@i</a>
+                                            </li>
+                                        }
+                                    }
+
+                                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                    {
+                                        <li class="page-item" id="next">
+                                            <a class="page-link" href="?sODTypeId=@ViewBag.sODTypeId&page=@(ViewBag.CurrentPage + 1)&pageSize=@ViewBag.PageSize" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
                                         </li>
                                     }
+                                    else
+                                    {
+                                        <li class="page-item disabled" id="next">
+                                            <span class="page-link" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </span>
+                                        </li>
+                                    }
+
                                 </ul>
                             </nav>
                         </div>
@@ -144,39 +244,41 @@
         </div>
     </div>
 
-    <div class="col-md-6"></div>
+    <div class="col-md-3"></div>
     <div class="col-md-3">
         <div class="form-group">
             <label for="AverageInherentRisk">Average Inherent Risk</label>
-            <input type="text" class="form-control" id="AverageInherentRisk" name="AverageInherentRisk" readonly>
+            <input value="@ViewBag.tInherentRiskRisk" type="text" class="form-control" id="AverageInherentRisk" name="AverageInherentRisk" readonly>
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group">
             <label for="AverageControl">Average Control</label>
-            <input type="text" class="form-control" id="AverageControl" name="AverageControl" readonly>
+            <input value="@ViewBag.tRiskControl" type="text" class="form-control" id="AverageControl" name="AverageControl" readonly>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="AverageResidualRisk">Average Residual Risk</label>
+            @{
+                var wColor = "";
+                if (ViewBag.rRiskColor == "#C00000")
+                {
+                    wColor = "#ffffff";
+                }
+                else
+                {
+                    wColor = "#000000";
+                }
+            }
+            <input value="@ViewBag.tResidualRisk | @ViewBag.rRiskName" style="background-color:@ViewBag.rRiskColor;color:@wColor;" type="text" class="form-control" id="AverageResidualRisk" name="AverageResidualRisk" readonly>
         </div>
     </div>
 </div>
 
 @section Scripts{
-    @* <script src="https://cdn.rawgit.com/dobtco/jquery-resizable-columns/v1.0.9/jquery.resizableColumns.min.js"></script> *@
 
     <script>
-        // $("td,th")
-        //     .css({
-        //         position: "relative"
-        //     })
-        //     .prepend("<div class='resizer'></div>")
-        //     .resizable({
-        //         resizeHeight: false,
-        //         handleSelector: "",
-        //         onDragStart: function (e, $el, opt) {
-        //             if (!$(e.target).hasClass("resizer"))
-        //                 return false;
-        //             return true;
-        //         }
-        //     });
 
         var table = $('.tableList');
 
@@ -189,38 +291,199 @@
                 $.ui.ddmanager.current.cancelHelperRemoval = true;
             }
         });
-        function calculateAverageInherentRisk() {
-            var totalInherentRisk = 0;
-            var rowCount = 0;
 
-            $("#tableList tbody tr").each(function () {
-                var inherentRisk = parseFloat($(this).find("td:eq(6)").text()) || 0;
-                totalInherentRisk += inherentRisk;
-                rowCount++;
+
+        $("#Department").prop("disabled", true);
+        $("#Company").on("change", function () {
+            var CompanyId = $(this).val();
+            $.ajax({
+                url: "/RiskAssessment/GetDepartmentsByCompany",
+                data: { CompanyId: CompanyId },
+                type: "GET",
+                success: function (data) {
+                    $("#Department").prop("disabled", false);
+
+                    var options = '<option value="">All Departments</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            options += '<option value="' + item.id + '">' + item.name + '</option>';
+                        });
+                        $("#Department").html(options);
+                    }
+                }
             });
+        });
 
-            var averageInherentRisk = rowCount > 0 ? totalInherentRisk / rowCount : 0;
 
-            $("#AverageInherentRisk").val(averageInherentRisk.toFixed(2));
+        $("#Company, #Department, #Year").on("change", function () {
+            var CompanyId = $("#Company").val();
+            var departmentId = $("#Department").val();
+            var year = $("#Year").val();
+
+            $.ajax({
+                url: '/RiskAssessment/FilterAssessmentTable',
+                type: 'GET',
+                data: { CompanyId: CompanyId, departmentId: departmentId, year: year },
+                dataType: 'json',
+                success: function (response) {
+                    $('tbody').empty();
+
+                    $.each(response.data.$values, function (index, item) {
+                        var row = '<tr>' +
+                            '<td><div class="form-group"><select style="border:1px solid #c1c1c1" class="form-control" id="UseToYear" data-id="item.id"><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select></div></td>' +
+                            '<td>' + item.riskIdentificationCode + '</td>' +
+                            '<td>' + item.companyName + '</td>' +
+                            '<td>' + item.departmentName + '</td>' +
+                            '<td>' + item.riskIdentificationName + '</td>' +
+                            '<td style="text-align:center; background-color:' + item.riskCategoryBGColor + ';color:' + item.riskCategoryFontColor + '">' + item.riskCategoryName + '</td>' +
+                            '<td>' + item.riskIdentificationDescription + '</td>' +
+                            '<td>' + item.riskIdentificationRiskRatingRationalization + '</td>' +
+                            '<td style="text-align:center;">' + item.riskImpactRate + ' - ' + item.riskImpactName + '</td>' +
+                            '<td  style="text-align:center;">' + item.riskLikehoodRate + ' - ' + item.riskLikehoodName + '</td>' +
+                            '<td style="text-align:center; ">' + item.riskIdentificationInherentRiskRating + ' | ' + item.inherentRiskStatus + '</td>' +
+                            '<td>' + item.controlName + '</td>' +
+                            '<td>' + item.controlDescription + '</td>' +
+                            '<td style="text-align:center; background-color:' + item.controlTypeBGColor + ';color:' + item.controlTypeFontColor + '">' + item.controlTypeName + '</td>' +
+                            '<td style="text-align:center; background-color:' + item.controlProcessBGColor + ';color:' + item.controlProcessFontColor + '">' + item.controlProcessName + '</td>' +
+                            '<td style="text-align:center; background-color:' + item.controlFrequencyBGColor + ';color:' + item.controlFrequencyFontColor + '">' + item.controlFrequencyName + '</td>' +
+                            '<td style="text-align:center; background-color:' + item.controlEffectivenessBGColor + ';color:' + item.controlEffectivenessFontColor + '">' + item.controlEffectivenessRate + ' - ' + item.controlEffectivenessName + '</td>' +
+                            '<td style="text-align:center;">' + item.controlControlEffectivenessRating + '</td>' +
+                            '<td style="text-align:center; background-color:' + getBackgroundColor(item.riskAssessmentListResidualRiskRating) + ';color:' + getFontColor(item.riskAssessmentListResidualRiskRating) + '">' + item.riskAssessmentListResidualRiskRatingNumber + ' - ' + item.riskAssessmentListResidualRiskRating + '</td>' +
+                            '<td><button class="btn btn-danger" data-actions-id="' + item.id + '" title="Delete" id="btnDelete"><i class="fa-solid fa-trash"></i></a> Delete</td>' +
+                            '</tr>';
+
+                        $('tbody').append(row);
+                    });
+                    $('#totalAssessments').text(response.totalControlRow + " rows have been filtered");
+                    $("#AverageInherentRisk").val(response.totalInherentRisk.toFixed(2));
+                    $("#AverageControl").val(response.totalRiskControl.toFixed(2));
+                    $("#AverageResidualRisk").val(response.totalResidualRisk.toFixed(2) + " | " + response.residualRiskName);
+                    $("#AverageResidualRisk").css("background-color", response.residualRiskColor);
+                    if (response.residualRiskColor == "#C00000") {
+                        $("#AverageResidualRisk").css("color", "#ffffff");
+                    }
+                    $("#pagination").css("display", "none");
+                    var visibleRows = $('tbody tr:visible').length;
+                    $('#noDataMessage').toggle(visibleRows === 0);
+                    $('#resetFilterButton').show();
+                },
+                beforeSend: function () {
+                    $('#loading').show();
+                },
+                complete: function () {
+                    $('#loading').hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        function getBackgroundColor(residualRiskRating) {
+            switch (residualRiskRating) {
+                case "Active Management":
+                    return "#C00000";
+                case "Continuous Review":
+                    return "#FF9933";
+                case "Periodic Monitoring":
+                    return "#FFFF00";
+                case "No major concern":
+                    return "#66FF33";
+                default:
+                    return "";
+            }
         }
 
-        
-        function calculateAverageControlEffectivenessRating() {
-            var totalControlEffectivenessRating = 0;
-            var rowCount = 0;
-
-            $("#tableList tbody tr").each(function () {
-                var controlEffectivenessRating = parseFloat($(this).find("td:eq(13)").text()) || 0;
-                totalControlEffectivenessRating += controlEffectivenessRating;
-                rowCount++;
-            });
-
-            var averageControlEffectivenessRating = rowCount > 0 ? totalControlEffectivenessRating / rowCount : 0;
-
-            $("#AverageControl").val(averageControlEffectivenessRating.toFixed(2));
+        function getFontColor(residualRiskRating) {
+            return residualRiskRating === "Active Management" ? "#ffffff" : "#000000";
         }
 
-        calculateAverageInherentRisk();
-        calculateAverageControlEffectivenessRating();
+
+        // function calculateAverageInherentRisk() {
+        //     var totalInherentRisk = 0;
+        //     var rowCount = 0;
+
+        //     $(".tableList tbody tr").each(function () {
+        //         var inherentRisk = parseFloat($(this).find("td:eq(9)").text()) || 0;
+        //         totalInherentRisk += inherentRisk;
+        //         rowCount++;
+        //     });
+
+        //     var averageInherentRisk = rowCount > 0 ? totalInherentRisk / rowCount : 0;
+
+        //     $("#AverageInherentRisk").val(averageInherentRisk.toFixed(2));
+        // }
+
+
+        // function calculateAverageControlEffectivenessRating() {
+        //     var totalControlEffectivenessRating = 0;
+        //     var rowCount = 0;
+
+        //     $(".tableList tbody tr").each(function () {
+        //         var controlEffectivenessRating = parseFloat($(this).find("td:eq(16)").text()) || 0;
+        //         totalControlEffectivenessRating += controlEffectivenessRating;
+        //         rowCount++;
+        //     });
+
+        //     var averageControlEffectivenessRating = rowCount > 0 ? totalControlEffectivenessRating / rowCount : 0;
+
+        //     $("#AverageControl").val(averageControlEffectivenessRating.toFixed(2));
+        // }
+
+        // calculateAverageInherentRisk();
+        // calculateAverageControlEffectivenessRating();
+
+        $(document).ready(function () {
+            $(document).on("change", "#UseToYear", function () {
+                var assessmentId = $(this).data("id");
+                var year = $(this).val();
+
+                $.ajax({
+                    url: "/RiskAssessment/TransferToYear",
+                    data: { assessmentId: assessmentId, year: year },
+                    type: "POST",
+                    success: function (data) {
+                        alert("The data is saved!");
+                    }
+                });
+            });
+
+
+            // Pagination logic
+            var currentPage = parseInt("@ViewBag.CurrentPage");
+            var totalPages = parseInt("@ViewBag.TotalPages");
+            var pageSize = parseInt("@ViewBag.PageSize");
+
+            // Initially hide all page links
+            $(".pagination li").hide();
+
+            // Show the first five page links
+            $(".pagination li:lt(5)").show();
+
+            $("#prev").click(function () {
+                if (currentPage > 1) {
+                    if ((currentPage - 1) % 5 === 1) {
+                        $(".pagination li").hide(); // Hide all page links
+                        $(".pagination li:gt(0):lt(5)").show(); // Show pages 2 to 6
+                    }
+                    window.location.href = "?sODTypeId=" + $("#sODTypeId").val() + "&page=" + (currentPage - 1) + "&pageSize=" + pageSize;
+                }
+            });
+
+            $("#next").css("display", "block");
+            $("#next").click(function () {
+                if (currentPage < totalPages) {
+                    if ((currentPage + 1) % 5 === 1) {
+                        $(".pagination li").hide(); // Hide all page links
+                        $(".pagination li:gt(0):lt(5)").show(); // Show pages 2 to 6
+                    }
+                    window.location.href = "?sODTypeId=" + $("#sODTypeId").val() + "&page=" + (currentPage + 1) + "&pageSize=" + pageSize;
+                } else {
+                    // Disable next button and change its appearance
+                    $("#next").addClass("disabled").find("a").removeAttr("href").attr("aria-disabled", true);
+                }
+            });
+        });
     </script>
 }

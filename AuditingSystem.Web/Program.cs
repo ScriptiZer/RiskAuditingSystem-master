@@ -1,7 +1,10 @@
 using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldTests;
 using AuditingSystem.Entities.AuditFieldWork;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
+using AuditingSystem.Entities.AuditReports;
+using AuditingSystem.Entities.FollowUp;
 using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Entities.RiskAssessments;
 using AuditingSystem.Entities.Setup;
@@ -71,6 +74,16 @@ builder.Services.AddScoped<IBaseRepository<AuditProgram, int>, BaseRepository<Au
 builder.Services.AddScoped<IBaseRepository<AuditProgramList, int>, BaseRepository<AuditProgramList, int>>();
 
 builder.Services.AddScoped<IDashboard_ActualBudgetPlanperMonth, Dashboard_ActualBudgetPlanperMonth>();
+builder.Services.AddScoped<IBaseRepository<OperationBudgetType,int>, BaseRepository<OperationBudgetType,int>>();
+builder.Services.AddScoped<IBaseRepository<Observation, int>, BaseRepository<Observation, int>>();
+builder.Services.AddScoped<IBaseRepository<Finding, int>, BaseRepository<Finding, int>>();
+builder.Services.AddScoped<IBaseRepository<DraftAuditReports, int>, BaseRepository<DraftAuditReports, int>>();
+builder.Services.AddScoped<IBaseRepository<ClientActionPlans, int>, BaseRepository<ClientActionPlans, int>>();
+
+builder.Services.AddScoped<IBaseRepository<SODType, int>, BaseRepository<SODType, int>>();
+builder.Services.AddScoped<IBaseRepository<FirstDuty, int>, BaseRepository<FirstDuty, int>>();
+builder.Services.AddScoped<IBaseRepository<SecondDuty, int>, BaseRepository<SecondDuty, int>>();
+builder.Services.AddScoped<IBaseRepository<FirstSecondDuties, int>, BaseRepository<FirstSecondDuties, int>>();
 
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

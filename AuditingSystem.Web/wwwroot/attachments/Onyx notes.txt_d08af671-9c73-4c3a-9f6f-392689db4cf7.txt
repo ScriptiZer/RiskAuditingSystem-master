@@ -1,0 +1,43 @@
+1. open child from parent table on audit universe → done
+2. In User form set user name as a unique name
+3. Improve design card for audit resources → done
+4. Get APIs from Osama for audit universe → we waiting Osama
+5. Show Date per quarters
+6. Add bold borders for header → done
+7. Add icon to years and quarter for each audit plan
+8. Order by to plan year on company form →
+9. In audit plan add one button to save all data →
+10. Add label inside audit resources to identify days or hours
+11. Add budget title for (Estimated, Actual, and Variance) as a header
+12. Add DDL inside audit budget to select (Salary and other) for each row
+13. Actual to collection value from total actual fields
+14. Remove department card from draft audit plan form → done
+15. Add color for quarters, where to fill data from audit resources form → done
+16. Add color for quarters, where to fill data from draft audit plan form
+17. Create another form for udit universe to collect universes form
+18. Get Industry Department
+19. Remove Company Column from Department form
+20. Add Department head
+21. Remove Department Column from Function form
+22. Open Child data from parents after click
+23. Add Record Version / History for all forms
+24. disabled for actual control inside audit budget
+25. Make Filteration on the all audit processes form
+26. Draft audit plan just contains plan (gray color)
+27. Add another form to audit resource actual → plan first, actual second
+
+
+1. Remove Resize column table, just to "Audit Plan" → done
+2. Add Datatable for all tables 
+3. Add Cascading on the DDL for Audit Resourses
+4. Clear inspect element error → done
+5. Execute Permissions for all project
+6. Add Loading after redirect between pages
+7. Change login page style
+8. Add Validation error on the login page
+9. Add lockups form on the project
+10. Improve style on the form
+11. Add Sweet Alert
+12. Change library from cdn to locally
+12. Improve speed
+13. Full testing on the system

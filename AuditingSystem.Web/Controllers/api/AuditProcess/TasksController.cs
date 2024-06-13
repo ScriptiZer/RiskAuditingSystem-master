@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -62,6 +63,10 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     .OrderByDescending(x => x.Id)
                     .FirstOrDefault();
 
+                    task.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    task.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    task.CreationDate = DateTime.Now;
+                    task.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
@@ -101,9 +106,16 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound(new { error = $"Task with ID {id} not found" });
                     }
 
-                    // تحديث الخصائص
+                    existingTask.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingTask.UpdatedDate = DateTime.Now;
+                    existingTask.Code = updatedTask.Code;
                     existingTask.Name = updatedTask.Name;
                     existingTask.Description = updatedTask.Description;
+                    existingTask.IndustryId = updatedTask.IndustryId;
+                    existingTask.CompanyId = updatedTask.CompanyId;
+                    existingTask.DepartmentId = updatedTask.DepartmentId;
+                    existingTask.FunctionId = updatedTask.FunctionId;
+                    existingTask.ActivityId = updatedTask.ActivityId;
                     existingTask.ObjectiveId = updatedTask.ObjectiveId;
 
                     await _taskRepository.UpdateAsync(existingTask);

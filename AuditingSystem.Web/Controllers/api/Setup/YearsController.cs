@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,10 @@ namespace AuditingSystem.Web.Controllers.api.Setup
             {
                 if (ModelState.IsValid)
                 {
+                    year.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    year.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    year.CreationDate = DateTime.Now;
+                    year.CurrentYear = DateTime.Now.Year;
                     await _yearRepository.CreateAsync(year);
                     return NoContent();
                 }
@@ -82,6 +87,8 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                     if (existingYear == null)
                         return NotFound();
 
+                    existingYear.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingYear.UpdatedDate = DateTime.Now;
                     // Update the existing year with the new values
                     existingYear.Name = updatedYear.Name;
                     //existingYear.CompanyId = updatedYear.CompanyId;

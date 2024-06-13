@@ -72,7 +72,6 @@ namespace AuditingSystem.Web.Controllers
                     await connection.OpenAsync();
 
                     //1. SP → ActualBudgetPlanperMonth
-
                     using (var command = new SqlCommand("ActualBudgetPlanperMonth", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
@@ -182,6 +181,165 @@ namespace AuditingSystem.Web.Controllers
                         ViewData["totalPlanperDepartment"] = totalPlan;
                     }
 
+                    //3. SP → RiskAssessmentStatusSummary
+                    using (var command = new SqlCommand("RiskAssessmentStatusSummary", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        //command.Parameters.Add(new SqlParameter("@companyId", companyId));
+
+                        var lowList = new List<int>();
+                        var mediumList = new List<int>();
+                        var highList = new List<int>();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var low = reader.GetInt32(reader.GetOrdinal("Low"));
+                                var medium = reader.GetInt32(reader.GetOrdinal("Medium"));
+                                var high = reader.GetInt32(reader.GetOrdinal("High"));
+                                ViewData["Low"] = low;
+                                ViewData["Medium"] = medium;
+                                ViewData["High"] = high;
+                            }
+                        }
+                    }
+
+                    //4. SP → CountRisksPerFunctions
+                    using (var command = new SqlCommand("CountRisksPerFunctions", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        var functions = new List<string>();
+                        var totalCounts = new List<int>();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var function = reader.GetString(reader.GetOrdinal("Function"));
+                                var totalCount = reader.GetInt32(reader.GetOrdinal("Total Count"));
+
+                                functions.Add(function);
+                                totalCounts.Add(totalCount);
+                            }
+                        }
+
+                        ViewData["Functions"] = functions;
+                        ViewData["FunctionTotalCount"] = totalCounts;
+                    }
+
+                    //5. SP → CountRisksPerDepartments
+                    using (var command = new SqlCommand("CountRisksPerDepartments", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        var departments = new List<string>();
+                        var totalCounts = new List<int>();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var department = reader.GetString(reader.GetOrdinal("Department"));
+                                var totalCount = reader.GetInt32(reader.GetOrdinal("Total Count"));
+
+                                departments.Add(department);
+                                totalCounts.Add(totalCount);
+                            }
+                        }
+
+                        ViewData["Departments"] = departments;
+                        ViewData["DepartmentTotalCount"] = totalCounts;
+                    }
+
+                    //6. SP → ResidualRiskRatingCount
+                    using (var command = new SqlCommand("ResidualRiskRatingCount", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        var residualRiskRatings = new List<string>();
+                        var totalCounts = new List<int>();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var residualRiskRating = reader.GetString(reader.GetOrdinal("Residual Risk Rating"));
+                                var totalCount = reader.GetInt32(reader.GetOrdinal("Total Count"));
+
+                                residualRiskRatings.Add(residualRiskRating);
+                                totalCounts.Add(totalCount);
+                            }
+                        }
+
+                        ViewData["ResidualRiskRatings"] = residualRiskRatings;
+                        ViewData["TotalCount"] = totalCounts;
+                    }
+
+                    //7. SP → CountRisksPerRiskCategory
+                    using (var command = new SqlCommand("CountRisksPerRiskCategory", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        var riskCategories = new List<string>();
+                        var totalCounts = new List<int>();
+                        var bgColors = new List<string>();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var riskCategory = reader.GetString(reader.GetOrdinal("Risk Category"));
+                                var totalCount = reader.GetInt32(reader.GetOrdinal("Total Count"));
+                                var bgColor = reader.GetString(reader.GetOrdinal("BG Color"));
+
+                                riskCategories.Add(riskCategory);
+                                totalCounts.Add(totalCount);
+                                bgColors.Add(bgColor);
+                            }
+                        }
+
+                        ViewData["RiskCategories"] = riskCategories;
+                        ViewData["RiskCategoryTotalCount"] = totalCounts;
+                        ViewData["RiskCategoryBGColor"] = bgColors;
+                    }
+
+                    //8. SP → ResidualRiskRatingPerDepartment
+                    using (var command = new SqlCommand("ResidualRiskRatingPerDepartment", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        var DepartmentCodeList = new List<int>();
+                        var InherentRiskRatingList = new List<double>();
+                        var ControlRatingList = new List<double>();
+                        var ResidualRiskRatingList = new List<double>();
+                        var ResidualRiskList = new List<string>();
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var DepartmentCode = reader.GetInt32(reader.GetOrdinal("Department Code"));
+                                var InherentRiskRating = reader.GetDouble(reader.GetOrdinal("Inherent Risk Rating"));
+                                var ControlRating = reader.GetDouble(reader.GetOrdinal("Control Rating"));
+                                var ResidualRiskRating = reader.GetDouble(reader.GetOrdinal("Residual Risk Rating"));
+                                var ResidualRisk = reader.GetString(reader.GetOrdinal("Residual Risk"));
+
+                                DepartmentCodeList.Add(DepartmentCode);
+                                InherentRiskRatingList.Add(InherentRiskRating);
+                                ControlRatingList.Add(ControlRating);
+                                ResidualRiskRatingList.Add(ResidualRiskRating);
+                                ResidualRiskList.Add(ResidualRisk);
+                            }
+                        }
+
+                        ViewData["DepartmentCodeList"] = DepartmentCodeList;
+                        ViewData["InherentRiskRatingList"] = InherentRiskRatingList;
+                        ViewData["ControlRatingList"] = ControlRatingList;
+                        ViewData["ResidualRiskRatingList"] = ResidualRiskRatingList;
+                        ViewData["ResidualRiskList"] = ResidualRiskList;
+                    }
                 }
 
                 return View();

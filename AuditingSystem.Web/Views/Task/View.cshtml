@@ -20,6 +20,41 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="Industry">Industry</label>
+                            @Html.DropDownList("IndustryId", ViewBag.IndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Industry" , @name="IndustryId", disabled="disabled" })
+                            <span asp-validation-for="IndustryId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="Company">Company</label>
+                            @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company" , @name="CompanyId", disabled="disabled" })
+                            <span asp-validation-for="CompanyId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="Department">Department</label>
+                            @Html.DropDownList("DepartmentId", ViewBag.DepartmentId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Department" , @name="DepartmentId", disabled="disabled" })
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="Function">Function</label>
+                            @Html.DropDownList("FunctionId", ViewBag.FunctionId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Function" , @name="FunctionId", disabled="disabled" })
+                            <span asp-validation-for="FunctionId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="Activity">Activity</label>
+                            @Html.DropDownList("ActivityId", ViewBag.ActivityId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Activity" , @name="ActivityId", disabled="disabled" })
+                            <span asp-validation-for="ActivityId" class="text-danger"></span>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label>Objective</label>
                         @Html.DropDownList("ObjectiveId", ViewBag.ObjectiveId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Objective", @name="ObjectiveId", disabled="disabled" })

@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldTests;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -52,8 +53,12 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     var existingRecord = db.Departments
                   .Where(x => x.Source == "System")
                   .OrderByDescending(x => x.Id)
-                  .FirstOrDefault();
+                    .FirstOrDefault();
 
+                    department.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    department.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    department.CreationDate = DateTime.Now;
+                    department.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
@@ -93,9 +98,12 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound(new { error = $"Department with ID {id} not found" });
                     }
 
-                    // تحديث الخصائص
+                    existingDepartment.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingDepartment.UpdatedDate = DateTime.Now;
+                    existingDepartment.Code = updatedDepartment.Code;
                     existingDepartment.Name = updatedDepartment.Name;
                     existingDepartment.Description = updatedDepartment.Description;
+                    existingDepartment.IndustryId = updatedDepartment.IndustryId;
                     existingDepartment.CompanyId = updatedDepartment.CompanyId;
                     existingDepartment.Head = updatedDepartment.Head;
 

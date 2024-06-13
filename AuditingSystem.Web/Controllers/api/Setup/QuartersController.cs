@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Setup;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,10 @@ namespace AuditingSystem.Web.Controllers.api.Setup
             {
                 if (ModelState.IsValid)
                 {
+                    quarter.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    quarter.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    quarter.CreationDate = DateTime.Now;
+                    quarter.CurrentYear = DateTime.Now.Year;
                     await _quarterRepository.CreateAsync(quarter);
                     return NoContent();
                 }
@@ -87,7 +92,8 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                         return NotFound();
                     }
 
-                    // Update role properties
+                    existingQuarter.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingQuarter.UpdatedDate = DateTime.Now;
                     existingQuarter.Name = updatedQuarter.Name;
                     existingQuarter.Description = updatedQuarter.Description;
                     existingQuarter.Month = updatedQuarter.Month;

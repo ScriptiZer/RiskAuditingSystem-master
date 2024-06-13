@@ -23,6 +23,13 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label for="Industry">Industry</label>
+                                @Html.DropDownList("IndustryId", null, "-- Select One --", new { @class = "form-control", @id = "Industry" , @name="IndustryId"})
+                                <span asp-validation-for="IndustryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label for="Company">Company</label>
                                 @Html.DropDownList("CompanyId", null, "-- Select One --", new { @class = "form-control", @id = "Company" , @name="CompanyId"})
                                 <span asp-validation-for="CompanyId" class="text-danger"></span>
@@ -42,7 +49,7 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="Description">Description</label>
                                 <textarea type="text" class="form-control" id="Description" name="Description" placeholder="Description"></textarea>
@@ -64,9 +71,34 @@
 
     <script>
         $(document).ready(function () {
+            $("#Company").prop("disabled", true);
+            $("#Industry").change(function () {
+                var industryId = $(this).val();
+                $.ajax({
+                    url: "/Department/GetCompanyByIndustry",
+                    data: { industryId: industryId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Company").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Company").html(options);
+                        }
+                    }
+                });
+            });
+
             $('#Description').summernote();
             $("#AddForm").validate({
                 rules: {
+                    IndustryId: {
+                        required: true
+                    },
                     CompanyId: {
                         required: true
                     },
@@ -81,6 +113,9 @@
                     }
                 },
                 messages: {
+                    IndustryId: {
+                        required: "The Industry field is required"
+                    },
                     CompanyId: {
                         required: "The Company field is required"
                     },
@@ -115,6 +150,7 @@
                     var formData = {
                         Name: $("#Name").val(),
                         Code: $("#Code").val(),
+                        IndustryId: $("#Industry").val(),
                         CompanyId: $("#Company").val(),
                         Head: $("#Head").val(),
                         Description: htmlDescription

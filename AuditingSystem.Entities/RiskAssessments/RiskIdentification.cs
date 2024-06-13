@@ -35,6 +35,7 @@ namespace AuditingSystem.Entities.RiskAssessments
         /// Contains value per sum for Risk Impact and Likelihood
         /// </summary>
         public int InherentRiskRating { get; set; }
+        public string? InherentRiskStatus { get; set; }
         
         /// <summary>
         /// Description to select reason Risk Impact and Likelihood

@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
     {
         private readonly IBaseRepository<ControlType, int> _controltype;
         private readonly ILogger<ControlTypesscsController> _logger;
-        public ControlTypesscsController(IBaseRepository<ControlType, int> controltype)
-        {
-            _controltype = controltype;
-        }
+        //public ControlTypesscsController(IBaseRepository<ControlType, int> controltype)
+        //{
+        //    _controltype = controltype;
+        //}
         public ControlTypesscsController(IBaseRepository<ControlType, int> controltype, ILogger<ControlTypesscsController> logger)
         {
             _controltype = controltype ?? throw new ArgumentNullException(nameof(controltype));
@@ -62,6 +63,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
             {
                 if (ModelState.IsValid)
                 {
+                    control.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    control.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    control.CreationDate = DateTime.Now;
+                    control.CurrentYear = DateTime.Now.Year;
                     await _controltype.CreateAsync(control);
                     return NoContent();
                 }
@@ -87,11 +92,12 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                         return NotFound();
                     }
 
-
-
+                    existingtype.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingtype.UpdatedDate = DateTime.Now;
+                    existingtype.Name = control.Name;
                     existingtype.BGColor = control.BGColor;
                     existingtype.FontColor = control.FontColor;
-                    await _controltype.UpdateAsync(control);
+                    await _controltype.UpdateAsync(existingtype);
 
                     return NoContent();
                 }

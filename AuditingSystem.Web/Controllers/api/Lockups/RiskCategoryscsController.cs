@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,8 +51,8 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                 _logger.LogError(ex, $"An error occurred while deleting the riskcategory with ID: {id}.");
                 return StatusCode(500, new { error = $"An error occurred while processing your request to delete role with ID: {id}." });
             }
-
         }
+
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] RiskCategory risk)
         {
@@ -59,6 +60,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
             {
                 if (ModelState.IsValid)
                 {
+                    risk.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    risk.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    risk.CreationDate = DateTime.Now;
+                    risk.CurrentYear = DateTime.Now.Year;
                     await _riskcategory.CreateAsync(risk);
                     return NoContent();
                 }
@@ -84,7 +89,9 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                         return NotFound();
                     }
 
-;
+                    existingerisk.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingerisk.UpdatedDate = DateTime.Now;
+                    existingerisk.Name = risk.Name;
                     existingerisk.BGColor = risk.BGColor;
                     existingerisk.FontColor = risk.FontColor;
                     await _riskcategory.UpdateAsync(existingerisk);

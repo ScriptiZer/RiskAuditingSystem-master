@@ -110,6 +110,42 @@
                                                 <input disabled @isChecked title="Delete" data-size="small" id="Delete" name="Delete" class="Delete" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
                                             </center>
                                         </td>
+                                        <td>
+                                            @{
+                                                isChecked = "";
+                                                if (rolePermission.ExportToPDF == true)
+                                                {
+                                                    isChecked = "checked";
+                                                }
+                                            }
+                                            <center>
+                                                <input disabled @isChecked title="Export to PDF" data-size="small" id="ExporttoPDF" name="ExporttoPDF" class="ExporttoPDF" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            @{
+                                                isChecked = "";
+                                                if (rolePermission.ExportToWord == true)
+                                                {
+                                                    isChecked = "checked";
+                                                }
+                                            }
+                                            <center>
+                                                <input disabled @isChecked title="Export to Word" data-size="small" id="ExporttoWord" name="ExporttoWord" class="ExporttoWord" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
+                                        <td>
+                                            @{
+                                                isChecked = "";
+                                                if (rolePermission.ExportToExcel == true)
+                                                {
+                                                    isChecked = "checked";
+                                                }
+                                            }
+                                            <center>
+                                                <input disabled @isChecked title="Export to Excel" data-size="small" id="ExporttoExcel" name="ExporttoExcel" class="ExporttoExcel" type="checkbox" data-toggle="toggle" data-style="ios" data-on="Yes" data-off="No">
+                                            </center>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>

@@ -1,9 +1,25 @@
 ﻿@model IEnumerable<RiskImpact>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
 @{
-    ViewData["DeleteTitle"] = "Control Process";
+    ViewData["DeleteTitle"] = "RiskImpacts";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
 
 
 <div class="row">
@@ -12,12 +28,15 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h4 class="card-title">ControlEffectiveness View</h4>
+                        <h4 class="card-title">Risk Impact Management View</h4>
                     </div>
                     <div class="col-md-6 text-end">
-                        <a class="btn btn-primary me-2" href="~/ControlProcesses/Add">
-                            <i class="fa-solid fa-plus"></i> Add New control
-                        </a>
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true && p.Add == true))
+                        {
+                            <a class="btn btn-primary me-2" href="~/RiskImpactes/Add">
+                                <i class="fa-solid fa-plus"></i> Add New Risk Impact
+                            </a>
+                        }
                     </div>
                 </div>
                 <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
@@ -34,6 +53,7 @@
                         <thead>
                             <tr>
 
+                                <th>Name</th>
                                 <th>Rate</th>
                              
 
@@ -45,15 +65,32 @@
                             {
                                 <tr id="tr">
 
-                                    
+                                    <td>@item.Name</td>
                                     <td>@item.Rate</td>
-
-                                    <td>
-                                        <a asp-action="Edit" asp-controller="RiskImpactes" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    </td>
-                                    <td>
-                                        <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="RiskImpactes" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="RiskImpactes" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true && p.Edit == true))
+                                    {
+                                        <td>
+                                            <a asp-action="Edit" asp-controller="RiskImpactes" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true && p.Delete == true))
+                                    {
+                                        <td>
+                                            <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
+                                    }
                                 </tr>
                             }
                         </tbody>

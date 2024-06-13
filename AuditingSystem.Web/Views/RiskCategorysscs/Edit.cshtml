@@ -1,6 +1,6 @@
 ﻿@model RiskCategory
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Risk Category Edit";
 }
 
 <h1>Edit</h1>
@@ -11,24 +11,33 @@
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Edit Role</h4>
-                <form class="forms-sample" id="AddForm">
+                <h4 class="card-title">Edit Risk Category</h4>
+                <form class="forms-sample" id="EditForm">
 
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        @* <input type="text" class="form-control" id="Description" placeholder="Description"> *@
+                        <input asp-for="Name" type="text" class="form-control" id="Name" name="Name" placeholder="Risk Category Name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                        @*         <div id="Description"></div> *@
+                    </div>
 
                     <div class="form-group">
                         <label for="BGColor">BGColor</label>
                         @* <input type="text" class="form-control" id="Description" placeholder="Description"> *@
-                        <input type="text" class="form-control" id="BGColor" name="BGColor" placeholder="BGColor">
+                        <input asp-for="BGColor" type="text" class="form-control" id="BGColor" name="BGColor" placeholder="BGColor">
                         <span asp-validation-for="BGColor" class="text-danger"></span>
                         @*         <div id="Description"></div> *@
                     </div>
                     <div class="form-group">
                         <label for="FontColor">FontColor</label>
-                        <input type="text" class="form-control" id="FontColor" name="FontColor" placeholder="FontColor">
+                        <input asp-for="FontColor" type="text" class="form-control" id="FontColor" name="FontColor" placeholder="FontColor">
                         <span asp-validation-for="FontColor" class="text-danger"></span>
                     </div>
-                    <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
-                    <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                    <div class="float-end mt-2">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -44,11 +53,23 @@
                 rules: {
                     Name: {
                         required: true
+                    },
+                    BGColor: {
+                        required: true
+                    },
+                    FontColor: {
+                        required: true
                     }
                 },
                 messages: {
                     Name: {
                         required: "The Name field is required"
+                    },
+                    BGColor: {
+                        required: "The BG Color field is required"
+                    },
+                    FontColor: {
+                        required: "The Font Color field is required"
                     }
                 },
                 errorPlacement: function (error, element) {
@@ -70,28 +91,65 @@
 
                 if ($("#EditForm").valid()) {
                     var formData = {
-
+                        Name: $("#Name").val(),
                         BGColor: $("#BGColor").val(),
                         FontColor: $("#FontColor").val()
                     };
-                    $.ajax({
-                        url: "/api/RiskCategoryscs/@Model.Id",
-                        method: "PUT",
-                        dataType: 'json',
-                        contentType: "application/json",
-                        data: JSON.stringify(formData),
-                        success: function (response) {
-                            alert("The Role is modified successfully.");
-                            window.location.href = '/RiskCategorysscs/Index';
-                        },
-                        error: function (error) {
-                            if (error.responseJSON && error.responseJSON.errors) {
-                                $.each(error.responseJSON.errors, function (key, value) {
-                                    $("#" + key).siblings(".text-danger").text(value);
-                                });
-                            }
+
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        showCancelButton: false,
+                        showCloseButton: false,
+                        onBeforeOpen: () => {
+                            swal.showLoading();
                         }
                     });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/RiskCategoryscs/@Model.Id",
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close();
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end",
+                                    timer: 2000,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    showCloseButton: false
+                                }).then(function () {
+                                    window.location.href = '/RiskCategorysscs/Index';
+                                });
+                            },
+                            error: function (error) {
+                                swal.close();
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
                 }
             });
         });

@@ -20,7 +20,7 @@ namespace AuditingSystem.Web.Controllers.Lockups
             {
                 var controls = await _controleeffevt.ListAsync(
                        new Expression<Func<ControlEffectiveness, bool>>[] { u => u.IsDeleted == false },
-                       q => q.OrderBy(u => u.Id));
+                       q => q.OrderBy(u => u.Rate));
 
                 return View(controls);
             }
@@ -31,6 +31,11 @@ namespace AuditingSystem.Web.Controllers.Lockups
             return View();
         }
         public async Task<IActionResult> Edit(int id)
+        {
+            return View(await _controleeffevt.FindByAsync(id));
+        }
+
+        public async Task<IActionResult> View(int id)
         {
             return View(await _controleeffevt.FindByAsync(id));
         }

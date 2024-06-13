@@ -23,7 +23,11 @@
     }
 }
 
-
+<style>
+    .btn-danger, .fa-trash {
+        color: #ffffff;
+    }
+</style>
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
@@ -41,126 +45,9 @@
                         }
                     </div>
                 </div>
-                @foreach (var item in Model.OrderBy(d =>
-                {
-                   int code;
-                   return int.TryParse(d.Code, out code) ? code : 0;
-                }))
-                {
-                    <div class="card mb-5">
-                        <table class="table table-hover table-bordered">
-
-                            <tbody>
-
-
-                                <tr class="table-primary">
-                                    <th style="" colspan="6">
-                                        Objective: @item.Objective?.Name
-                                        <br />
-                                        @(item.Code + " - " + item.Name)
-                                    </th>
-
-                                    <th style=""></th>
-                                    <th style=""></th>
-                                    <th>
-                                    </th>
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == false)))
-                                    {
-
-                                        <th> <a title="View ObjeTaskctive" asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a></th>
-
-                                    }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == true)))
-                                    {
-
-                                        <th> <a title="View Task" asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a></th>
-
-                                    }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Edit == true))
-                                    {
-
-                                        <th> <a title="Edit Task" asp-action="Edit" asp-controller="Task" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a></th>
-
-                                    }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Delete == true))
-                                    {
-                                        <th> <a title="Delete Task" data-actions-id="@item.Id" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a></th>
-                                    }
-                                </tr>
-
-                                <tr>
-                                    <th>
-                                        PRACTICE
-                                    </th>
-                                </tr>
-
-                                @foreach (var practice in item.Practices.OrderBy(f => Convert.ToInt32(f.Code)))
-                                {
-                                            <tr>
-                                                <td colspan="4">
-                                                    @(practice.Code + " - " + practice.Name)
-                                                </td>
-
-
-                                                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && (p.Edit == false && p.Delete == false)))
-                                                {
-
-                                                    <td> <a title="View Practice" asp-action="View" asp-controller="Task" asp-route-id="@practice.Id"><i class="fa-solid fa-eye"></i></a></td>
-
-                                                }
-                                                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && (p.Edit == false && p.Delete == true)))
-                                                {
-
-                                                    <td> <a title="View Practice" asp-action="View" asp-controller="Task" asp-route-id="@practice.Id"><i class="fa-solid fa-eye"></i></a></td>
-
-                                                }
-                                                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && p.Edit == true))
-                                                {
-
-                                                    <td><a title="Edit Practice" asp-action="Edit" asp-controller="Task" asp-route-id="@practice.Id"><i class="fa fa-pencil"></i></a></td>
-
-                                                }
-                                                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && p.Delete == true))
-                                                {
-
-                                                    <td><a title="Delete Practice" data-actions-id="@practice.Id" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a></td>
-                                                }
-
-                                            </tr>
-                                        }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-
-            </div>
-        </div>
-    </div>
-</div>
-@* 
-<div class="row">
-    <div class="col-lg-12 grid-margin stretch-card">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="card-title">Task Management View</h4>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Add == true))
-                        {
-                            <a class="btn btn-primary me-2" href="~/Task/Add">
-                                <i class="fa-solid fa-plus"></i> Add New Task
-                            </a>
-                        }
-                    </div>
-                </div>
-
                 <table class="table">
                     <thead>
                         <tr>
-
-
                             <th>
                                 TASK
                             </th>
@@ -170,83 +57,278 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if(Model != null)
+                        @foreach(var item in Model)
                         {
-                            foreach(var item in Model)
-                            {
-                                <tr>
+                            <tr id="tr">
 
-                                    <td>
-                                        <div class="row">
-                                            <div class="col">
-                                                <b>
-                                                    <code title="Objective">
-                                                        @(item.Objective.Activity.Function.Department.Company.Code + "." + item.Objective.Activity.Function.Department.Code + "."
-                                                            + item.Objective.Activity.Function.Code + "." + item.Objective.Activity.Code + "." + item.Objective.Code + "." + item.Code)
-                                                    </code>
-                                                    ›
+                                <td>
+                                    <div class="row">
+                                        <div class="col">
+                                            <b>
+                                                <code>
+                                                    @(item.Objective.Activity.Function.Department.Company.Code).
+                                                    @(item.Objective.Activity.Function.Department.Code).
+                                                    @(item.Objective.Activity.Function.Code).
+                                                    @(item.Objective.Activity.Code).
+                                                    @(item.Objective.Code).
+                                                    @(item.Code)
+                                                </code>
+                                                ›
 
-                                                    @(item.Name!=null ? item.Name: "N/A")
-                                                </b>
-                                            </div>
-
+                                                @(item.Name != null ? item.Name : "N/A")
+                                            </b>
                                         </div>
 
+                                    </div>
+
+                                    @foreach(var subItem in item.Practices)
+                                    {
                                         <div class="row">
-                                            <div class="col col-12 pl-5 pt-2" v-for="child in item.practices"
-                                                 :key="child.id">
+                                            <div class="col col-12 pl-5 pt-2">
                                                 &nbsp; &nbsp; &nbsp;
-                                                @foreach (var practice in item.Practices.OrderBy(f => f.Code))
-                                                {
-                                                    <h6>
-                                                        <ol style="list-style-type:none;">
-                                                            <li>
-                                                                <a href="/Practice?TaskId=" + @item.Id
-                                                                   title="Practice">
-                                                                    {{child.code}} {{child.practiceName}}
-                                                                    @item.Code @item.Name
-                                                                </a>
-                                                            </li>
-                                                        </ol>
-                                                    </h6>
-                                                }
-                                                
+                                                <a href="'/Questionaires?companyId=' + item.companyId + '&functionId=' + item.id + '&activityId=' + item.activityId + '&practiceId=' + child.id"
+                                                   title="Function">
+                                                    @subItem.Code @subItem.Name
+                                                </a>
                                             </div>
                                         </div>
+                                    }
+                                    
 
-                                    </td>
+                                </td>
+                                <td class="text-right" style="white-space: nowrap;">
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == false)))
                                     {
-                                        <td>
-                                            <a asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
-                                        </td>
+
+                                    <th> <a class="btn btn-primary" title="View Task" asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i>View Task</a></th>
+
                                     }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == true)))
                                     {
-                                        <td>
-                                            <a asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
-                                        </td>
+
+                                    <th> <a class="btn btn-primary" title="View Task" asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i>View Task</a></th>
+
                                     }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Edit == true))
                                     {
-                                        <td>
-                                            <a asp-action="Edit" asp-controller="Task" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        </td>
+
+                                    <th> <a class="btn btn-primary" title="Edit Task" asp-action="Edit" asp-controller="Task" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i>Edit Task</a></th>
+
                                     }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Delete == true))
                                     {
-                                        <td>
-                                            <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
-                                        </td>
-                                    }
-                                </tr>
-                            }
+                                    <th> <button class="btn btn-danger" title="Delete Task" data-actions-id="@item.Id" id="btnDeleteTask"><i class="fa-solid fa-trash"></i>Delete Task</button></th>
+                                    }                                </td>
+
+
+                            </tr>
                         }
                     </tbody>
+                    <tfoot>
+                    </tfoot>
                 </table>
-              
+           @*      @foreach (var item in Model)
+                {
+                    <div class="card mb-5" data-tskId="@item.Id">
+                        <table class="table table-hover table-bordered">
+
+                            <tbody>
+
+
+                                <tr class="table-primary tr">
+                                    <th style="" colspan="6">
+                                        Industry: @item.Industry?.Code - @item.Industry?.Name)
+                                        <br />
+                                        Company: @item.Company?.Code - @item.Company?.Name)
+                                        <br />
+                                        Department: @item.Department?.Code - @item.Department?.Name)
+                                        <br />
+                                        Function: @item.Objective?.Code - @item.Function?.Name)
+                                        <br />
+                                        Activity: @item.Activity?.Code - @item.Activity?.Name)
+                                        <br />
+                                        Objective: @item.Objective?.Code - @item.Objective?.Name)
+                                        <br />
+                                        Task: @(item.Code + " - " + item.Name)
+                                    </th>
+
+                                    <th style=""></th>
+                                    <th style=""></th>
+                                    <th>
+                                    </th>
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    {
+
+                                        <th> <a class="btn btn-primary" title="View Task" asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i>View Task</a></th>
+
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    {
+
+                                        <th> <a class="btn btn-primary" title="View Task" asp-action="View" asp-controller="Task" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i>View Task</a></th>
+
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Edit == true))
+                                    {
+
+                                        <th> <a class="btn btn-primary" title="Edit Task" asp-action="Edit" asp-controller="Task" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i>Edit Task</a></th>
+
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true && p.Delete == true))
+                                    {
+                                        <th> <button class="btn btn-danger" title="Delete Task" data-actions-id="@item.Id" id="btnDeleteTask"><i class="fa-solid fa-trash"></i>Delete Task</button></th>
+                                    }
+                                </tr>
+
+                                <tr class="tr2">
+                                    <th colspan="6">
+                                        PRACTICE
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+
+                                @foreach (var practice in item.Practices.Where(p=>p.IsDeleted == false).OrderBy(f => Convert.ToInt32(f.Code)))
+                                {
+                                    <tr id="tr3">
+                                        <td colspan="4">
+                                            @(practice.Code + " - " + practice.Name)
+                                        </td>
+
+
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                        {
+
+                                            <td> <a class="btn btn-primary" title="View Practice" asp-action="View" asp-controller="Task" asp-route-id="@practice.Id"><i class="fa-solid fa-eye"></i>View Practice</a></td>
+
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                        {
+
+                                            <td> <a class="btn btn-primary" title="View Practice" asp-action="View" asp-controller="Task" asp-route-id="@practice.Id"><i class="fa-solid fa-eye"></i>View Practice</a></td>
+
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && p.Edit == true))
+                                        {
+
+                                            <td><a class="btn btn-primary" title="Edit Practice" asp-action="Edit" asp-controller="Task" asp-route-id="@practice.Id"><i class="fa fa-pencil"></i>Edit Practice</a></td>
+
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true && p.Delete == true))
+                                        {
+
+                                            <td><button class="btn btn-danger" title="Delete Practice" data-actions-id="@practice.Id" id="btnDeletePractice"><i class="fa-solid fa-trash"></i>Delete Practice</button></td>
+                                        }
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                } *@
+
             </div>
         </div>
     </div>
 </div>
- *@
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $(document).on("click", "#btnDeleteTask", function () {
+                var btnId = $(this);
+                swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this data!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                    confirmButtonText: "Yes, delete it!",
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: '/api/Tasks/' + btnId.attr("data-actions-id"),
+                            method: 'DELETE',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (response) {
+                                swal({
+                                    title: "Success",
+                                    text: "The Delete is Successfully",
+                                    icon: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                btnId.parents(".tr").remove();
+                                $("div[data-tskId=" + btnId.attr("data-actions-id") + "]").remove();
+                            },
+                            error: function (error) {
+                                swal({
+                                    title: "Error",
+                                    text: "Failed to delete the data",
+                                    icon: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        });
+                    } else {
+                        swal("The data is safe!", {
+                            icon: "info",
+                            //timer: 2000,
+                        });
+                    }
+                });
+            });
+
+            $(document).on("click", "#btnDeletePractice", function () {
+                var btnId = $(this);
+                swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this data!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                    confirmButtonText: "Yes, delete it!",
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: '/api/Practices/' + btnId.attr("data-actions-id"),
+                            method: 'DELETE',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (response) {
+                                swal({
+                                    title: "Success",
+                                    text: "The Delete is Successfully",
+                                    icon: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                btnId.closest("tr").nextUntil(".tr3").addBack().remove();
+                            },
+                            error: function (error) {
+                                swal({
+                                    title: "Error",
+                                    text: "Failed to delete the data",
+                                    icon: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        });
+                    } else {
+                        swal("The data is safe!", {
+                            icon: "info",
+                            //timer: 2000,
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,8 +1,13 @@
-﻿using AuditingSystem.Entities.AuditProcess;
+﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
+using AuditingSystem.Web.Controllers.AuditPlan;
+using AuditingSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Linq.Expressions;
 
@@ -15,19 +20,29 @@ namespace AuditingSystem.Web.Controllers.Setup
         private readonly IBaseRepository<Department, int> _departmentRepository;
         private readonly IBaseRepository<Quarter, int> _quarterRepository;
         private readonly IBaseRepository<User, int> _userRepository;
+        private readonly IBaseRepository<DraftAuditPlan, int> _draftRepository;
+        private readonly IBaseRepository<DraftAuditPlanList, int> _draftListRepository;
+        private readonly AuditingSystemDbContext _db;
 
         public YearController(
             IBaseRepository<Year, int> yearRepository,
             IBaseRepository<Company, int> companyRepository,
             IBaseRepository<Department, int> departmentRepository,
             IBaseRepository<Quarter, int> quarterRepository,
-            IBaseRepository<User, int> userRepository)
+            IBaseRepository<User, int> userRepository,
+            IBaseRepository<DraftAuditPlan, int> draftRepository,
+            AuditingSystemDbContext db,
+            IBaseRepository<DraftAuditPlanList, int> draftListRepository)
         {
             _companyRepository = companyRepository;
             _departmentRepository = departmentRepository;
             _yearRepository = yearRepository;
             _quarterRepository = quarterRepository;
             _userRepository = userRepository;
+            _draftRepository = draftRepository;
+            _db = db;
+            _draftListRepository = draftListRepository;
+
         }
         public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
@@ -126,5 +141,67 @@ namespace AuditingSystem.Web.Controllers.Setup
             }
             return RedirectToAction("Login", "Account");
         }
+
+        public async Task<IActionResult> GetFinalAuditperYear(string getYear)
+        {
+            try
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
+
+                if (userId == null)
+                    return RedirectToAction("Login", "Account");
+
+                var user = await _userRepository.FindByAsync(Convert.ToInt32(userId));
+
+                //var list = await _draftRepository.ListAsync(
+                //    new Expression<Func<DraftAuditPlan, bool>>[] { u => u.IsDeleted == false, c => c.CompanyId == user.CompanyId },
+                //    q => q.OrderBy(u => u.Id),
+                //    c => c.Company,
+                //    d => d.Department,
+                //    f => f.Function,
+                //    dr => dr.DraftAuditPlanLists);
+
+                var list = await _draftListRepository.ListAsync(
+                    new Expression<Func<DraftAuditPlanList, bool>>[] { u => u.IsDeleted == false, c => c.DraftAuditPlan.CompanyId == user.CompanyId, y=>y.Year == getYear, a=>a.Actual > 0 },
+                    q => q.OrderBy(u => u.Id),
+                    c => c.DraftAuditPlan,
+                    d => d.DraftAuditPlan.Company,
+                    f => f.DraftAuditPlan.Department,
+                    dr => dr.DraftAuditPlan.Function);
+
+                ViewBag.getYear = getYear;
+
+                var companiesWithYearsAndQuarters = await _db.Companies
+                    .Include(c => c.Years).ThenInclude(y => y.Quarters)
+                    .Where(u => u.IsDeleted == false)
+                    .OrderBy(u => u.Id)
+                    .ToListAsync();
+
+                var yearQuarterDictionary = new Dictionary<string, List<YearQuarter>>();
+
+                foreach (var company in companiesWithYearsAndQuarters)
+                {
+                    foreach (var year in company.Years.Where(y=>y.Name == getYear))
+                    {
+                        var quarters = year.Quarter.Split(',').ToList();
+                        var yearQuarters = new List<YearQuarter>();
+                        foreach (var quarter in quarters)
+                        {
+                            yearQuarters.Add(new YearQuarter { YearId = year.Id, Quarter = quarter });
+                        }
+                        yearQuarterDictionary.Add(year.Name, yearQuarters);
+                    }
+                }
+
+                ViewBag.yearQuarterDictionary = yearQuarterDictionary;
+
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+        }
+       
     }
 }

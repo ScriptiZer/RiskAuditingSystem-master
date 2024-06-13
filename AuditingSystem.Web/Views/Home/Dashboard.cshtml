@@ -9,7 +9,132 @@
     string formattedEstimatedNumber = string.Format("{0:N0}", Estimatednumber);
 }
 
+
+
 <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Risk Control SLA</p>
+                <table class="table table-bordered" style="border:2px solid gray;text-align: center;">
+                    <tr>
+                        <th colspan="2" rowspan="3" style="background: #d9d9d9;">Risk</th>
+                        <th colspan="6" style="background: #d9d9d9;">Control</th>
+                    </tr>
+                    <tr>
+                        <th style="background: #d9d9d9;">5</th>
+                        <th style="background: #d9d9d9;">4</th>
+                        <th style="background: #d9d9d9;">3</th>
+                        <th style="background: #d9d9d9;">2</th>
+                        <th style="background: #d9d9d9;">1</th>
+                    </tr>
+                    <tr>
+                        <th style="background: #80808024;">Excelllent</th>
+                        <th style="background: #80808024;">Good</th>
+                        <th style="background: #80808024;">Fair</th>
+                        <th style="background: #80808024;">Poor</th>
+                        <th style="background: #80808024;">Unsatisfactory</th>
+                    </tr>
+                    <tr>
+                        <th style="background: #d9d9d9;">9 - 10</th>
+                        <th style="background: #80808024;">Critical</th>
+                        <td style="background: linear-gradient(99deg, rgb(255, 255, 0) 0%, rgb(255, 153, 51) 50%, red 100%);color:white;font-size: 17px;">4 - 5</td>
+                        <td style="background: linear-gradient(99deg, red 0%, red 100%);color:white;font-size: 17px;">5 - 6</td>
+                        <td style="background: linear-gradient(99deg, red 0%, #e40000 100%);color:white;font-size: 17px;">6 - 7</td>
+                        <td style="background: linear-gradient(99deg, #e40000 0%, rgb(192, 0, 0) 100%);color:white;font-size: 17px;">7 - 8</td>
+                        <td style="background: linear-gradient(99deg, rgb(192, 0, 0) 100%, rgb(192, 0, 0) 100%);color:white;font-size: 17px;">8 - 9</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #d9d9d9;">7 - 8</th>
+                        <th style="background: #80808024;">High</th>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(255, 255, 0) 100%);font-size: 17px;">2 - 3</td>
+                        <td style="background: linear-gradient(99deg, rgb(255, 255, 0) 0, rgb(255, 255, 0) 100%);font-size: 17px;">3 - 4</td>
+                        <td style="background: linear-gradient(99deg, rgb(255, 255, 0) 0, red 100%);color:white;font-size: 17px;">4 - 5</td>
+                        <td style="background: linear-gradient(99deg, red 0, red 100%);color:white;font-size: 17px;">5 - 6</td>
+                        <td style="background: linear-gradient(99deg, red 0, rgb(192, 0, 0) 100%);color:white;font-size: 17px;">6 - 7</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #d9d9d9;">5 - 6</th>
+                        <th style="background: #80808024;">Medium</th>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(15, 255, 0) 100%);font-size: 17px;">0 - 1</td>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(15, 255, 0) 100%);font-size: 17px;">1 - 2</td>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(255, 255, 0) 100%);font-size: 17px;">2 - 3</td>
+                        <td style="background: linear-gradient(99deg, rgb(255, 255, 0) 0, rgb(255, 255, 0) 100%);color:red;font-size: 17px;">3 - 4</td>
+                        <td style="background: linear-gradient(99deg, rgb(255, 255, 0) 0, red 100%);color:white;font-size: 17px;">4 - 5</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #d9d9d9;">1 - 4</th>
+                        <th style="background: #80808024;">Low</th>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(15, 255, 0) 100%);font-size: 17px;">(4) - 1</td>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(15, 255, 0) 100%);font-size: 17px;">(3) - 0</td>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(15, 255, 0) 100%);font-size: 17px;">(2) - 1</td>
+                        <td style="background: linear-gradient(99deg, rgb(15, 255, 0) 0, rgb(15, 255, 0) 100%);font-size: 17px;">(1) - 2</td>
+                        <td style="background: linear-gradient(99deg, rgb(255, 255, 0) 0, rgb(255, 255, 0) 100%);color:red;font-size: 17px;">0 - 3</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Risk Category Summary</p>
+                <canvas id="CountRisksPerRiskCategory"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Residual Risk Rating Summary</p>
+                <div id="ResidualRiskRatingCount"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Residual Risk Rating Per Department</p>
+                <canvas id="scatterChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Risk Assessment Status Summary</h4>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Risks Summary Per Departments</p>
+                <canvas id="CountRisksPerDepartments"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title">Risks Summary Per Functions</p>
+                <canvas id="CountRisksPerFunctions"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-6 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
@@ -20,12 +145,12 @@
                             <div class="item">
                                 <p class="mb-">Total Estimated</p>
                                 <h5 class="font-weight-bold mb-0">@formattedActualNumber</h5>
-                                <div style="background:#6640b2;" class="color-border"></div>
+                                <div style="background:#c00000d9" class="color-border"></div>
                             </div>
                             <div class="item">
                                 <p class="mb-">Total Actual</p>
                                 <h5 class="font-weight-bold mb-0">@formattedEstimatedNumber</h5>
-                                <div style="background:#1cbccd" class="color-border"></div>
+                                <div style="background:#005500" class="color-border"></div>
                             </div>
                         </div>
                     </div>
@@ -37,7 +162,6 @@
         </div>
     </div>
 
-
     <div class="col-md-6 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
@@ -48,12 +172,12 @@
                             <div class="item">
                                 <p class="mb-">Total Plan</p>
                                 <h5 class="font-weight-bold mb-0">@ViewData["totalPlanperDepartment"]</h5>
-                                <div style="background:#6640b2;" class="color-border"></div>
+                                <div style="background:rgba(255, 99, 132, 1)" class="color-border"></div>
                             </div>
                             <div class="item">
                                 <p class="mb-">Total Actual</p>
                                 <h5 class="font-weight-bold mb-0">@ViewData["totalActualperDepartment"]</h5>
-                                <div style="background:#1cbccd" class="color-border"></div>
+                                <div style="background:rgba(54, 162, 235, 1)" class="color-border"></div>
                             </div>
                         </div>
                     </div>
@@ -69,182 +193,427 @@
     <script>
 
         //1. SP → ActualBudgetPlanperMonth
-        if ($("#audience-chart").length) {
+        $(document).ready(function () {
+            // Retrieve data from ViewData
             var months = @Html.Raw(JsonSerializer.Serialize(ViewData["Months"]));
-            var Actualvalues = @Html.Raw(JsonSerializer.Serialize(ViewData["ActualValues"]));
-            var Estimatedvalues = @Html.Raw(JsonSerializer.Serialize(ViewData["EstimatedValues"]));
+            var actualValues = @Html.Raw(JsonSerializer.Serialize(ViewData["ActualValues"]));
+            var estimatedValues = @Html.Raw(JsonSerializer.Serialize(ViewData["EstimatedValues"]));
 
-            var AudienceChartCanvas = $("#audience-chart").get(0).getContext("2d");
-            var AudienceChart = new Chart(AudienceChartCanvas, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [
-                        // {
-                        //     type: 'line',
-                        //     fill: false,
-                        //     data: [100, 2030, 1030, 1040, 2070, 1040,1058,7004,9009,1130,1012,1128],
-                        //     borderColor: '#ff4c5b'
-                        // },
-                        {
-                            label: '# of Estimated Budget',
-                            data: Estimatedvalues,
-                            backgroundColor: '#6640b2'
-                        },
-                        {
-                            label: '# of Actual Budget',
-                            data: Actualvalues,
-                            backgroundColor: '#1cbccd'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    layout: {
-                        padding: {
-                            left: 0,
-                            right: 0,
-                            top: 20,
-                            bottom: 0
-                        }
+            // Define the data for the bar chart
+            var data = {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Estimated',
+                        data: estimatedValues,
+                        backgroundColor: '#c00000d9', // You can customize color here
+                        borderColor: '#c00000d9', // You can customize border color here
+                        borderWidth: 1
                     },
+                    {
+                        label: 'Actual',
+                        data: actualValues,
+                        backgroundColor: '#005500', // You can customize color here
+                        borderColor: '#005500', // You can customize border color here
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            // Get the context of the canvas element
+            var ctx = document.getElementById('audience-chart').getContext('2d');
+
+            // Create the bar chart
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
                     scales: {
                         yAxes: [{
-                            display: true,
-                            gridLines: {
-                                display: true,
-                                drawBorder: false,
-                                color: "#f8f8f8",
-                                zeroLineColor: "#f8f8f8"
-                            },
                             ticks: {
                                 beginAtZero: true
-                                // display: true,
-                                // min: 0,
-                                // max: 1000000,
-                                // stepSize: 1000,
-                                // fontColor: "#b1b0b0",
-                                // fontSize: 10,
-                                // padding: 10
                             }
-                        }],
-                        xAxes: [{
-                            stacked: false,
-                            ticks: {
-                                beginAtZero: true,
-                                fontColor: "#b1b0b0",
-                                fontSize: 10
-                            },
-                            gridLines: {
-                                color: "rgba(0, 0, 0, 0)",
-                                display: false
-                            },
-                            barPercentage: .9,
-                            categoryPercentage: .7,
                         }]
                     },
-                    legend: {
-                        display: false
-                    },
-                    elements: {
-                        point: {
-                            radius: 3,
-                            backgroundColor: '#ff4c5b'
-                        }
-                    }
-                },
+                    // You can add more options here like title, legend, etc.
+                }
             });
-        }
-
+        });
 
         //2. SP → TotalPlanandActualperDepartment
-        if ($("#TotalPlanandActualperDepartment").length) {
-            var months = @Html.Raw(JsonSerializer.Serialize(ViewData["Departments"]));
-            var Actualvalues = @Html.Raw(JsonSerializer.Serialize(ViewData["ActualValuesperDepartment"]));
-            var PlanValues = @Html.Raw(JsonSerializer.Serialize(ViewData["PlanValuesperDepartment"]));
+        $(document).ready(function () {
+            // Retrieve data from ViewData
+            var departments = @Html.Raw(JsonSerializer.Serialize(ViewData["Departments"]));
+            var actualValues = @Html.Raw(JsonSerializer.Serialize(ViewData["ActualValuesperDepartment"]));
+            var planValues = @Html.Raw(JsonSerializer.Serialize(ViewData["PlanValuesperDepartment"]));
 
-            var AudienceChartCanvas = $("#TotalPlanandActualperDepartment").get(0).getContext("2d");
-            var AudienceChart = new Chart(AudienceChartCanvas, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [
-                        // {
-                        //     type: 'line',
-                        //     fill: false,
-                        //     data: [100, 2030, 1030, 1040, 2070, 1040,1058,7004,9009,1130,1012,1128],
-                        //     borderColor: '#ff4c5b'
-                        // },
-                        {
-                            label: '# of Plan Resources',
-                            data: PlanValues,
-                            backgroundColor: '#6640b2'
-                        },
-                        {
-                            label: '# of Actual Resources',
-                            data: Actualvalues,
-                            backgroundColor: '#1cbccd'
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    layout: {
-                        padding: {
-                            left: 0,
-                            right: 0,
-                            top: 20,
-                            bottom: 0
-                        }
+            // Define the data for the bar chart
+            var data = {
+                labels: departments,
+                datasets: [
+                    {
+                        label: 'Plan',
+                        data: planValues,
+                        backgroundColor: '#c00000d9', // You can customize color here
+                        borderColor: '#c00000d9', // You can customize border color here
+                        borderWidth: 1
                     },
+                    {
+                        label: 'Actual',
+                        data: actualValues,
+                        backgroundColor: '#005500', // You can customize color here
+                        borderColor: '#005500', // You can customize border color here
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            // Get the context of the canvas element
+            var ctx = document.getElementById('TotalPlanandActualperDepartment').getContext('2d');
+
+            // Create the bar chart
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
                     scales: {
                         yAxes: [{
-                            display: true,
-                            gridLines: {
-                                display: true,
-                                drawBorder: false,
-                                color: "#f8f8f8",
-                                zeroLineColor: "#f8f8f8"
-                            },
                             ticks: {
                                 beginAtZero: true
-                                // display: true,
-                                // min: 0,
-                                // max: 1000000,
-                                // stepSize: 1000,
-                                // fontColor: "#b1b0b0",
-                                // fontSize: 10,
-                                // padding: 10
                             }
-                        }],
-                        xAxes: [{
-                            stacked: false,
-                            ticks: {
-                                beginAtZero: true,
-                                fontColor: "#b1b0b0",
-                                fontSize: 10
-                            },
-                            gridLines: {
-                                color: "rgba(0, 0, 0, 0)",
-                                display: false
-                            },
-                            barPercentage: .9,
-                            categoryPercentage: .7,
                         }]
                     },
-                    legend: {
-                        display: false
+                    // You can add more options here like title, legend, etc.
+                }
+            });
+        });
+
+        //3. SP → RiskAssessmentStatusSummary
+        $(document).ready(function () {
+            var low = @Html.Raw(JsonSerializer.Serialize(ViewData["Low"]));
+            var medium = @Html.Raw(JsonSerializer.Serialize(ViewData["Medium"]));
+            var high = @Html.Raw(JsonSerializer.Serialize(ViewData["High"]));
+            var critical = @Html.Raw(JsonSerializer.Serialize(ViewData["Critical"]));
+            var data = {
+                labels: ["Low", "Medium", "High", "Critical"],
+                datasets: [{
+                    data: [low, medium, high, critical],
+                    backgroundColor: ['green', '#FFFF00', 'red', '#C00000'],
+                    borderColor: ['green', '#FFFF00', 'red', '#C00000'],
+                    borderWidth: 1
+                }]
+            };
+
+            // Get the context of the canvas element
+            var ctx = document.getElementById('pieChart').getContext('2d');
+
+            // Create the pie chart
+            var myPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    // You can add options here like title, legend, etc.
+                }
+            });
+        });
+
+        //4. SP → CountRisksPerFunctions
+        $(document).ready(function () {
+            var functions = @Html.Raw(JsonSerializer.Serialize(ViewData["Functions"]));
+            var totalCounts = @Html.Raw(JsonSerializer.Serialize(ViewData["FunctionTotalCount"]));
+            var ctx = document.getElementById('CountRisksPerFunctions').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: functions,
+                    datasets: [{
+                        label: 'Total Count',
+                        data: totalCounts,
+                        backgroundColor: '#005500',
+                        borderColor: '#005500',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+
+
+        //5. SP → CountRisksPerDepartments
+        $(document).ready(function () {
+            // Retrieve data from ViewData
+            var departments = @Html.Raw(JsonSerializer.Serialize(ViewData["Departments"]));
+            var totalCounts = @Html.Raw(JsonSerializer.Serialize(ViewData["DepartmentTotalCount"]));
+
+            // Define the data for the bar chart
+            var data = {
+                labels: departments,
+                datasets: [{
+                    label: 'Total Count',
+                    data: totalCounts,
+                    backgroundColor: '#c00000d9', // You can customize color here
+                    borderColor: '#c00000d9', // You can customize border color here
+                    borderWidth: 1
+                }]
+            };
+
+            // Get the context of the canvas element
+            var ctx = document.getElementById('CountRisksPerDepartments').getContext('2d');
+
+            // Create the bar chart
+            var myBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
                     },
-                    elements: {
-                        point: {
-                            radius: 3,
-                            backgroundColor: '#ff4c5b'
+                    // You can add more options here like title, legend, etc.
+                }
+            });
+        });
+
+        //6. SP → ResidualRiskRatings
+        $(document).ready(function () {
+            // Retrieve data from ViewData
+            var residualRiskRatings = @Html.Raw(JsonSerializer.Serialize(ViewData["ResidualRiskRatings"]));
+            var totalCounts = @Html.Raw(JsonSerializer.Serialize(ViewData["TotalCount"]));
+
+            // Create the table element
+            var table = $('<table class="table table-bordered" style="border:2px solid gray;">');
+
+            // Create the table header
+            var thead = $('<thead>').appendTo(table);
+            var headerRow = $('<tr>').appendTo(thead);
+            $('<th style="background: #d9d9d9;">').text('Residual Risk').appendTo(headerRow);
+            $('<th style="background: #d9d9d9;">').text('Count').appendTo(headerRow);
+
+            // Create the table body and fill it with data
+            var tbody = $('<tbody>').appendTo(table);
+            for (var i = 0; i < residualRiskRatings.length; i++) {
+                var row = $('<tr>').appendTo(tbody);
+                var tdRisk = $('<td>').text(residualRiskRatings[i]).appendTo(row);
+                var tdCount = $('<td>').text(totalCounts[i]).appendTo(row);
+
+                // Set background color based on residual risk rating
+                if (residualRiskRatings[i] === "Active Management") {
+                    tdRisk.css('background-color', '#C00000');
+                    tdRisk.css('color', '#ffffff');
+                } else if (residualRiskRatings[i] === "Continuous Review") {
+                    tdRisk.css('background-color', '#FF9933');
+                } else if (residualRiskRatings[i] === "Periodic Monitoring") {
+                    tdRisk.css('background-color', '#FFFF00');
+                } else if (residualRiskRatings[i] === "No major concern") {
+                    tdRisk.css('background-color', '#66FF33');
+                }
+            }
+
+            // Append the table to a container in your HTML (assuming you have a div with id="tableContainer")
+            $('#ResidualRiskRatingCount').append(table);
+        });
+
+
+        // $(document).ready(function () {
+        //     // Retrieve data from ViewData
+        //     var residualRiskRatings = @Html.Raw(JsonSerializer.Serialize(ViewData["ResidualRiskRatings"]));
+        //     var totalCounts = @Html.Raw(JsonSerializer.Serialize(ViewData["TotalCount"]));
+
+        //     // Define the backgroundColor based on residualRiskRatings
+        //     var backgroundColors = residualRiskRatings.map(function (rating) {
+        //         if (rating === "Active Management") {
+        //             return "#C00000";
+        //         } else if (rating === "Continuous Review") {
+        //             return "#FF9933";
+        //         } else if (rating === "Periodic Monitoring") {
+        //             return "#FFFF00";
+        //         } else if (rating === "No major concern") {
+        //             return "#66FF33";
+        //         }
+        //     });
+
+        //     // Define the data for the pie chart
+        //     var data = {
+        //         labels: residualRiskRatings,
+        //         datasets: [{
+        //             data: totalCounts,
+        //             backgroundColor: backgroundColors,
+        //             borderColor: backgroundColors,
+        //             borderWidth: 1
+        //         }]
+        //     };
+
+        //     // Get the context of the canvas element
+        //     var ctx = document.getElementById('ResidualRiskRatingCount').getContext('2d');
+
+        //     // Create the pie chart
+        //     var myPieChart = new Chart(ctx, {
+        //         type: 'doughnut',
+        //         data: data,
+        //         options: {
+        //             // You can add more options here like title, legend, etc.
+        //         }
+        //     });
+        // });
+
+
+
+        //7. SP → CountRisksPerRiskCategory
+        $(document).ready(function () {
+            // Retrieve data from ViewData
+            var RiskCategories = @Html.Raw(JsonSerializer.Serialize(ViewData["RiskCategories"]));
+            var totalCounts = @Html.Raw(JsonSerializer.Serialize(ViewData["RiskCategoryTotalCount"]));
+            var bgColors = @Html.Raw(JsonSerializer.Serialize(ViewData["RiskCategoryBGColor"]));
+
+            // Define the data for the pie chart
+            var data = {
+                labels: RiskCategories,
+                datasets: [{
+                    data: totalCounts,
+                    backgroundColor: bgColors,
+                    borderColor: bgColors,
+                    borderWidth: 1
+                }]
+            };
+
+            // Get the context of the canvas element
+            var ctx = document.getElementById('CountRisksPerRiskCategory').getContext('2d');
+
+            // Create the pie chart
+            var myPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    // You can add more options here like title, legend, etc.
+                }
+            });
+        });
+
+
+        // 8. SP → ResidualRiskRatingPerDepartment
+        $(document).ready(function () {
+            var DepartmentCodeList = @Html.Raw(JsonSerializer.Serialize(ViewData["DepartmentCodeList"]));
+            var InherentRiskRatingList = @Html.Raw(JsonSerializer.Serialize(ViewData["InherentRiskRatingList"]));
+            var ControlRatingList = @Html.Raw(JsonSerializer.Serialize(ViewData["ControlRatingList"]));
+            var ResidualRiskRatingList = @Html.Raw(JsonSerializer.Serialize(ViewData["ResidualRiskRatingList"]));
+            var ResidualRiskList = @Html.Raw(JsonSerializer.Serialize(ViewData["ResidualRiskList"]));
+
+            // إعداد الألوان بناءً على قيم ResidualRiskList
+            var colorMap = {
+                "Active Management": {
+                    backgroundColor: 'rgba(192, 0, 0, 1)',
+                    borderColor: 'rgba(192, 0, 0, 1)'
+                },
+                "Continuous Review": {
+                    backgroundColor: 'rgba(255, 153, 51, 1)',
+                    borderColor: 'rgba(255, 153, 51, 1)'
+                },
+                "Periodic Monitoring": {
+                    backgroundColor: 'rgba(255, 255, 0, 1)',
+                    borderColor: 'rgba(255, 255, 0, 1)'
+                },
+                "No major concern": {
+                    backgroundColor: 'rgba(102, 255, 51, 1)',
+                    borderColor: 'rgba(102, 255, 51, 1)'
+                },
+                "default": {
+                    backgroundColor: 'rgba(201, 203, 207, 1)',
+                    borderColor: 'rgba(201, 203, 207, 1)'
+                }
+            };
+
+            // إعداد بيانات الرسم البياني
+            var scatterData = DepartmentCodeList.map((code, index) => {
+                var residualRisk = ResidualRiskList[index % ResidualRiskList.length];
+                var color = colorMap[residualRisk] || colorMap["default"];
+                return {
+                    x: ControlRatingList[index],
+                    y: InherentRiskRatingList[index],
+                    departmentCode: code,
+                    residualRisk: residualRisk,
+                    residualRiskRating: ResidualRiskRatingList[index].toFixed(2),
+                    backgroundColor: color.backgroundColor,
+                    borderColor: color.borderColor
+                };
+            });
+
+            // إزالة التكرارات في ResidualRiskList
+            var uniqueResidualRisks = Array.from(new Set(ResidualRiskList));
+
+            var scatterChartData = {
+                datasets: uniqueResidualRisks.map((risk) => ({
+                    label: risk,
+                    data: scatterData.filter(d => d.residualRisk === risk),
+                    backgroundColor: scatterData.filter(d => d.residualRisk === risk)[0].backgroundColor,
+                    borderColor: scatterData.filter(d => d.residualRisk === risk)[0].borderColor,
+                    borderWidth: 1,
+                    pointRadius: 5
+                }))
+            };
+
+            var scatterChartOptions = {
+                scales: {
+                    xAxes: [{
+                        type: 'linear',
+                        position: 'bottom',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Control Rating'
+                        }
+                    }],
+                    yAxes: [{
+                        type: 'linear',
+                        position: 'left',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Inherent Risk Rating'
+                        }
+                    }]
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var dataset = data.datasets[tooltipItem.datasetIndex];
+                            var item = dataset.data[tooltipItem.index];
+                            return `Department Code: ${item.departmentCode}\nResidual Risk Rating: ${item.residualRiskRating}`;
                         }
                     }
-                },
-            });
-        }
+                }
+            };
+
+            if ($("#scatterChart").length) {
+                var scatterChartCanvas = $("#scatterChart").get(0).getContext("2d");
+                var scatterChart = new Chart(scatterChartCanvas, {
+                    type: 'scatter',
+                    data: scatterChartData,
+                    options: scatterChartOptions
+                });
+
+                // إضافة علامات النص لأرقام Department Code
+                scatterChart.update();
+
+                scatterChart.data.datasets.forEach((dataset, datasetIndex) => {
+                    dataset.data.forEach((dataPoint, index) => {
+                        var meta = scatterChart.getDatasetMeta(datasetIndex);
+                        var point = meta.data[index].getCenterPoint();
+                        scatterChartCanvas.font = '12px Arial';
+                        scatterChartCanvas.fillStyle = 'black';
+                        scatterChartCanvas.fillText(dataPoint.departmentCode, point.x, point.y - 10); // تعديل الموقع فوق النقطة
+                    });
+                });
+            }
+        });
+
     </script>
 }

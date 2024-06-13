@@ -13,9 +13,13 @@ namespace AuditingSystem.Entities.AuditProcess
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public int Id { get; set; }
+        public int? IndustryId { get; set; }
+        public int? CompanyId { get; set; }
         public int? DepartmentId { get; set; }
         public int? DaysNumber { get; set; }
         public string? Source { get; set; }
+        public virtual Industry? Industry { get; set; }
+        public virtual Company? Company { get; set; }
         public virtual Department? Department { get; set; }
         public virtual IEnumerable<Activity>? Activities { get; set; }
 

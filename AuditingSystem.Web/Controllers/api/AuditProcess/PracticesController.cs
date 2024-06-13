@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -59,8 +60,12 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     var existingRecord = db.Practices
                       .Where(x => x.Source == "System")
                       .OrderByDescending(x => x.Id)
-                      .FirstOrDefault();
+                    .FirstOrDefault();
 
+                    practice.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    practice.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    practice.CreationDate = DateTime.Now;
+                    practice.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
@@ -100,7 +105,9 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound(new { error = $"Practice with ID {id} not found" });
                     }
 
-                    // تحديث الخصائص
+                    existingPractice.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingPractice.UpdatedDate = DateTime.Now;
+                    existingPractice.Code = updatedPractice.Code;
                     existingPractice.Name = updatedPractice.Name;
                     existingPractice.Description = updatedPractice.Description;
                     existingPractice.TaskId = updatedPractice.TaskId;

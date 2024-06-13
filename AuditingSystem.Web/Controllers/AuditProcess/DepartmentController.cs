@@ -2,165 +2,187 @@
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
+using AuditingSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Configuration;
+using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AuditingSystem.Web.Controllers.AuditProcess
 {
     public class DepartmentController : Controller
     {
         private readonly IBaseRepository<Department, int> _departmentRepository;
+        private readonly IBaseRepository<Industry, int> _industryRepository;
         private readonly IBaseRepository<Company, int> _companyRepository;
         private readonly IBaseRepository<User, int> _userRepository;
-        private readonly AuditingSystemDbContext db;
+        private readonly AuditingSystemDbContext _db;
+
         public DepartmentController(
             IBaseRepository<Company, int> companyRepository,
-            IBaseRepository<Department, int> departmentRepository, 
+            IBaseRepository<Department, int> departmentRepository,
             IBaseRepository<User, int> userRepository,
-            AuditingSystemDbContext db)
+            AuditingSystemDbContext db,
+            IBaseRepository<Industry, int> industryRepository)
         {
             _companyRepository = companyRepository;
             _departmentRepository = departmentRepository;
             _userRepository = userRepository;
-            this.db = db;
+            _db = db;
+            _industryRepository = industryRepository;
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            //var departments = await _departmentRepository.ListAsync(
-            //    new Expression<Func<Department, bool>>[] { u => u.IsDeleted == false },
-            //    q => q.OrderBy(u => u.Company.Code),
-            //    c => c.Company, f=>f.Functions);
-            var departments = db.Departments.Include(i => i.Company).Include(d => d.Functions).ThenInclude(f => f.Activities)
-                .ThenInclude(a => a.Objectives).ThenInclude(o => o.Tasks).ThenInclude(p => p.Practices);
 
-            string apiurl = "https://onyx3.azurewebsites.net/departments/GetAlldepartments";
-            using (HttpClient client = new HttpClient())
-            {
-                string requestBody = "{}";
-                StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(apiurl, content);
+            var departments = await _db.Departments
+                .Include(c => c.Company)
+                .Include(f => f.Functions)
+                .OrderBy(d => d.Company.Code)
+                .ThenBy(d => d.Code)
+                .Where(d=>d.IsDeleted == false)
+                .ToListAsync();
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
+            ViewBag.CompanyId = new SelectList(_db.Companies.Where(c=>c.IsDeleted == false), "Id","Name");
 
-                    // Parse JSON response using JObject
-                    JObject json = JObject.Parse(responseBody);
+            //string apiUrl = "https://onyx3.azurewebsites.net/departments/GetAlldepartments";
+            //using (var client = new HttpClient())
+            //{
+            //    var response = await client.GetAsync(apiUrl);
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        var responseBody = await response.Content.ReadAsStringAsync();
+            //        var json = JObject.Parse(responseBody);
+            //        foreach (var item in json["items"])
+            //        {
+            //            var id = (int)item["id"];
+            //            var name = (string)item["departmentName"];
+            //            var companyId = item["companyId"]?.ToObject<int?>();
+            //            var code = (string)item["code"];
 
-                    // Create APIDepartment entities and add them to the repository
-                    foreach (var item in json["items"])
-                    {
-                        int id = (int)item["id"];
-                        string name = (string)item["departmentName"];
-                        int? companyId = item["companyId"]?.ToObject<int?>() ?? null;
-                        string code = (string)item["code"];
-
-                        // Check if the APIDepartment with the given id already exists
-                        var existingApiDepartment = await _departmentRepository.FindByAsync(id);
-                        if (existingApiDepartment == null)
-                        {
-                            // Check if companyId is not null
-                            if (companyId != null)
-                            {
-                                // Check if there is a record in the Company table with the same id
-                                var existingCompany = await _companyRepository.FindByAsync(companyId.Value);
-
-                                // Create a new APIDepartment and add it to the repository
-                                var newApiDepartment = new Department
-                                {
-                                    Id = id,
-                                    Name = name,
-                                    Code = code,
-                                    Source = "API",
-                                    CompanyId = existingCompany != null ? existingCompany.Id : null,
-                                    CreatedBy = "Admin",
-                                    CreationDate = DateTime.Now,
-                                    UpdatedBy = "Admin",
-                                    UpdatedDate = DateTime.Now,
-                                    IsDeleted = false
-                                };
-                                await _departmentRepository.CreateAsync(newApiDepartment);
-                            }
-                            else
-                            {
-                                // Create a new APIDepartment without a CompanyId and add it to the repository
-                                var newApiDepartment = new Department
-                                {
-                                    Id = id,
-                                    Name = name,
-                                    Code = code,
-                                    Source = "API",
-                                    CompanyId = companyId,
-                                    CreatedBy = "Admin",
-                                    CreationDate = DateTime.Now,
-                                    UpdatedBy = "Admin",
-                                    UpdatedDate = DateTime.Now,
-                                    IsDeleted = false
-                                };
-                                await _departmentRepository.CreateAsync(newApiDepartment);
-                            }
-                        }
-                    }
-                }
-            }
+            //            var existingApiDepartment = await _departmentRepository.FindByAsync(id);
+            //            if (existingApiDepartment == null)
+            //            {
+            //                var newApiDepartment = new Department
+            //                {
+            //                    Id = id,
+            //                    Name = name,
+            //                    Code = code,
+            //                    Source = "API",
+            //                    CompanyId = companyId,
+            //                    CreatedBy = "Admin",
+            //                    CreationDate = DateTime.Now,
+            //                    UpdatedBy = "Admin",
+            //                    UpdatedDate = DateTime.Now,
+            //                    IsDeleted = false
+            //                };
+            //                await _departmentRepository.CreateAsync(newApiDepartment);
+            //            }
+            //        }
+            //    }
+            //}
 
             return View(departments);
         }
 
+        [HttpGet]
+        public IActionResult FilterDeptTablebyCompanyId(int companyId)
+        {
+            if(companyId != 0)
+            {
+                var departments = _db.Departments
+                .Include(d => d.Company)
+                .Include(d => d.Functions)
+                .Where(d => d.CompanyId == companyId)
+                .ToList();
 
+                var result = departments.Select(d => new
+                {
+                    id = d.Id,
+                    companyCode = d.Company.Code,
+                    code = d.Code,
+                    name = d.Name,
+                    companyId = d.CompanyId,
+                    functions = d.Functions.Select(f => new
+                    {
+                        id = f.Id,
+                        code = f.Code,
+                        name = f.Name
+                    }).ToList()
+                });
+
+                return Json(result);
+            }
+            else
+            {
+                var departments = _db.Departments
+                    .Include(d => d.Company)
+                    .Include(d => d.Functions)
+                    .ToList();
+
+                var result = departments.Select(d => new
+                {
+                    id = d.Id,
+                    companyCode = d.Company.Code,
+                    code = d.Code,
+                    name = d.Name,
+                    companyId = d.CompanyId,
+                    functions = d.Functions.Select(f => new
+                    {
+                        id = f.Id,
+                        code = f.Code,
+                        name = f.Name
+                    }).ToList()
+                });
+
+                return Json(result);
+            }
+        }
         public async Task<IActionResult> Add()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            var company = _companyRepository.ListAsync(
-                  new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false },
-                  q => q.OrderBy(u => u.Id),
-                  null).Result;
+            var industry = await _industryRepository.ListAsync(new Expression<Func<Industry, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
+            var company = await _companyRepository.ListAsync(new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
+            var head = await _userRepository.ListAsync(new Expression<Func<User, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
 
-            var head = _userRepository.ListAsync(
-                  new Expression<Func<User, bool>>[] { u => u.IsDeleted == false },
-                  q => q.OrderBy(u => u.Id),
-                  null).Result;
-
+            ViewBag.IndustryId = new SelectList(industry, "Id", "Name");
             ViewBag.CompanyId = new SelectList(company, "Id", "Name");
             ViewBag.Head = new SelectList(head, "Id", "Name");
 
             return View();
         }
 
-
         public async Task<IActionResult> Edit(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
             var department = await _departmentRepository.FindByAsync(id);
+            var industry = await _industryRepository.ListAsync(new Expression<Func<Industry, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
+            var company = await _companyRepository.ListAsync(new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
+            var head = await _userRepository.ListAsync(new Expression<Func<User, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
 
-            var company = _companyRepository.ListAsync(
-                  new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false },
-                  q => q.OrderBy(u => u.Id),
-                  null).Result;
-
-            var head = _userRepository.ListAsync(
-                  new Expression<Func<User, bool>>[] { u => u.IsDeleted == false },
-                  q => q.OrderBy(u => u.Id),
-                  null).Result;
+            ViewBag.IndustryId = new SelectList(industry, "Id", "Name", department.IndustryId);
             ViewBag.CompanyId = new SelectList(company, "Id", "Name", department.CompanyId);
             ViewBag.Head = new SelectList(head, "Id", "Name", department.Head);
 
@@ -170,21 +192,31 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
         public async Task<IActionResult> View(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
             var department = await _departmentRepository.FindByAsync(id);
+            var industry = await _industryRepository.ListAsync(new Expression<Func<Industry, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
+            var company = await _companyRepository.ListAsync(new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
+            var head = await _userRepository.ListAsync(new Expression<Func<User, bool>>[] { u => u.IsDeleted == false }, q => q.OrderBy(u => u.Id), null);
 
-            var company = _companyRepository.ListAsync(
-                  new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false },
-                  q => q.OrderBy(u => u.Id),
-                  null).Result;
-
+            ViewBag.IndustryId = new SelectList(industry, "Id", "Name", department.IndustryId);
             ViewBag.CompanyId = new SelectList(company, "Id", "Name", department.CompanyId);
+            ViewBag.Head = new SelectList(head, "Id", "Name", department.Head);
 
             return View(department);
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetCompanyByIndustry(int industryId)
+        {
+            var companies = await _companyRepository.ListAsync(
+                new Expression<Func<Company, bool>>[] { u => u.IsDeleted == false && u.IndustryId == industryId },
+                q => q.OrderBy(u => u.Id),
+                null);
+
+            var companyList = companies.Select(d => new { Id = d.Id, Name = d.Name }).ToList();
+            return Json(companyList);
+        }
     }
 }

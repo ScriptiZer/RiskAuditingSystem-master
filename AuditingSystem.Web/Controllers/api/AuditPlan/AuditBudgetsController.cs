@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldTests;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
@@ -60,6 +61,26 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
             }
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> Add([FromBody] AuditBudget auditBudget)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            await _auditBudgetRepository.CreateAsync(auditBudget);
+        //            return NoContent();
+        //        }
+
+        //        return BadRequest("Invalid ModelState");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An error occurred while adding a new role.");
+        //        return StatusCode(500, new { error = "An error occurred while processing your request to add a new role." });
+        //    }
+        //}
+
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] AuditBudget auditBudget)
         {
@@ -67,6 +88,10 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
             {
                 if (ModelState.IsValid)
                 {
+                    auditBudget.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    auditBudget.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    auditBudget.CreationDate = DateTime.Now;
+                    auditBudget.CurrentYear = DateTime.Now.Year;
                     await _auditBudgetRepository.CreateAsync(auditBudget);
                     return NoContent();
                 }
@@ -76,7 +101,7 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding a new role.");
-                return StatusCode(500, new { error = "An error occurred while processing your request to add a new role." });
+                return StatusCode(500, new { error = "An error occurred while processing your request to add a new role.\nError Message: " + ex.Message });
             }
         }
 
@@ -93,6 +118,8 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
                         return NotFound();
                     }
 
+                    existingauditBudget.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingauditBudget.UpdatedDate = DateTime.Now;
                     existingauditBudget.TotalEstmated = updateAuditBudget.TotalEstmated;
                     existingauditBudget.TotalActual = updateAuditBudget.TotalActual;
                     existingauditBudget.Variance = updateAuditBudget.Variance; 
@@ -108,7 +135,7 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while editing the role with ID: {id}.");
-                return StatusCode(500, new { error = $"An error occurred while processing your request to edit role with ID: {id}." });
+                return StatusCode(500, new { error = $"An error occurred while processing your request to edit role with ID: {id}.\nError Message: " + ex.Message });
             }
         }
 
@@ -133,11 +160,17 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
 
                         if (existingRecord != null)
                         {
+                            existingRecord.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                            existingRecord.UpdatedDate = DateTime.Now;
                             existingRecord.Estimated = auditBudget.Estimated;
                             existingRecord.Actual = auditBudget.Actual;
                         }
                         else
                         {
+                            auditBudget.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                            auditBudget.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                            auditBudget.CreationDate = DateTime.Now;
+                            auditBudget.CurrentYear = DateTime.Now.Year;
                             db.AuditBudgetLists.Add(auditBudget);
                         }
                     }
@@ -153,7 +186,7 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding/updating a list of audit resources.");
-                return StatusCode(500, new { error = "An error occurred while processing your request to add/update a list of audit resources." });
+                return StatusCode(500, new { error = "An error occurred while processing your request to add/update a list of audit resources.\nError Message: " + ex.Message });
             }
         }
 

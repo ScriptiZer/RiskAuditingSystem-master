@@ -55,6 +55,7 @@ namespace AuditingSystem.Entities.AuditProcess
         /// </summary>
         public string? BudgetManager { get; set; }
 
+
         public virtual IEnumerable<User>? User { get; set; }
         public virtual IEnumerable<Year>? Years { get; set; }
         public virtual IEnumerable<Department>? Departments { get; set; }

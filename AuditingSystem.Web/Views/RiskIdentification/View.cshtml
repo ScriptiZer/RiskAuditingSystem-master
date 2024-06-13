@@ -64,6 +64,11 @@
                                 <input disabled type="text" class="form-control" id="InherentRiskRating" name="InherentRiskRating" placeholder="Inherent Risk Rating" asp-for="InherentRiskRating">
                                 <span asp-validation-for="InherentRiskRating" class="text-danger"></span>
                             </div>
+                            <div class="form-group">
+                                <label for="InherentRiskStatus">Inherent Risk Status</label>
+                                <input asp-for="InherentRiskStatus" type="text" class="form-control" id="InherentRiskStatus" name="InherentRiskStatus" readonly placeholder="Inherent Risk Status">
+                                <span asp-validation-for="InherentRiskStatus" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
 

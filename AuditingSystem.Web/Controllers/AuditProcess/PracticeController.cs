@@ -39,83 +39,83 @@ namespace AuditingSystem.Web.Controllers.AuditProcess
                   c => c.Task.Objective.Activity.Function.Department.Company, c => c.Task.Practices);
 
 
-            string apiurl = "https://onyx3.azurewebsites.net/practices/GetAllpractices";
-            using (HttpClient client = new HttpClient())
-            {
-                string requestBody = "{}";
-                StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(apiurl, content);
+            //string apiurl = "https://onyx3.azurewebsites.net/practices/GetAllpractices";
+            //using (HttpClient client = new HttpClient())
+            //{
+            //    string requestBody = "{}";
+            //    StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+            //    HttpResponseMessage response = await client.PostAsync(apiurl, content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        string responseBody = await response.Content.ReadAsStringAsync();
 
-                    JObject json = JObject.Parse(responseBody);
+            //        JObject json = JObject.Parse(responseBody);
 
-                    // Create APIPractice entities and add them to the repository
-                    foreach (var item in json["items"])
-                    {
-                        int id = (int)item["id"];
-                        string name = (string)item["practiceName"];
-                        int? taskId = item["taskId"]?.ToObject<int?>() ?? null;
-                        string code = (string)item["code"];
+            //        // Create APIPractice entities and add them to the repository
+            //        foreach (var item in json["items"])
+            //        {
+            //            int id = (int)item["id"];
+            //            string name = (string)item["practiceName"];
+            //            int? taskId = item["taskId"]?.ToObject<int?>() ?? null;
+            //            string code = (string)item["code"];
 
-                        // Check if the APIPractice with the given id already exists
-                        var existingApiPractice = await _practiceRepository.FindByAsync(id);
+            //            // Check if the APIPractice with the given id already exists
+            //            var existingApiPractice = await _practiceRepository.FindByAsync(id);
 
-                        if (existingApiPractice == null)
-                        {
-                            // Check if taskId is not null
-                            if (taskId != null)
-                            {
-                                // Check if there is a record in the Task table with the same taskId
-                                var existingTask = await _tasksRepository.FindByAsync(taskId.Value);
+            //            if (existingApiPractice == null)
+            //            {
+            //                // Check if taskId is not null
+            //                if (taskId != null)
+            //                {
+            //                    // Check if there is a record in the Task table with the same taskId
+            //                    var existingTask = await _tasksRepository.FindByAsync(taskId.Value);
 
-                                if (existingTask == null)
-                                {
-                                    // Create a new APIPractice and add it to the repository
-                                    var newApiPractice = new Practice
-                                    {
-                                        Id = id,
-                                        Name = name,
-                                        Code = code,
-                                        TaskId = null,
-                                        Source = "API",
-                                        CreatedBy = "Admin",
-                                        CreationDate = DateTime.Now,
-                                        UpdatedBy = "Admin",
-                                        UpdatedDate = DateTime.Now,
-                                        IsDeleted = false
-                                    };
-                                    await _practiceRepository.CreateAsync(newApiPractice);
-                                }
-                                else
-                                {
-                                    // Log or handle the case where the associated Task doesn't exist
-                                }
-                            }
-                            else
-                            {
-                                // Create a new APIPractice without a TaskId and add it to the repository
-                                var newApiPractice = new Practice
-                                {
-                                    Id = id,
-                                    Name = name,
-                                    Code = code,
-                                    TaskId = taskId,
-                                    Source = "API",
-                                    CreatedBy = "Admin",
-                                    CreationDate = DateTime.Now,
-                                    UpdatedBy = "Admin",
-                                    UpdatedDate = DateTime.Now,
-                                    IsDeleted = false
-                                };
-                                await _practiceRepository.CreateAsync(newApiPractice);
-                            }
-                        }
-                    }
-                }
-            }
+            //                    if (existingTask == null)
+            //                    {
+            //                        // Create a new APIPractice and add it to the repository
+            //                        var newApiPractice = new Practice
+            //                        {
+            //                            Id = id,
+            //                            Name = name,
+            //                            Code = code,
+            //                            TaskId = null,
+            //                            Source = "API",
+            //                            CreatedBy = "Admin",
+            //                            CreationDate = DateTime.Now,
+            //                            UpdatedBy = "Admin",
+            //                            UpdatedDate = DateTime.Now,
+            //                            IsDeleted = false
+            //                        };
+            //                        await _practiceRepository.CreateAsync(newApiPractice);
+            //                    }
+            //                    else
+            //                    {
+            //                        // Log or handle the case where the associated Task doesn't exist
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    // Create a new APIPractice without a TaskId and add it to the repository
+            //                    var newApiPractice = new Practice
+            //                    {
+            //                        Id = id,
+            //                        Name = name,
+            //                        Code = code,
+            //                        TaskId = taskId,
+            //                        Source = "API",
+            //                        CreatedBy = "Admin",
+            //                        CreationDate = DateTime.Now,
+            //                        UpdatedBy = "Admin",
+            //                        UpdatedDate = DateTime.Now,
+            //                        IsDeleted = false
+            //                    };
+            //                    await _practiceRepository.CreateAsync(newApiPractice);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             return View(practices);
         }
 

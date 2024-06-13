@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using AuditingSystem.Web.Controllers.api.Setup;
@@ -44,7 +45,6 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                 {
                     return NotFound();
                 }
-
                 await _controleeffevt.DeleteAsync(id);
                 return NoContent();
             }
@@ -62,10 +62,13 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
             {
                 if (ModelState.IsValid)
                 {
+                    control.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    control.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    control.CreationDate = DateTime.Now;
+                    control.CurrentYear = DateTime.Now.Year;
                     await _controleeffevt.CreateAsync(control);
                     return NoContent();
                 }
-
                 return BadRequest("Invalid ModelState");
             }
             catch (Exception ex)
@@ -87,6 +90,8 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                         return NotFound();
                     }
 
+                    existingeffect.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingeffect.UpdatedDate = DateTime.Now;
                     existingeffect.Name = control.Name;
                     existingeffect.Description = control.Description;
                     existingeffect.Rate = control.Rate;

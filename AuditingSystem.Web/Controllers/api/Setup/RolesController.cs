@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using AuditingSystem.Web.ViewModels;
@@ -75,6 +76,10 @@ namespace AuditingSystem.Web.Controllers.api.Setup
             {
                 if (ModelState.IsValid)
                 {
+                    rolePermissionsViewModel.Role.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    rolePermissionsViewModel.Role.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    rolePermissionsViewModel.Role.CreationDate = DateTime.Now;
+                    rolePermissionsViewModel.Role.CurrentYear = DateTime.Now.Year;
                     await _roleRepository.CreateAsync(rolePermissionsViewModel.Role);
 
                     List<RolesPermissions> rolesPermissions = new List<RolesPermissions>();
@@ -82,12 +87,19 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                     {
                         RolesPermissions rolePermission = new RolesPermissions
                         {
+                            CreatedByCompany = HttpContext.Session.GetInt32("CompanyId"),
+                            CreatedBy = HttpContext.Session.GetInt32("UserId"),
+                            CreationDate = DateTime.Now,
+                            CurrentYear = DateTime.Now.Year,
                             RoleId = rolePermissionsViewModel.Role.Id,
                             PermissionId = item.Id,
                             View = item.View,
                             Add = item.Add,
                             Edit = item.Edit,
-                            Delete = item.Delete
+                            Delete = item.Delete,
+                            ExportToExcel = item.ExportToExcel,
+                            ExportToWord = item.ExportToWord,
+                            ExportToPDF = item.ExportToPDF
                         };
 
                         rolesPermissions.Add(rolePermission);
@@ -122,7 +134,8 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                         return NotFound();
                     }
 
-                    // Update role properties
+                    existingRole.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingRole.UpdatedDate = DateTime.Now;
                     existingRole.Name = rolePermissionsViewModel.Role.Name;
                     existingRole.Description = rolePermissionsViewModel.Role.Description;
 
@@ -142,6 +155,9 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                             existingRolePermission.Add = item.Add;
                             existingRolePermission.Edit = item.Edit;
                             existingRolePermission.Delete = item.Delete;
+                            existingRolePermission.ExportToPDF = item.ExportToPDF;
+                            existingRolePermission.ExportToWord = item.ExportToWord;
+                            existingRolePermission.ExportToExcel = item.ExportToExcel;
                         }
                     }
 

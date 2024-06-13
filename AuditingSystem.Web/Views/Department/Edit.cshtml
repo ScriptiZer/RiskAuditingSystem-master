@@ -23,7 +23,15 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label for="Industry">Industry</label>
+                                @Html.DropDownList("IndustryId", ViewBag.IndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Industry" , @name="IndustryId"})
+                                <span asp-validation-for="IndustryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label>Company</label>
+                                <input type="hidden" value="@Model.CompanyId" id="comId" />
                                 @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company", @name="CompanyId" })
                                 <span asp-validation-for="CompanyId" class="text-danger"></span>
                             </div>
@@ -65,9 +73,52 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
+            $.ajax({
+                url: "/Department/GetCompanyByIndustry",
+                data: { industryId: $("#Industry").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Company").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#comId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Company").html(options);
+                    }
+                }
+            });
+
+            $("#Industry").change(function () {
+                var industryId = $(this).val();
+                $.ajax({
+                    url: "/Department/GetCompanyByIndustry",
+                    data: { industryId: industryId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Company").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Company").html(options);
+                        }
+                    }
+                });
+            });
+
             $('#Description').summernote();
             $("#EditForm").validate({
                 rules: {
+                    IndustryId: {
+                        required: true
+                    },
                     CompanyId: {
                         required: true
                     },
@@ -82,6 +133,9 @@
                     }
                 },
                 messages: {
+                    IndustryId: {
+                        required: "The Industry field is required"
+                    },
                     CompanyId: {
                         required: "The Company field is required"
                     },
@@ -118,6 +172,7 @@
                     var formData = {
                         Name: $("#Name").val(),
                         Code: $("#Code").val(),
+                        IndustryId: $("#Industry").val(),
                         CompanyId: $("#Company").val(),
                         Head: $("#Head").val(),
                         Description: htmlDescription

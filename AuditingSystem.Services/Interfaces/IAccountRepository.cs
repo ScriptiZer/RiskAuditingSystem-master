@@ -9,7 +9,8 @@ namespace AuditingSystem.Services.Interfaces
 {
     public interface IAccountRepository
     {
-        public (int? userId, string userName) Login(User user);
+        //public (int? userId, string userName) Login(User user);
+        public User Login(string email, string password);
         public string GetUserRoleName(string userName);
         public string GetUserRoleId(string userName);
     }

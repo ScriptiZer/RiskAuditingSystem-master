@@ -55,10 +55,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Title</th>
-                                <th>Email</th>
-                                <th>Contact No</th>
-                                <th>Company</th>
-                                <th>Department</th>
+                                <th>Resource Type</th>
                                 <th>Role</th>
                                 <th colspan="2">Actions</th>
                             </tr>
@@ -69,10 +66,7 @@
                                 <tr id="tr">
                                     <td>@item.Name</td>
                                     <td>@item.Title</td>
-                                    <td>@item.Email</td>
-                                    <td>@item.ContactNo</td>
-                                    <td>@item.Company.Name</td>
-                                    <td>@item.Department.Name</td>
+                                    <td>@item.ResourceType</td>
                                     <td>@item.Role.Name</td>
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true && (p.Edit == false && p.Delete == false)))
                                     {
@@ -124,8 +118,6 @@
                             </nav>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>

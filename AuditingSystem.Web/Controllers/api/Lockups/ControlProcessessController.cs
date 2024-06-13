@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.Lockups;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Services.Interfaces;
 using AuditingSystem.Web.Controllers.Lockups;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +13,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
     {
         private readonly IBaseRepository<ControlProcess, int> _controlprocess;
         private readonly ILogger<ControlProcessessController> _logger;
-        public ControlProcessessController(IBaseRepository<ControlProcess, int> controlprocess)
-        {
-            _controlprocess = controlprocess;
-        }
+        //public ControlProcessessController(IBaseRepository<ControlProcess, int> controlprocess)
+        //{
+        //    _controlprocess = controlprocess;
+        //}
         public ControlProcessessController(IBaseRepository<ControlProcess, int> controlprocess, ILogger<ControlProcessessController> logger)
         {
            _controlprocess  = controlprocess ?? throw new ArgumentNullException(nameof(controlprocess));
@@ -64,6 +65,10 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
             {
                 if (ModelState.IsValid)
                 {
+                    control.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    control.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    control.CreationDate = DateTime.Now;
+                    control.CurrentYear = DateTime.Now.Year;
                     await _controlprocess.CreateAsync(control);
                     return NoContent();
                 }
@@ -88,12 +93,12 @@ namespace AuditingSystem.Web.Controllers.api.Lockups
                     {
                         return NotFound();
                     }
-
-
-
+                    existingprocess.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingprocess.UpdatedDate = DateTime.Now;
+                    existingprocess.Name = control.Name;
                     existingprocess.BGColor = control.BGColor;
                     existingprocess.FontColor = control.FontColor;
-                    await _controlprocess.UpdateAsync(control);
+                    await _controlprocess.UpdateAsync(existingprocess);
 
                     return NoContent();
                 }

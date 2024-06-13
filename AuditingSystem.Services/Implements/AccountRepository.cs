@@ -19,21 +19,33 @@ using System;
             this.db = db;
         }
 
-        public (int? userId, string userName) Login(User user)
+        //public (int? userId, string userName) Login(User user)
+        //{
+        //    var loggedInUser = db.Users
+        //        .Include(r=>r.Role)
+        //        .Where(u => u.Email.ToLower() == user.Email.ToLower() && u.Password == user.Password)
+        //        .FirstOrDefault();
+
+        //    if (loggedInUser != null)
+        //    {
+        //        return (loggedInUser.Id, loggedInUser.Name);
+        //    }
+
+        //    return (null, null);
+        //}
+        public User Login(string email, string password)
         {
-            var loggedInUser = db.Users
-                .Include(r=>r.Role)
-                .Where(u => u.Email.ToLower() == user.Email.ToLower() && u.Password == user.Password)
-                .FirstOrDefault();
+            var usr = db.Users.SingleOrDefault(u => u.Email == email);
 
-            if (loggedInUser != null)
+            if (usr != null)
             {
-                return (loggedInUser.Id, loggedInUser.Name);
+                return usr;
             }
-
-            return (null, null);
+            else
+            {
+                return null;
+            }
         }
-
         public string GetUserRoleName(string userName)
         {
             return db.Users

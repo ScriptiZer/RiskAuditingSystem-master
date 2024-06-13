@@ -4,6 +4,7 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @inject IUserContext UserContext
 @{
+    ViewData["DeleteTitle"] = "AuditProgramLists";
     ViewData["Title"] = "Add";
 }
 @{
@@ -21,7 +22,11 @@
 }
 
 <link href="~/css/addeditstyle.css" rel="stylesheet" />
-
+<style>
+    .note-editor {
+        width: 450px;
+    }
+</style>
 <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
@@ -77,8 +82,8 @@
                         </li>
                     </ul>
                 </div>
-                <div class="table-responsive">
-                    <table id="tableList" class="table table-striped table-hover table-bordered">
+                <div class="table-responsive" style="">
+                    <table style="width:3500px;" id="tableList" class="table table-striped table-bordered tableList">
                         <thead>
                             <tr>
                                 <th>Risk Title</th>
@@ -94,6 +99,7 @@
                                 <th>Control Effectiveness Rating</th>
                                 @* <th>Residual Risk Rating</th> *@
                                 <th>Test Description</th>
+                                <th>Test Result</th>
                                 <th>Reference</th>
                                 <th></th>
                             </tr>
@@ -104,42 +110,57 @@
                                 <tr id="tr">
                                     <td>@Html.Raw(item.RiskIdentification.Name)</td>
                                     <td>@Html.Raw(item.RiskIdentification.Description)</td>
-                                    <td>@item.RiskCategory.Name</td>
+                                    <td style="background-color:@item.RiskCategory.BGColor;color:@item.RiskCategory.FontColor">@item.RiskCategory.Name</td>
                                     <td>@item.RiskIdentification.InherentRiskRating</td>
                                     <td>@Html.Raw(item.Control.Name)</td>
                                     <td>@Html.Raw(item.Control.Description)</td>
-                                    <td>@item.ControlType.Name</td>
-                                    <td>@item.ControlProcess.Name</td>
-                                    <td>@item.ControlFrequency.Name</td>
-                                    <td>@item.ControlEffectiveness.Name</td>
+                                    <td style="background-color:@item.ControlType.BGColor;color:@item.ControlType.FontColor">@item.ControlType.Name</td>
+                                    <td style="background-color:@item.ControlProcess.BGColor;color:@item.ControlProcess.FontColor">@item.ControlProcess.Name</td>
+                                    <td style="background-color:@item.ControlFrequency.BGColor;color:@item.ControlFrequency.FontColor">@item.ControlFrequency.Name</td>
+                                    <td style="background-color:@item.ControlEffectiveness.BGColor;color:@item.ControlEffectiveness.FontColor">@item.ControlEffectiveness.Name</td>
                                     <td>@item.Control.ControlEffectivenessRating</td>
                                     @* <td>@item.RiskAssessmentList.ResidualRiskRating</td> *@
-                                    <td></td>
-                                    <td></td>
-                                  @*   @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && (p.Edit == false && p.Delete == false)))
-                                    {
+                                    <td style="display:none;" class="desc" data-programlistid="@item.AuditProgramList.Id">
+                                        <textarea data-programlistid="@item.AuditProgramList.Id" type="text" class="form-control Description" id="Description" name="Description" placeholder="Test Description">@item.AuditProgramList.Description</textarea>
+                                        <button title="View" data-programlistid="@item.AuditProgramList.Id" class="btn btn-info btnViewDesc"><i class="fa-solid fa-eye"></i></button>
+                                    </td>
+                                    <td style="width:490px;" class="View" data-programlistid="@item.AuditProgramList.Id">
+                                        @Html.Raw(item.AuditProgramList.Description)
+                                            <button title="Edit" data-programlistid="@item.AuditProgramList.Id" class="btn btn-info btnEditDesc"><i class="fa fa-pencil"></i></button>
+                                   </td>
+
+                                    <td style="display:none;" class="Testdesc" data-programlistid="@item.AuditProgramList.Id">
+                                        <textarea data-programlistid="@item.AuditProgramList.Id" type="text" class="form-control TestResult" id="TestResult" name="TestResult" placeholder="Test Result">@item.AuditProgramList.TestResult</textarea>
+                                        <button title="View" data-programlistid="@item.AuditProgramList.Id" class="btn btn-info btnViewTestResultDesc"><i class="fa-solid fa-eye"></i></button>
+                                    </td>
+                                    <td style="width:490px;" class="TestView" data-programlistid="@item.AuditProgramList.Id">
+                                        @Html.Raw(item.AuditProgramList.TestResult)
+                                        <button title="Edit" data-programlistid="@item.AuditProgramList.Id" class="btn btn-info btnEditTestResultDesc"><i class="fa fa-pencil"></i></button>
+                                    </td>
+
+
                                         <td>
-                                            <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
-                                        </td>
-                                    }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && (p.Edit == false && p.Delete == true)))
-                                    {
-                                        <td>
-                                            <a asp-action="View" asp-controller="User" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
-                                        </td>
-                                    }
-                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Edit == true))
-                                    {
-                                        <td>
-                                            <a asp-action="Edit" asp-controller="User" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        </td>
-                                    }
+                                        <input multiple data-programlistid="@item.AuditProgramList.Id" style="width: 300px;" type="file" name="Reference" id="Reference" class="form-control Reference" />
+                                        <ul id="fileList" data-programlistid="@item.AuditProgramList.Id" class="list-unstyled">
+                                            @if (item.AuditProgramList.Reference != null)
+                                            {
+                                                foreach (var fileName in item.AuditProgramList.Reference.Split(','))
+                                                {
+                                                    <li><a href="@fileName" download="@fileName">@fileName</a></li>
+                                                }
+                                            }
+                                        </ul>
+                                    </td>
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true && p.Delete == true))
                                     {
                                         <td>
-                                            <a data-actions-id="@item.Id" title="Delete" class="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                            <a data-actions-id="@item.AuditProgramList.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
                                         </td>
-                                    } *@
+
+                                    }
+                                    <td style="display:none;">
+                                        <a id="btnSave" class="showAlertButton btnSave" title="Add Data" data-programlistid="@item.AuditProgramList.Id" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -150,7 +171,7 @@
                 <br />
                 <br />
                 <br />
-                <div class="float-end">
+                <div class="modal-footer" style="position: fixed; left: 0; right: 0; bottom: 0; background-color: #ffffff; z-index: 9; ">
                     <button id="btnCancel" class="btn btn-secondary">Cancel</button>
                     <button id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
                 </div>
@@ -162,13 +183,72 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
+            var table = $('.tableList');
+
+            table.draggable({
+                axis: 'x',
+                cursor: 'grabbing',
+                scroll: false,
+                start: function (event, ui) {
+                    $.ui.ddmanager.current.cancelHelperRemoval = true;
+                }
+            });
+            $(document).on("click", ".btnEditDesc", function () {
+                var programlistid = $(this).data("programlistid");
+                $(".desc[data-programlistid='" + programlistid + "']").show();//css("display","block");
+                $(".View[data-programlistid='" + programlistid + "']").hide();// css("display", "none");
+                $('.tableList').draggable("destroy");
+
+            });
+            $(document).on("click", ".btnViewDesc", function () {
+                var programlistid = $(this).data("programlistid");
+                $(".desc[data-programlistid='" + programlistid + "']").hide();// css("display", "none");
+                $(".View[data-programlistid='" + programlistid + "']").show();//css("display", "block");
+                var table = $('.tableList');
+
+                table.draggable({
+                    axis: 'x',
+                    cursor: 'grabbing',
+                    scroll: false,
+                    start: function (event, ui) {
+                        $.ui.ddmanager.current.cancelHelperRemoval = true;
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".btnEditTestResultDesc", function () {
+                var programlistid = $(this).data("programlistid");
+                $(".Testdesc[data-programlistid='" + programlistid + "']").show();//css("display","block");
+                $(".TestView[data-programlistid='" + programlistid + "']").hide();// css("display", "none");
+                $('.tableList').draggable("destroy");
+
+            });
+            $(document).on("click", ".btnViewTestResultDesc", function () {
+                var programlistid = $(this).data("programlistid");
+                $(".Testdesc[data-programlistid='" + programlistid + "']").hide();// css("display", "none");
+                $(".TestView[data-programlistid='" + programlistid + "']").show();//css("display", "block");
+                var table = $('.tableList');
+
+                table.draggable({
+                    axis: 'x',
+                    cursor: 'grabbing',
+                    scroll: false,
+                    start: function (event, ui) {
+                        $.ui.ddmanager.current.cancelHelperRemoval = true;
+                    }
+                });
+            });
+
             $("#Company").prop("disabled", true);
             $("#Department").prop("disabled", true);
 
             $(".ActualDate").datepicker();
             $(".Period").datepicker();
 
-            $('#Description').summernote();
+            $('.Description').summernote();
+            $('.TestResult').summernote();
+
 
             function formatDate(dateString) {
                 if (dateString) {
@@ -218,11 +298,12 @@
                 window.location.href = '/AuditProgram/Index';
             });
 
-            $("#saveButton").click(function () {
 
+            $(document).on("click", "#saveButton", function () {
                 if ($("#EditForm").valid()) {
                     var formData = {
                         AuditorId: $("#Auditor").val(),
+                        DepartmentId: $("#Department").val(),
                         ActualDate: formatDate($("#ActualDate").val()) || null,
                         Period: formatDate($("#Period").val()) || null
                     };
@@ -247,20 +328,7 @@
                             contentType: "application/json",
                             data: JSON.stringify(formData),
                             success: function (response) {
-                                swal.close(); // إغلاق SweetAlert بعد النجاح
-                                swal({
-                                    title: "Success",
-                                    text: "Your data has been saved",
-                                    icon: "success",
-                                    position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                    timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
-                                    allowOutsideClick: false,
-                                    showConfirmButton: false, // إخفاء زر التأكيد
-                                    showCancelButton: false, // إخفاء زر الإلغاء
-                                    showCloseButton: false // إخفاء زر الإغلاق
-                                }).then(function () {
-                                    window.location.href = '/AuditProgram/Index';
-                                });
+                                console.log("Add audit program");
                             },
                             error: function (error) {
                                 if (error.responseJSON && error.responseJSON.errors) {
@@ -278,9 +346,88 @@
                                 }
                             }
                         });
+
+                        var totalRequests = $(".btnSave").length;
+                        var successfulResponses = 0; 
+
+                        $(".btnSave").each(function () {
+                            var programlistid = $(this).data("programlistid");
+                            var htmlDescription = $(".Description[data-programlistid='" + programlistid + "']").summernote('code');
+                            var htmlTestResult = $(".TestResult[data-programlistid='" + programlistid + "']").summernote('code');
+
+                            // Handle file inputs
+                            var referenceInput = $("input[data-programlistid='" + programlistid + "'][type='file']");
+                            var formData = new FormData();
+
+                            formData.append("Description", htmlDescription);
+                            formData.append("TestResult", htmlTestResult);
+
+                            if (referenceInput.length > 0) {
+                                var referenceFiles = referenceInput[0].files;
+                                for (var i = 0; i < referenceFiles.length; i++) {
+                                    formData.append("ReferenceFiles", referenceFiles[i]);
+                                }
+                            }
+                            $.ajax({
+                                url: "/api/AuditProgramLists/" + programlistid,
+                                method: "PUT",
+                                processData: false,  // Important: Do not process the data
+                                contentType: false,  // Important: Let jQuery set the content type
+                                data: formData,
+                                success: function (response) {
+                                    successfulResponses++; 
+                                    if (successfulResponses === totalRequests) { 
+                                        swal({
+                                            title: "Success",
+                                            text: "Your data has been saved",
+                                            icon: "success",
+                                            position: "top-end",
+                                            timer: 2000,
+                                            allowOutsideClick: false,
+                                            showConfirmButton: false,
+                                            showCancelButton: false,
+                                            showCloseButton: false
+                                        }).then(function () {
+                                            window.location.href = '/AuditProgram/Index';
+                                        });
+                                    }
+                                },
+                                error: function (error) {
+                                    successfulResponses++;
+                                    if (error.responseJSON && error.responseJSON.errors) {
+                                        if (successfulResponses === totalRequests) {
+                                            swal({
+                                                title: "Opps...",
+                                                text: "Something went wrong!",
+                                                icon: "error",
+                                                position: "top-end",
+                                                timer: 2000,
+                                                allowOutsideClick: false,
+                                                showConfirmButton: false,
+                                                showCancelButton: false,
+                                                showCloseButton: false
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                        });
                     }, 2000);
                 }
             });
+
+            $(document).on("change", "input[type='file']", function () {
+                var programlistid = $(this).data("programlistid");
+                var fileList = $(this)[0].files;
+                var ulFileList = $("#fileList[data-programlistid='" + programlistid + "']");
+
+                ulFileList.empty();
+                for (var i = 0; i < fileList.length; i++) {
+                    ulFileList.append("<li>" + fileList[i].name + "</li>");
+                }
+            });
+
+
         });
     </script>
 }

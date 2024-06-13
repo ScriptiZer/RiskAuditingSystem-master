@@ -1,0 +1,144 @@
+﻿@model RolesPermissions
+@{
+    ViewData["Title"] = "Roles Permissions View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">View Roles Permissions</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="form-group">
+                        <label for="Role">Role</label>
+                        @Html.DropDownList("RoleId", ViewBag.RoleId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Role" , @name="RoleId", @disabled ="disabled"})
+                        <span asp-validation-for="RoleId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Permission">Permission</label>
+                        @Html.DropDownList("PermissionId", ViewBag.PermissionId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Permission" , @name="PermissionId", @disabled ="disabled"})
+                        <span asp-validation-for="PermissionId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <textarea type="text" class="form-control" id="Description" name="Description" placeholder="Description"></textarea>
+                    </div>
+                    <div class="float-end mt-2">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button disabled id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Description').summernote();
+
+            $("#EditForm").validate({
+                rules: {
+                    RoleId: {
+                        required: true
+                    },
+                    PermissionId: {
+                        required: true
+                    }
+                },
+                messages: {
+                    RoleId: {
+                        required: "The Role field is required"
+                    },
+                    PermissionId: {
+                        required: "The Permission field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select")) {
+                        error.insertAfter(element.siblings(".text-danger"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/RolesPermissions/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+
+                if ($("#EditForm").valid()) {
+                    var formData = {
+                        Name: $("#Name").val(),
+                        RoleId: $("#Role").val(),
+                        PermissionId: $("#Permission").val(),
+                        Description: htmlDescription
+                    };
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        showCancelButton: false,
+                        showCloseButton: false,
+                        onBeforeOpen: () => {
+                            swal.showLoading();
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/RolePermissions",
+                            method: "POST",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close();
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end",
+                                    timer: 2000,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    showCloseButton: false
+                                }).then(function () {
+                                    window.location.href = '/RolesPermissions/Index';
+                                });
+                            },
+                            error: function (error) {
+                                swal.close();
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+}
+
+

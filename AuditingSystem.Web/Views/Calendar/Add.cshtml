@@ -101,7 +101,6 @@
         </div>
     </div>
 </div>
- 
 @section Scripts{
     <script>
         $(document).ready(function () {
@@ -110,6 +109,7 @@
             $("#DaysNumberInYear, #Weekends, #HolidaysNumber, #NoofInternationalHlidays, #NoofLeavesDays, #SpecialWorkingHours, #EstimatedSickLeaves, #BalancefromPreviousYear").on("change", function () {
                 updateWorkingDays();
             });
+
             function updateWorkingDays() {
                 var daysNumberInYear = parseFloat($("#DaysNumberInYear").val()) || 0;
                 var weekends = parseFloat($("#Weekends").val()) || 0;
@@ -120,55 +120,56 @@
                 var estimatedSickLeaves = parseFloat($("#EstimatedSickLeaves").val()) || 0;
                 var balancefromPreviousYear = parseFloat($("#BalancefromPreviousYear").val()) || 0;
 
-                var workingDays = daysNumberInYear - (weekends + holidaysNumber + noofInternationalHlidays + noofLeavesDays + (specialWorkingHours / 8) + estimatedSickLeaves + balancefromPreviousYear);
+                var workingDays = daysNumberInYear - (weekends + holidaysNumber + noofInternationalHlidays + noofLeavesDays + (3 * specialWorkingHours) / 8) + estimatedSickLeaves + balancefromPreviousYear;
                 $("#WorkingDays").val(workingDays);
             }
+
             $("#AddForm").validate({
                 rules: {
                     CompanyId: {
                         required: true,
                     },
                     UserId: {
-                        required:true
+                        required: true
                     },
                     YearId: {
                         required: true
-                    },
-                    DaysNumberInYear: {
-                        required: true,
-                        number: true
-                    },
-                    Weekends: {
-                        required: true,
-                        number: true
-                    },
-                    HolidaysNumber: {
-                        required: true,
-                        number: true
-                    },
-                    NoofInternationalHlidays: {
-                        required: true,
-                        number: true
-                    },
-                    NoofLeavesDays: {
-                        required: true,
-                        number: true
-                    },
-                    SpecialWorkingHours: {
-                        required: true,
-                        number: true
-                    },
-                    EstimatedSickLeaves: {
-                        required: true,
-                        number: true
-                    },
-                    BalancefromPreviousYear: {
-                        required: true,
-                        number: true
-                    },
-                    WorkingDays: {
-                        required: true
-                    }
+                    }//,
+                    // DaysNumberInYear: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // Weekends: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // HolidaysNumber: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // NoofInternationalHlidays: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // NoofLeavesDays: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // SpecialWorkingHours: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // EstimatedSickLeaves: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // BalancefromPreviousYear: {
+                    //     required: true,
+                    //     number: true
+                    // },
+                    // WorkingDays: {
+                    //     required: true
+                    // }
                 },
                 messages: {
                     CompanyId: {
@@ -179,42 +180,42 @@
                     },
                     YearId: {
                         required: "The Year field is required"
-                    },
-                    DaysNumberInYear: {
-                        required: "The Days Number In Year field is required",
-                        number: "Please enter a valid number"
-                    },
-                    Weekends: {
-                        required: "The Weekends field is required",
-                        number: "Please enter a valid number"
-                    },
-                    HolidaysNumber: {
-                        required: "The Holidays Number field is required",
-                        number: "Please enter a valid number"
-                    },
-                    NoofInternationalHlidays: {
-                        required: "The No of International Hlidays field is required",
-                        number: "Please enter a valid number"
-                    },
-                    NoofLeavesDays: {
-                        required: "The No of Leaves Days field is required",
-                        number: "Please enter a valid number"
-                    },
-                    SpecialWorkingHours: {
-                        required: "The Special Working Hours field is required",
-                        number: "Please enter a valid number"
-                    },
-                    EstimatedSickLeaves: {
-                        required: "The Estimated Sick Leaves field is required",
-                        number: "Please enter a valid number"
-                    },
-                    BalancefromPreviousYear: {
-                        required: "The Balance from Previous Year field is required",
-                        number: "Please enter a valid number"
-                    },
-                    WorkingDays:{
-                        required: "The Working Days field is required",
-                    }
+                    }//,
+                    // DaysNumberInYear: {
+                    //     required: "The Days Number In Year field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // Weekends: {
+                    //     required: "The Weekends field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // HolidaysNumber: {
+                    //     required: "The Holidays Number field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // NoofInternationalHlidays: {
+                    //     required: "The No of International Holidays field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // NoofLeavesDays: {
+                    //     required: "The No of Leaves Days field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // SpecialWorkingHours: {
+                    //     required: "The Special Working Hours field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // EstimatedSickLeaves: {
+                    //     required: "The Estimated Sick Leaves field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // BalancefromPreviousYear: {
+                    //     required: "The Balance from Previous Year field is required",
+                    //     number: "Please enter a valid number"
+                    // },
+                    // WorkingDays: {
+                    //     required: "The Working Days field is required",
+                    // }
                 },
                 errorPlacement: function (error, element) {
                     if (element.is("select")) {
@@ -230,9 +231,8 @@
                 window.location.href = '/Calendar/Index';
             });
 
-            $("#saveButton").click(function () { 
+            $("#saveButton").click(function () {
                 var htmlDescription = $('#Description').summernote('code');
-
 
                 if ($("#AddForm").valid()) {
                     var formData = {
@@ -240,15 +240,15 @@
                         CompanyId: $("#CompanyId").val(),
                         UserId: $("#UserId").val(),
                         YearId: $("#YearId").val(),
-                        DaysNumberInYear: $("#DaysNumberInYear").val(),
-                        Weekends: $("#Weekends").val(),
-                        HolidaysNumber: $("#HolidaysNumber").val(),
-                        NoofInternationalHlidays: $("#NoofInternationalHlidays").val(),
-                        NoofLeavesDays: $("#NoofLeavesDays").val(),
-                        SpecialWorkingHours: $("#SpecialWorkingHours").val(),
-                        EstimatedSickLeaves: $("#EstimatedSickLeaves").val(),
-                        BalancefromPreviousYear: $("#BalancefromPreviousYear").val(),
-                        WorkingDays: parseInt($("#WorkingDays").val())
+                        DaysNumberInYear: $("#DaysNumberInYear").val() || 0,
+                        Weekends: $("#Weekends").val() || 0,
+                        HolidaysNumber: $("#HolidaysNumber").val() || 0,
+                        NoofInternationalHlidays: $("#NoofInternationalHlidays").val() || 0,
+                        NoofLeavesDays: $("#NoofLeavesDays").val() || 0,
+                        SpecialWorkingHours: $("#SpecialWorkingHours").val() || 0,
+                        EstimatedSickLeaves: $("#EstimatedSickLeaves").val() || 0,
+                        BalancefromPreviousYear: $("#BalancefromPreviousYear").val() || 0,
+                        WorkingDays: parseInt($("#WorkingDays").val() || 0)
                     };
 
                     swal({

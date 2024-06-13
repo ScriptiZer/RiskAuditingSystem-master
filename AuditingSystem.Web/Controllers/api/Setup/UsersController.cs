@@ -1,7 +1,9 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
+using AuditingSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,18 +19,21 @@ namespace AuditingSystem.Web.Controllers.api.Setup
     public class UsersController : ControllerBase
     {
         private readonly IBaseRepository<User,int> _userRepository;
+        private readonly IBaseRepository<AuditBudget,int> _auditBudgetRepository;
         private readonly IBaseRepository<Department, int> _departmentRepository;
         private readonly ILogger<UsersController> _logger;
         private readonly AuditingSystemDbContext db;
 
         public UsersController(IBaseRepository<User, int> userRepository, ILogger<UsersController> logger,
             IBaseRepository<Department, int> departmentRepository,
-            AuditingSystemDbContext db)
+            AuditingSystemDbContext db,
+            IBaseRepository<AuditBudget, int> auditBudgetRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _departmentRepository = departmentRepository;
             this.db = db;
+            _auditBudgetRepository = auditBudgetRepository;
         }
 
         [HttpGet]
@@ -74,11 +79,26 @@ namespace AuditingSystem.Web.Controllers.api.Setup
             {
                 if (ModelState.IsValid)
                 {
+                    user.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    user.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    user.CreationDate = DateTime.Now;
+                    user.CurrentYear = DateTime.Now.Year;
                     await _userRepository.CreateAsync(user);
+
+                    var auditBudget = new AuditBudget();
+                    auditBudget.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    auditBudget.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    auditBudget.CreationDate = DateTime.Now;
+                    auditBudget.CurrentYear = DateTime.Now.Year;
+                    auditBudget.ResourceId = user.Id;
+                    auditBudget.CompanyId = Convert.ToInt32(user.CompanyId);
+                    auditBudget.IsDeleted = false;
+                    await _auditBudgetRepository.CreateAsync(auditBudget);
+
                     return NoContent();
                 }
 
-                return BadRequest(ModelState); // يفضل إرجاع ModelState مع الرد
+                return BadRequest(ModelState); 
             }
             catch (Exception ex)
             {
@@ -100,9 +120,12 @@ namespace AuditingSystem.Web.Controllers.api.Setup
                         return NotFound();
                     }
 
+                    existingUser.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingUser.UpdatedDate = DateTime.Now;
                     existingUser.Title = updatedUser.Title;
                     existingUser.Email = updatedUser.Email;
                     existingUser.Name = updatedUser.Name;
+                    existingUser.ResourceType = updatedUser.ResourceType;
                     existingUser.CompanyId = updatedUser.CompanyId;
                     existingUser.DepartmentId = updatedUser.DepartmentId;
                     existingUser.RoleId = updatedUser.RoleId;

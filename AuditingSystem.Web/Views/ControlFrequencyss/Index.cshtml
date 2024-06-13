@@ -1,9 +1,25 @@
 ﻿@model IEnumerable<ControlFrequency>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject IUserContext UserContext
 @{
-    ViewData["DeleteTitle"] = "Control Frequency";
+    ViewData["DeleteTitle"] = "ControlFrequencys";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{
+    var userPermissionsJson = "";
+    var userPermissions = new List<RolesPermissions>();
+    var httpContext = ViewContext.HttpContext;
+    if (httpContext != null)
+    {
+        userPermissionsJson = httpContext.Session.GetString("UserPermissions");
+        userPermissions = JsonConvert.DeserializeObject<List<RolesPermissions>>(userPermissionsJson, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+    }
+}
 
 
 <div class="row">
@@ -15,9 +31,12 @@
                         <h4 class="card-title">Control Frequency Management View</h4>
                     </div>
                     <div class="col-md-6 text-end">
-                        <a class="btn btn-primary me-2" href="~/ControlFrequencyss/Add">
-                            <i class="fa-solid fa-plus"></i> Add New Control Frequency
-                        </a>
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true && p.Add == true))
+                        {
+                            <a class="btn btn-primary me-2" href="~/ControlFrequencyss/Add">
+                                <i class="fa-solid fa-plus"></i> Add New Control Frequency
+                            </a>
+                        }
                     </div>
                 </div>
                 <div class="navbar-menu-wrapper navbar-search-wrapper d-none d-lg-flex align-items-center">
@@ -48,16 +67,33 @@
                                 <tr id="tr">
                               
                                     <td>@item.Name</td>
-                                    <td>@item.Description</td>
+                                    <td>@Html.Raw(item.Description)</td>
                                     <td>@item.BGColor</td>
                                     <td>@item.FontColor</td>
-
-                                    <td>
-                                        <a asp-action="Edit" asp-controller="ControlFrequencyss" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    </td>
-                                    <td>
-                                        <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true && (p.Edit == false && p.Delete == false)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="ControlFrequencyss" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true && (p.Edit == false && p.Delete == true)))
+                                    {
+                                        <td>
+                                            <a asp-action="View" asp-controller="ControlFrequencyss" asp-route-id="@item.Id" title="View"><i class="fa-solid fa-eye"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true && p.Edit == true))
+                                    {
+                                        <td>
+                                            <a asp-action="Edit" asp-controller="ControlFrequencyss" asp-route-id="@item.Id" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        </td>
+                                    }
+                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true && p.Delete == true))
+                                    {
+                                        <td>
+                                            <a data-actions-id="@item.Id" title="Delete" id="btnDelete" href="#"><i class="fa-solid fa-trash"></i></a>
+                                        </td>
+                                    }
                                 </tr>
                             }
                         </tbody>

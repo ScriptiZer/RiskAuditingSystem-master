@@ -18,6 +18,12 @@ namespace AuditingSystem.Entities.RiskAssessments
         public virtual Control? Control { get; set; }
 
         public string? ResidualRiskRating { get; set; }
+        public int? ResidualRiskRatingNumber { get; set; }
+        public virtual bool? IsTransfer { get; set; } = false;
+        public virtual int? TransferToYear { get; set; }
+        public virtual int? TransferByUser { get; set; }
+        public virtual int? TransferByCompany { get; set; }
+        public virtual DateTime? TransferDate { get; set; }
 
         public virtual IEnumerable<RiskAssessmentList>? RiskAssessments { get; set; }
 

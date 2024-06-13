@@ -13,15 +13,14 @@ namespace AuditingSystem.Entities.Setup
     {
         [Key]
         public virtual int Id { get; set; }
-        [Required(ErrorMessage = "The Title field is required")]
         public virtual string? Title { get; set; }
 
-        [Required(ErrorMessage = "The Email field is required")]
         [EmailAddress]
         public virtual string? Email { get; set; }
 
-        [Required(ErrorMessage = "The Contact No field is required")]
         public virtual string? ContactNo { get; set; }
+
+        public virtual string? ResourceType { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -34,15 +33,12 @@ namespace AuditingSystem.Entities.Setup
 
         public virtual int DaysNumber { get; set; }
 
-        [Required(ErrorMessage = "The Role field is required")]
         public virtual int? RoleId { get; set; }
         public virtual Role? Role { get; set; }
 
-        [Required(ErrorMessage = "The Company field is required")]
         public  virtual int? CompanyId { get; set; }
         public virtual Company? Company { get; set; }
 
-        [Required(ErrorMessage = "The Department field is required")]
         public virtual int? DepartmentId { get; set; }
         public virtual Department? Department { get; set; }
 

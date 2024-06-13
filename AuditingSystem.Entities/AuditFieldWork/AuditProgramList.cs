@@ -20,5 +20,7 @@ namespace AuditingSystem.Entities.AuditFieldWork
         public virtual int ControlId { get; set; }
         public virtual Control? Control { get; set; }
 
+        public virtual string? Reference { get; set; }
+        public string? TestResult { get; set; }
     }
 }

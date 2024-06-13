@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditFieldTests;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Setup;
@@ -56,8 +57,12 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     var existingRecord = db.Companies
                       .Where(x => x.Source == "System")
                       .OrderByDescending(x => x.Id)
-                      .FirstOrDefault();
+                    .FirstOrDefault();
 
+                    company.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    company.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    company.CreationDate = DateTime.Now;
+                    company.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
@@ -136,6 +141,9 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound();
                     }
 
+                    existingCompany.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingCompany.UpdatedDate = DateTime.Now;
+                    existingCompany.Code = updatedCompany.Code;
                     existingCompany.Name = updatedCompany.Name;
                     existingCompany.Description = updatedCompany.Description;
                     existingCompany.Address = updatedCompany.Address;

@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -63,6 +64,10 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                     .OrderByDescending(x => x.Id)
                     .FirstOrDefault();
 
+                    objective.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    objective.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    objective.CreationDate = DateTime.Now;
+                    objective.CurrentYear = DateTime.Now.Year;
                     int increment = 5000;
                     if (existingRecord != null)
                     {
@@ -102,9 +107,15 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound(new { error = $"Objective with ID {id} not found" });
                     }
 
-                    // تحديث الخصائص
+                    existingObjective.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingObjective.UpdatedDate = DateTime.Now;
+                    existingObjective.Code = updatedObjective.Code;
                     existingObjective.Name = updatedObjective.Name;
                     existingObjective.Description = updatedObjective.Description;
+                    existingObjective.IndustryId = updatedObjective.IndustryId;
+                    existingObjective.CompanyId = updatedObjective.CompanyId;
+                    existingObjective.DepartmentId = updatedObjective.DepartmentId;
+                    existingObjective.FunctionId = updatedObjective.FunctionId;
                     existingObjective.ActivityId = updatedObjective.ActivityId;
 
                     await _objectiveRepository.UpdateAsync(existingObjective);

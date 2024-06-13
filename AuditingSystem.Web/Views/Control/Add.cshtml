@@ -216,17 +216,29 @@
                                 });
                             },
                             error: function (error) {
-                                if (error.responseJSON && error.responseJSON.errors) {
+                                if (error.responseJSON && error.responseJSON.error === "DuplicateData") {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "The Risk Identification has Control already!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                } else {
                                     swal({
                                         title: "Opps...",
                                         text: "Something went wrong!",
                                         icon: "error",
-                                        position: "top-end", // تحديد الوضعية في أعلى الزاوية اليمنى
-                                        timer: 2000, // فترة الزمن بالميلي ثانية (هنا 2000 ميلي ثانية = 2 ثانية)
+                                        position: "top-end",
+                                        timer: 2000,
                                         allowOutsideClick: false,
-                                        showConfirmButton: false, // إخفاء زر التأكيد
-                                        showCancelButton: false, // إخفاء زر الإلغاء
-                                        showCloseButton: false // إخفاء زر الإغلاق
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
                                     });
                                 }
                             }

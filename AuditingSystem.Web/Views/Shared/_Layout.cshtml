@@ -56,7 +56,36 @@
             font-weight: 900 !important;
             text-transform: uppercase;
         }
-        
+
+        body::-webkit-scrollbar {
+            width: 10px;
+            background-color: #F5F5F5;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #6071ac;
+        }
+
+        body::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
+
+        .table-responsive::-webkit-scrollbar {
+            width: 10px;
+            background-color: #F5F5F5;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background-color: #6071ac;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
         #sidebar::-webkit-scrollbar {
             width: 6px;
             background-color: #F5F5F5;
@@ -71,29 +100,35 @@
             background-color: #F5F5F5;
         }
 
-        #Search{
-            margin-top:5px;
+        #Search {
+            margin-top: 5px;
         }
-        .table-responsive{
-            margin-top:10px;
+
+        .table-responsive {
+            margin-top: 10px;
         }
+
         .cardbox {
             cursor: pointer;
             box-shadow: inset 4px 1px 13px 0px;
             border-radius: 10px;
             height: 70px;
         }
-        .btn-light{
+
+        .btn-light {
             margin-right: 10px;
         }
+
         .fa-solid {
             font-size: 18px;
-            margin-right:3px;
+            margin-right: 3px;
         }
-        .fa-circle{
+
+        .fa-circle {
             font-size: 5px;
-            margin-left:8px;
+            margin-left: 8px;
         }
+
         .fa-trash {
             color: #e94848;
         }
@@ -106,14 +141,15 @@
             border: 1px solid #ff0000;
         }
 
-        .navSub{
+        .navSub {
             padding-left: 23px !important;
         }
-        .navSub_Sub{
+
+        .navSub_Sub {
             padding-left: 28px !important;
         }
 
-        .navSub_Subs{
+        .navSub_Subs {
             padding-left: 40px !important;
         }
 
@@ -136,32 +172,104 @@
         }
     </style>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    
+
 </head>
 <body>
     <div class="container-scroller d-flex">
 
-             <nav class="sidebar sidebar-offcanvas" id="sidebar">
-                <ul class="metismenu nav" id="menu">
-                    <li style="color:#fff;" class="sidebar-category">Dashboard</li>
-                    <li class="nav-item">
-                        <a class="nav-link arrowHeader" style="margin-left: -16px;" asp-action="Dashboard" asp-controller="Home" aria-expanded="false">
-                            <i class="icon-speedometer menu-icon"></i><span class="nav-text"><i class="fa-solid fa-chart-simple arrowHeader"></i> Dashboard</span>
-                        </a> 
-                    </li>
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="metismenu nav" id="menu">
+                <li style="color:#fff;" class="sidebar-category">Dashboard</li>
+                <li class="nav-item">
+                    <a class="nav-link arrowHeader" style="margin-left: -16px;" asp-action="Dashboard" asp-controller="Home" aria-expanded="false">
+                        <i class="icon-speedometer menu-icon"></i><span class="nav-text"><i class="fa-solid fa-chart-simple arrowHeader"></i> Dashboard</span>
+                    </a>
+                </li>
 
-                    <li style="color:#fff;" class="sidebar-category">Components</li>
+                <li style="color:#fff;" class="sidebar-category">Components</li>
 
                 @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Years" && p.View == true) ||
                 userPermissions.Any(p => p.Permission.Name == "Calendar" && p.View == true) ||
                 userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true) ||
-                userPermissions.Any(p => p.Permission.Name == "Roles" && p.View == true))
+                userPermissions.Any(p => p.Permission.Name == "Roles" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Risk Category" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Risk Likelihood" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Control Type" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Control Process" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Control Effectiveness" && p.View == true) @* ||
+                userPermissions.Any(p => p.Permission.Name == "Permissions" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "RolesPermissions" && p.View == true )*@)
                 {
-                    <li class="mega-menu mega-menu-sm nav-item">                        
+                    <li class="mega-menu mega-menu-sm nav-item">
                         <a class="has-arrow nav-link arrowHeader" href="javascript:void()" aria-expanded="false">
                             <i class="fa-solid fa-star arrowHeader"></i><span class="nav-text">Set Up</span>
                         </a>
                         <ul aria-expanded="false">
+                            <li>
+                                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Category" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Risk Likelihood" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Control Type" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Control Process" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Control Effectiveness" && p.View == true) ||
+                               userPermissions.Any(p => p.Permission.Name == "Operation Budget Types" && p.View == true))
+                                {
+                                    <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">Lockups</a>
+                                    <ul aria-expanded="false">
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Category" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskCategorysscs"><i class="fa-solid fa-circle"></i> Risk Category</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Impact" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskImpactes"><i class="fa-solid fa-circle"></i> Risk Impact</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Likelihood" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskLikehoodes"><i class="fa-solid fa-circle"></i> Risk Likelihood</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Type" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="ControlTypes"><i class="fa-solid fa-circle"></i> Control Type</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Process" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="ControlProcesses"><i class="fa-solid fa-circle"></i> Control Process</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="ControlFrequencyss"><i class="fa-solid fa-circle"></i> Control Frequency</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control Effectiveness" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="ControlEffectivenessc"><i class="fa-solid fa-circle"></i> Control Effectiveness</a>
+                                            </li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Operation Budget Types" && p.View == true))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="OperationBudgetType"><i class="fa-solid fa-circle"></i> Operation Budget Types</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
                             <li>
                                 @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Years" && p.View == true) ||
                                userPermissions.Any(p => p.Permission.Name == "Calendar" && p.View == true))
@@ -176,80 +284,126 @@
                                         }
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Calendar" && p.View == true))
                                         {
-                                            <li class="nav-item"> 
+                                            <li class="nav-item">
                                                 <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="Calendar"><i class="fa-solid fa-circle"></i> Calendar</a>
                                             </li>
                                         }
                                     </ul>
-                                }                                
+                                }
                             </li>
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Users" && p.View == true))
-                            {   
-                                <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="User">Users</a></li>                                              
+                            {
+                                <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="User">Users</a></li>
                             }
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Roles" && p.View == true))
                             {
                                 <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="Role">Roles</a></li>
+                            }
+                            @*  @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Permissions" && p.View == true))
+                        { *@
+                            <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="Permission">Permission</a></li>
+                            @* }
+                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Roles Permissions" && p.View == true))
+                        { *@
+                            <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="RolesPermissions">Roles Permissions</a></li>
+                            @* } *@
+                        </ul>
+                    </li>
+                }
+
+                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true))
+                {
+                    <li class="mega-menu mega-menu-sm nav-item">
+                        <a class="has-arrow nav-link arrowHeader" href="javascript:void()" aria-expanded="false">
+                            <i class="fa-solid fa-database arrowHeader"></i><span class="nav-text">Database</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true))
+                            {
+                                <li class="nav-item">
+                                    <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">
+                                        <span class="nav-text">Risk Assessments</span>
+                                    </a>
+                                    <ul aria-expanded="false">
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true))
+                                        {
+                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskIdentification"><i class="fa-solid fa-circle"></i> Risk Identification</a></li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true))
+                                        {
+                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="Control"><i class="fa-solid fa-circle"></i> Controls</a></li>
+                                        }
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true))
+                                        {
+                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskAssessment"><i class="fa-solid fa-circle"></i> Risk Assessment</a></li>
+                                        }
+                                    </ul>
+                                </li>
                             }
                         </ul>
                     </li>
                 }
 
                 @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Company" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Department" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Function" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Activity" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Objective" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Budget" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Final Audit Plan" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Process walkthrough" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "List of Information" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Sampling" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Work Progress" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Audit Team Monitoring" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Draft Audit Reports" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true) ||
-                        userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
+                userPermissions.Any(p => p.Permission.Name == "Company" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Department" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Function" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Activity" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Objective" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true) ||
+      @*           userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true) || *@
+                userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Budget" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Final Audit Plan" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Process walkthrough" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "List of Information" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Sampling" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Finding" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Work Progress" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Audit Team Monitoring" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Draft Audit Reports" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true) ||
+                userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
                 {
                     <li class="nav-item">
-                        
+
                         <a class="has-arrow arrowHeader nav-link" href="javascript:void()" aria-expanded="false">
                             <i class="fa-solid fa-microchip arrowHeader"></i> <span class="nav-text">Audit Process</span>
                         </a>
                         <ul aria-expanded="false">
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Company" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Department" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Function" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Activity" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Objective" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true)) 
+                           userPermissions.Any(p => p.Permission.Name == "Company" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Department" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Function" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Activity" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Objective" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Task" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Practice" && p.View == true))
                             {
                                 <li class="nav-item">
                                     <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">Audit Universe</a>
                                     <ul aria-expanded="false">
-                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true)) 
+                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Industry" && p.View == true))
                                         {
                                             <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="Industry"><i class="fa-solid fa-circle"></i> Industry</a></li>
                                         }
@@ -283,43 +437,26 @@
                                         }
                                     </ul>
                                 </li>
-                           }
+                            }
 
-                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true))
+
+                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Annual Risk Assessment" && p.View == true))
                             {
-                                <li class="nav-item">
-                                    <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">
-                                        <span class="nav-text">Risk Assessments</span>
-                                    </a>
-                                    <ul aria-expanded="false">
-                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true))
-                                        {
-                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskIdentification"><i class="fa-solid fa-circle"></i> Risk Identification</a></li>
-                                        }
-                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Control" && p.View == true))
-                                        {
-                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="Control"><i class="fa-solid fa-circle"></i> Controls</a></li>
-                                        }
-                                        @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Assessment" && p.View == true))
-                                        {
-                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="RiskAssessment"><i class="fa-solid fa-circle"></i> Risk Assessment</a></li>
-                                        }                                        
-                                    </ul>
-                                </li>
-                           }
+                                 <a style="margin-left:-7px;" class="nav-link navSub_Sub" asp-action="AnnualRiskAssessment" asp-controller="RiskAssessment"> Annual Risk Assessment</a>
+                            }
+
 
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Audit Budget" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Final Audit Plan" && p.View == true))
+                           userPermissions.Any(p => p.Permission.Name == "Audit Budget" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Final Audit Plan" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Audit Budget Operations" && p.View == true))
                             {
                                 <li class="nav-item">
                                     <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">
                                         <span class="nav-text">Audit Plans</span>
                                     </a>
-                                    
+
                                     <ul aria-expanded="false">
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Resources" && p.View == true))
                                         {
@@ -339,64 +476,65 @@
                                         }
                                     </ul>
                                 </li>
-                           }
+                            }
 
 
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Process walkthrough" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "List of Information" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Sampling" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Audit Work Progress" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Audit Team Monitoring" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Draft Audit Reports" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true) ||
-                                   userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
-                           {
+                           userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Process walkthrough" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "List of Information" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Sampling" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Finding" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Audit Work Progress" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Audit Team Monitoring" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Draft Audit Reports" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
+                            {
                                 <li class="nav-item">
                                     <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">
                                         <span class="nav-text">Audit Filed Work</span>
                                     </a>
                                     <ul aria-expanded="false">
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true))
+                                       userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true))
                                         {
                                             <li>
                                                 <a class="has-arrow nav-link navSub_Sub" href="javascript:void()" aria-expanded="false"><i class="fa-solid fa-circle"></i> Audit Engagement</a>
                                                 <ul aria-expanded="false">
                                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
-                                                           userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true))
-                                                   {
+                                                   userPermissions.Any(p => p.Permission.Name == "Audit Field Work Weekly Meetings" && p.View == true) ||
+                                                   userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true) ||
+                                                   userPermissions.Any(p => p.Permission.Name == "Kick Off Meeting" && p.View == true) ||
+                                                   userPermissions.Any(p => p.Permission.Name == "Process Understanding Meeting" && p.View == true) ||
+                                                   userPermissions.Any(p => p.Permission.Name == "Draft Audit Report Meeting" && p.View == true) ||
+                                                   userPermissions.Any(p => p.Permission.Name == "Final Audit Report Meeting" && p.View == true) ||
+                                                   userPermissions.Any(p => p.Permission.Name == "Board Meeting" && p.View == true))
+                                                    {
                                                         <li class="nav-item">
                                                             <a class="nav-link navSub_Subs" data-bs-toggle="modal" data-bs-target="#exampleModalAuditEngagement" href="#" data-bs-whatever="@@mdo">
                                                                 <i class="fa-solid fa-minus"></i> IA Meetings
                                                             </a>
                                                         </li>
-                                                   }
-                                                    
+                                                    }
+
                                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Engagement Letter" && p.View == true))
                                                     {
                                                         <li class="nav-item"><a class="nav-link navSub_Subs" href="#" onclick="downloadFile('/Reports/01PurchasingEngagementMemorandum2023.docx','01PurchasingEngagementMemorandum2023.docx')"><i class="fa-solid fa-minus"></i> Engagement Letter</a></li>
@@ -407,26 +545,27 @@
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Process walkthrough" && p.View == true))
                                         {
                                             <li>
-                                                <a class="nav-link navSub_Sub" href="#"><i class="fa-solid fa-circle"></i>Process walkthrough</a>
+                                                <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/ProcessUnderstandingPurchasingDepartement.docx','ProcessUnderstandingPurchasingDepartement')"><i class="fa-solid fa-circle"></i>Process walkthrough</a>
                                             </li>
                                         }
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Programs" && p.View == true))
                                         {
                                             <!--href="/Reports/7AuditProgramsFinanceandPurchasing.xlsx" download="AuditProgram.xlsx"-->
                                             <li>
-                                                <a class="nav-link navSub_Sub"  asp-action="Index" asp-controller="AuditProgram"><i class="fa-solid fa-circle"></i>Audit Programs</a>
+                                                <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="AuditProgram"><i class="fa-solid fa-circle"></i>Audit Programs</a>
                                             </li>
                                         }
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "List of Information" && p.View == true))
                                         {
                                             <li>
-                                                <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/listofDocumentsrequirements2023.xlsx','listofDocumentsrequirements2023.xlsx')"><i class="fa-solid fa-circle"></i>List of Information</a>
+                                                <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/listofDocumentsrequirements2023.xlsx','listofDocumentsrequirements2023')"><i class="fa-solid fa-circle"></i>List of Information</a>
                                             </li>
                                         }
 
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Sampling" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true) ||
-                                               userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true))
+                                       userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Finding" && p.View == true) ||
+                                       userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true))
                                         {
                                             <li>
                                                 <a class="has-arrow nav-link navSub_Sub" href="javascript:void()" aria-expanded="false"><i class="fa-solid fa-circle"></i> Audit Field Tests</a>
@@ -435,9 +574,13 @@
                                                     {
                                                         <li class="nav-item"> <a class="nav-link navSub_Subs" href="#"><i class="fa-solid fa-minus"></i> Sampling</a></li>
                                                     }
+                                                    @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Finding" && p.View == true))
+                                                    {
+                                                        <li class="nav-item"> <a class="nav-link navSub_Subs" asp-action="Index" asp-controller="Finding"><i class="fa-solid fa-minus"></i> Findings</a></li>
+                                                    }
                                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Observation" && p.View == true))
                                                     {
-                                                        <li class="nav-item"> <a class="nav-link navSub_Subs" href="#"><i class="fa-solid fa-minus"></i> Observations</a></li>
+                                                        <li class="nav-item"> <a class="nav-link navSub_Subs" asp-action="Index" asp-controller="Observation"><i class="fa-solid fa-minus"></i> Observations</a></li>
                                                     }
                                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Progress" && p.View == true))
                                                     {
@@ -447,32 +590,35 @@
                                                             </a>
                                                         </li>
                                                     }
-                                                    
+
                                                 </ul>
                                             </li>
                                         }
                                     </ul>
                                 </li>
-                           }
+                            }
 
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Reports" && p.View == true) ||
-                                  userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true) ||
-                                  userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
+                           userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true) ||
+                           userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
                             {
                                 <li class="nav-item">
                                     <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false"> Audit Reports</a>
                                     <ul aria-expanded="false">
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Reports" && p.View == true))
                                         {
-                                            <li class="nav-item"> <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate.docx')"><i class="fa-solid fa-circle"></i> Draft Audit Reports</a></li>
+                                            <!-- onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate')"-->
+                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="DraftAuditReport"><i class="fa-solid fa-circle"></i> Draft Audit Reports</a></li>
                                         }
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Client Action Plans" && p.View == true))
                                         {
-                                            <li class="nav-item"> <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate.docx')"><i class="fa-solid fa-circle"></i> Client Action Plans</a></li>
+                                            <!-- onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate')"-->
+                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="ClientActionPlan"><i class="fa-solid fa-circle"></i> Client Action Plans</a></li>
                                         }
                                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Final Audit Reports" && p.View == true))
                                         {
-                                            <li class="nav-item"> <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate.docx')"><i class="fa-solid fa-circle"></i> Final Audit Reports</a></li>
+                                            <!--onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate')"-->
+                                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="FinalAuditReport"><i class="fa-solid fa-circle"></i> Final Audit Reports</a></li>
                                         }
                                     </ul>
                                 </li>
@@ -480,7 +626,25 @@
                         </ul>
                     </li>
                 }
-                    
+                @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Segregation of Duties" && p.View == true))
+                {
+
+                    <li class="mega-menu mega-menu-sm nav-item">
+                        <a class="has-arrow nav-link arrowHeader" href="javascript:void()" aria-expanded="false">
+                            <i class="fa-solid fa-book"></i><span class="nav-text">Segregation of Duties</span>
+                        </a>
+                        <ul aria-expanded="false">
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="1"><i class="fa-solid fa-circle"></i> Cash & Electronic Funds <br>Transfer (EFT)</a></li>
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="2"><i class="fa-solid fa-circle"></i> Account Receivable (A/R)</a></li>
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="3"><i class="fa-solid fa-circle"></i> Accounts Payable (A/P),<br> Purchasing</a></li>
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="4"><i class="fa-solid fa-circle"></i> Payroll</a></li>
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="5"><i class="fa-solid fa-circle"></i> Property Records</a></li>
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="6"><i class="fa-solid fa-circle"></i> Inventory</a></li>
+                            <li class="nav-item"> <a class="nav-link navSub_Sub" asp-action="Index" asp-controller="SegregationOfDuties" asp-route-sODTypeId="7"><i class="fa-solid fa-circle"></i> General Accounting</a></li>
+                        </ul>
+
+                    </li>
+                }
                 @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Field Tests" && p.View == true))
                 {
                     <li class="mega-menu mega-menu-sm nav-item">
@@ -488,32 +652,30 @@
                             <i class="fa-solid fa-plus arrowHeader"></i><span class="nav-text">Follow Up</span>
                         </a>
                         <ul aria-expanded="false">
-                            <li>
-                                <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">Published Audit Reports</a>
-                                <ul aria-expanded="false">
-                                    <li class="nav-item"> <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate.docx')"><i class="fa-solid fa-circle"></i> Audit Field Tests</a></li>
-                                </ul>
-                            </li>
+                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Field Tests" && p.View == true))
+                            {
+                                <li>
+                                    <a class="has-arrow nav-link navSub" href="javascript:void()" aria-expanded="false">Published Audit Reports</a>
+                                    <ul aria-expanded="false">
+                                        <li class="nav-item"> <a class="nav-link navSub_Sub" href="#" onclick="downloadFile('/Reports/2023PurchasingAuditReportSHAMSTemplate.docx','2023PurchasingAuditReportSHAMSTemplate')"><i class="fa-solid fa-circle"></i> Audit Field Tests</a></li>
+                                    </ul>
+                                </li>
+                            }
                         </ul>
                     </li>
                 }
-                </ul>            
-            </nav> 
 
-       
-        <!-- partial -->
+            </ul>
+        </nav>
+
+
         <div class="container-fluid page-body-wrapper" style="margin-right:0;">
-            <!-- partial:./partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="    z-index: 99;">
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
 
                     <div class="navbar-brand-wrapper">
                         <a class="navbar-brand brand-logo" asp-action="Dashboard" asp-controller="Home"><img style="width:50px" src="~/images/logo.png" alt="logo" /><span style="color:white">ONYX IV</span></a>
-                        @* <a class="navbar-brand brand-logo-mini" href="index.html"><img src="~/images/logo-mini.svg" alt="logo" /></a> *@
                     </div>
-                    @* <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">
-                        Welcome back, @HttpContextAccessor.HttpContext.Session.GetString("UserName")
-                    </h4> *@
                     <ul class="navbar-nav navbar-nav-right">
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
@@ -523,71 +685,19 @@
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                                <a class="dropdown-item">
-                                    <i class="mdi mdi-settings text-primary"></i>
-                                    Settings
-                                </a>
                                 <a asp-action="Logout" asp-controller="Account" class="dropdown-item">
                                     <i class="mdi mdi-logout text-primary"></i>
                                     Logout
                                 </a>
                             </div>
                         </li>
-                        <li class="nav-item dropdown me-2">
-                            <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
-                                <i class="mdi mdi-email-open mx-0"></i>
-                                <span class="count bg-danger">1</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                                <p class="mb-0 font-weight-normal float-left dropdown-header">Notifications</p>
-                                <a class="dropdown-item preview-item">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-success">
-                                            <i class="mdi mdi-information mx-0"></i>
-                                        </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <h6 class="preview-subject font-weight-normal">Application Error</h6>
-                                        <p class="font-weight-light small-text mb-0 text-muted">
-                                            Just now
-                                        </p>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item preview-item">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-warning">
-                                            <i class="mdi mdi-settings mx-0"></i>
-                                        </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <h6 class="preview-subject font-weight-normal">Settings</h6>
-                                        <p class="font-weight-light small-text mb-0 text-muted">
-                                            Private message
-                                        </p>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item preview-item">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-info">
-                                            <i class="mdi mdi-account-box mx-0"></i>
-                                        </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <h6 class="preview-subject font-weight-normal">New user registration</h6>
-                                        <p class="font-weight-light small-text mb-0 text-muted">
-                                            2 days ago
-                                        </p>
-                                    </div>
-                                </a>
-                            </div>
-                        </li>
                     </ul>
-                
+
                     <button style="position:absolute;left:0;margin:-7px;" class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
                         <span class="mdi mdi-menu"></span>
                     </button>
                 </div>
-               
+
             </nav>
             <!-- partial -->
             <div class="main-panel">
@@ -598,7 +708,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="d-sm-flex justify-content-center justify-content-sm-between py-2">
-                                <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <a href="#" target="_blank">ONYX </a>@DateTime.Now.Year</span>
+                                <span style="z-index:999;" class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © <a href="#" target="_blank">ONYX </a>@DateTime.Now.Year</span>
                             </div>
                         </div>
                     </div>
@@ -606,7 +716,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <div class="modal fade" id="exampleModalAuditFieldTests" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -631,7 +741,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -658,7 +768,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true)) 
+                            @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Audit Planning Meeting" && p.View == true))
                             {
                                 <div class="col-md-4 mb-3 col-sm-12">
                                     <div class="cardbox bg-primary">
@@ -679,7 +789,7 @@
                                 </div>
                             }
                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Year End Audit Closure Meeting" && p.View == true))
-                            { 
+                            {
                                 <div class="col-md-4 mb-3 col-sm-12">
                                     <div class="cardbox bg-success">
                                         <div class="card-body">
@@ -771,8 +881,7 @@
     <script src="~/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page-->
-    <script src="~/vendors/chart.js/Chart.min.js"></script>
-    <script src="~/js/chart.js"></script>
+
     <script src="~/js/jquery.cookie.js" type="text/javascript"></script>
     <!-- End plugin js for this page-->
     <!-- inject:js -->
@@ -789,11 +898,12 @@
     <!-- End custom js for this page-->
 
     <script src="~/HeaderStyle/plugins/common/common.min.js"></script>
-
+    <script src="~/vendors/chart/Chart.min.js"></script>
+    <script src="~/js/chart.js"></script>
 
     <script>
         $(document).ready(function () {
-         
+
 
             $(".Dates").datepicker({
                 dateFormat: "dd-mm-yy",
@@ -818,14 +928,13 @@
     </script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-    
+
 
     <script>
         $(document).ready(function () {
             $(document).on("click", "#btnDelete", function () {
                 var btnId = $(this);
 
-                // استخدام SweetAlert2 بدلاً من confirm
                 swal({
                     title: "Are you sure?",
                     text: "Once deleted, you will not be able to recover this data!",

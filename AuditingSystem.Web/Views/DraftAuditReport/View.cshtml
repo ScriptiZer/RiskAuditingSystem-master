@@ -1,0 +1,402 @@
+﻿@model AuditingSystem.Entities.AuditReports.DraftAuditReports
+@{
+    ViewData["Title"] = "Draft Audit Report View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/addeditstyle.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">View Draft Audit Report</h4>
+                <form class="forms-sample" id="EditForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Name">Name</label>
+                                <input disabled asp-for="Name" type="text" class="form-control" id="Name" name="Name" placeholder="Name">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                      @*   <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Industry">Industry</label>
+                                @Html.DropDownList("IndustryId", ViewBag.IndustryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Industry", @name = "IndustryId",@disabled = "disabled" })
+                                <span asp-validation-for="IndustryId" class="text-danger"></span>
+                            </div>
+                        </div> *@
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Company">Company</label>
+                                <input type="hidden" value="@Model.CompanyId" id="ComId" />
+                                @Html.DropDownList("CompanyId", ViewBag.CompanyId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Company", @name = "CompanyId",@disabled = "disabled" })
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Department">Department</label>
+                                <input type="hidden" value="@Model.DepartmentId" id="DeptId" />
+                                @Html.DropDownList("DepartmentId", ViewBag.DepartmentId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Department", @name = "DepartmentId",@disabled = "disabled" })
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Function">Function</label>
+                                <input type="hidden" value="@Model.FunctionId" id="FuncId" />
+                                @Html.DropDownList("FunctionId", ViewBag.FunctionId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Function", @name = "Function" ,@disabled = "disabled"})
+                                <span asp-validation-for="FunctionId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Finding">Finding</label>
+                                @Html.DropDownList("FindingId", ViewBag.FindingId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Finding", @name = "FindingId",@disabled = "disabled" })
+                                <span asp-validation-for="FindingId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Observation">Observation</label>
+                                @Html.DropDownList("ObservationId", ViewBag.ObservationId as SelectList, "-- Select One --", new { @class = "form-control", @id = "Observation", @name = "ObservationId" })
+                                <span asp-validation-for="ObservationId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="RiskImpact">Risk Impact</label>
+                                <textarea asp-for="RiskImpact" type="text" class="form-control" id="RiskImpact" name="RiskImpact" placeholder="RiskImpact"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="RiskCategory">Risk Category</label>
+                                @Html.DropDownList("RiskCategoryId", ViewBag.RiskCategoryId as SelectList, "-- Select One --", new { @class = "form-control", @id = "RiskCategory", @name = "RiskCategoryId",@disabled = "disabled" })
+                                <span asp-validation-for="RiskCategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Significance">Significance</label>
+                                <select disabled class="form-control" name="Significance" id="Significance" asp-for="Significance">
+                                    <option value="">-- Select One --</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                                <span asp-validation-for="Significance" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Recomendation">Recomendation</label>
+                                <textarea asp-for="Recomendation" type="text" class="form-control" id="Recomendation" name="Recomendation" placeholder="Recomendation"></textarea>
+                            </div>
+                        </div>
+                        @* <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Description">Description</label>
+                                <textarea asp-for="Description" type="text" class="form-control" id="Description" name="Description" placeholder="Description"></textarea>
+                            </div>
+                        </div> *@
+                    </div>
+
+                    <div class="float-end mt-2">
+                        <button id="btnCancel" class="btn btn-secondary">Cancel</button>
+                        <button disabled id="saveButton" type="button" class="btn btn-primary me-2">Save Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#Company").prop("disabled", true);
+            $("#Department").prop("disabled", true);
+            $("#Function").prop("disabled", true);
+
+            $.ajax({
+                url: "/DraftAuditReport/GetCompanyByIndustry",
+                data: { industryId: $("#Industry").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Company").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#ComId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Company").html(options);
+                    }
+                }
+            });
+            $.ajax({
+                url: "/DraftAuditReport/GetDepartmentsByCompany",
+                data: { companyId: $("#Company").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Department").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#DeptId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Department").html(options);
+                    }
+                }
+            });
+            $.ajax({
+                url: "/DraftAuditReport/GetFunctionsByDepartment",
+                data: { departmentId: $("#Department").val() },
+                type: "GET",
+                success: function (data) {
+                    $("#Function").prop("disabled", false);
+
+                    var options = '<option value="">-- Select One --</option>';
+
+                    if (data && data["$values"]) {
+                        data["$values"].forEach(function (item) {
+                            var selected = item.id == $("#FuncId").val() ? 'selected' : '';
+                            options += '<option value="' + item.id + '" ' + selected + '>' + item.name + '</option>';
+                        });
+                        $("#Function").html(options);
+                    }
+                }
+            });
+
+            $("#Industry").change(function () {
+                var industryId = $(this).val();
+                $.ajax({
+                    url: "/DraftAuditReport/GetCompanyByIndustry",
+                    data: { industryId: industryId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Company").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Company").html(options);
+                        }
+                    }
+                });
+            });
+
+            $("#Company").change(function () {
+                var companyId = $(this).val();
+                $.ajax({
+                    url: "/DraftAuditReport/GetDepartmentsByCompany",
+                    data: { companyId: companyId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Department").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Department").html(options);
+                        }
+                    }
+                });
+            });
+
+            $("#Department").change(function () {
+                var departmentId = $(this).val();
+                $.ajax({
+                    url: "/DraftAuditReport/GetFunctionsByDepartment",
+                    data: { departmentId: departmentId },
+                    type: "GET",
+                    success: function (data) {
+                        $("#Function").prop("disabled", false);
+
+                        var options = '<option value="">-- Select One --</option>';
+
+                        if (data && data["$values"]) {
+                            data["$values"].forEach(function (item) {
+                                options += '<option value="' + item.id + '">' + item.name + '</option>';
+                            });
+                            $("#Function").html(options);
+                        }
+                    }
+                });
+            });
+
+            $('#Description').summernote();
+            $('#Recomendation').summernote();
+
+            $("#AddForm").validate({
+                rules: {
+                    Name: {
+                        required: true
+                    },
+                    IndustryId: {
+                        required: true
+                    },
+                    CompanyId: {
+                        required: true
+                    },
+                    DepartmentId: {
+                        required: true
+                    },
+                    FunctionId: {
+                        required: true
+                    },
+                    FindingId: {
+                        required: true
+                    },
+                    ObservationId: {
+                        required: true
+                    },
+                    RiskImpactId: {
+                        required: true
+                    },
+                    RiskCategoryId: {
+                        required: true
+                    },
+                    Significance: {
+                        required: true
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "The Name field is required"
+                    },
+                    IndustryId: {
+                        required: "The Industry field is required"
+                    },
+                    CompanyId: {
+                        required: "The Company field is required"
+                    },
+                    DepartmentId: {
+                        required: "The Department field is required"
+                    },
+                    FunctionId: {
+                        required: "The Function field is required"
+                    },
+                    FindingId: {
+                        required: "The Finding field is required"
+                    },
+                    ObservationId: {
+                        required: "The Observation field is required"
+                    },
+                    RiskImpactId: {
+                        required: "The RiskImpact field is required"
+                    },
+                    RiskCategoryId: {
+                        required: "The RiskCategory field is required"
+                    },
+                    Significance: {
+                        required: "The Significance field is required"
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    if (element.is("select")) {
+                        error.insertAfter(element.siblings(".text-danger"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                }
+            });
+
+            $(document).on("click", "#btnCancel", function (e) {
+                e.preventDefault();
+                window.location.href = '/DraftAuditReport/Index';
+            });
+
+            $("#saveButton").click(function () {
+                var htmlDescription = $('#Description').summernote('code');
+                var htmlRecomendation = $('#Recomendation').summernote('code');
+
+                if ($("#EditForm").valid()) {
+                    var formData = {
+                        Name: $("#Name").val(),
+                        Description: htmlDescription,
+                        Recomendation: htmlRecomendation,
+                        IndustryId: $("#Industry").val(),
+                        CompanyId: $("#Company").val(),
+                        DepartmentId: $("#Department").val(),
+                        FunctionId: $("#Function").val(),
+                        FindingId: $("#Finding").val(),
+                        ObservationId: $("#Observation").val(),
+                        RiskImpactId: $("#RiskImpact").val(),
+                        RiskCategoryId: $("#RiskCategory").val(),
+                        Significance: $("#Significance").val()
+                    };
+
+                    swal({
+                        title: "Saving...",
+                        text: "Please wait.",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        showCancelButton: false,
+                        showCloseButton: false,
+                        onBeforeOpen: () => {
+                            swal.showLoading();
+                        }
+                    });
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "/api/DraftAuditReports/@Model.Id",
+                            method: "PUT",
+                            dataType: 'json',
+                            contentType: "application/json",
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                swal.close();
+                                swal({
+                                    title: "Success",
+                                    text: "Your data has been saved",
+                                    icon: "success",
+                                    position: "top-end",
+                                    timer: 2000,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    showCloseButton: false
+                                }).then(function () {
+                                    window.location.href = '/DraftAuditReport/Index';
+                                });
+                            },
+                            error: function (error) {
+                                swal.close();
+                                if (error.responseJSON && error.responseJSON.errors) {
+                                    swal({
+                                        title: "Opps...",
+                                        text: "Something went wrong!",
+                                        icon: "error",
+                                        position: "top-end",
+                                        timer: 2000,
+                                        allowOutsideClick: false,
+                                        showConfirmButton: false,
+                                        showCancelButton: false,
+                                        showCloseButton: false
+                                    });
+                                }
+                            }
+                        });
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+}
+
+

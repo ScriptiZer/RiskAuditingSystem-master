@@ -93,7 +93,7 @@
         }
 
     .scrollable-table-container {
-        max-height: 400px;
+        max-height: 700px;
         overflow-y: auto;
     }
 
@@ -149,7 +149,8 @@
                                 {
                                     <div data-departments="@group.DepartmentName" class="year-tab" data-years="@year" style="cursor: pointer;border:1px solid #bbb;
                                                 height: 55px;
-                                                width: 70px;
+                                                width: 90px;
+                                                text-align: center;
                                                 box-sizing: border-box;
                                                 /* margin-right: -14px; */
                                                 background-color: #cdd8e7;
@@ -395,7 +396,7 @@
                                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
                                             {
                                                 <td style="display:none;">
-                                                    <a data-id="@index" data-draftId="@item.Id" class="btnSave" id="btnSave" title="Save Data" href="#"> <i class="fa-solid fa-floppy-disk"></i></a>
+                                                    <button data-id="@index" data-draftId="@item.Id" class="btnSave" id="btnSave" title="Save Data"> <i class="fa-solid fa-floppy-disk"></i> Save</button>
                                                 </td>
                                             }
                                         </tr>
@@ -424,10 +425,10 @@
 
                     }
                 }
-                <div class="float-end">
+                <div class="modal-footer" style="position: fixed; left: 0; right: 0; bottom: 0; background-color: #ffffff; z-index: 9; ">
                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Draft Audit Plan" && p.View == true && p.Add == true))
                     {
-                        <button id="saveAllButton" type="button" class="btn btn-primary">Save All</button>
+                        <button id="saveAllButton" type="button" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save All</button>
                     }
                 </div>
 
@@ -483,6 +484,17 @@
             $('#tableList td[data-years="' + year + '"][ data-departments="' + department + '"]').toggle();
         }
         $(document).ready(function () {
+                        var table = $('.tableList');
+
+            table.draggable({
+                axis: 'x',
+                cursor: 'grabbing',
+                scroll: false,
+                start: function (event, ui) {
+                    $.ui.ddmanager.current.cancelHelperRemoval = true;
+                }
+            });
+
             $(document).on("click", ".year-tab", function () {
                 var selectedYear = $(this).data("years");
                 var selectedDepartment = $(this).data("departments");
@@ -544,22 +556,24 @@
             });
 
             $(document).on("click", "#saveAllButton", function () {
+            
 
                 swal({
                     title: "Saving...",
                     text: "Please wait.",
                     allowOutsideClick: false,
-                    showConfirmButton: false, // إخفاء زر التأكيد
-                    showCancelButton: false, // إخفاء زر الإلغاء
-                    showCloseButton: false, // إخفاء زر الإغلاق
+                    showConfirmButton: false, 
+                    showCancelButton: false,
+                    showCloseButton: false, 
                     onBeforeOpen: () => {
-                        swal.showLoading(); // إضافة شريط التقدم
+                        swal.showLoading();
                     }
                 });
                 setTimeout(function () {
                     $(".btnSave").each(function () {
                         var draftId = $(this).attr("data-draftId");
                         var index = $(this).data("id");
+                        var row = $(this).closest('tr');
                         var draftAuditPlanList = [];
                         for (var userIndex = 0; userIndex < 12; userIndex++) {
                             var plan = $("input[name='plan-" + userIndex + "'][data-index='" + index + "']").prop('checked');
@@ -576,7 +590,7 @@
                             });
                         }
 
-                        var row = $(this).closest('tr');
+                        
                         var isOneYear = row.find('.IsOneYear').prop('checked');
                         var isTwoYear = row.find('.IsTwoYear').prop('checked');
                         var isThreeYear = row.find('.IsThreeYear').prop('checked');

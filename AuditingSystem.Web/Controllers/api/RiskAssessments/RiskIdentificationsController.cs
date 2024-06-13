@@ -1,4 +1,5 @@
-﻿using AuditingSystem.Entities.RiskAssessments;
+﻿using AuditingSystem.Entities.AuditPlan;
+using AuditingSystem.Entities.RiskAssessments;
 using AuditingSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -78,12 +79,26 @@ namespace AuditingSystem.Web.Controllers.Api.RiskAssessment
             {
                 if (ModelState.IsValid)
                 {
+                    //var existingIdentification = await _riskIdentificationRepository.FindByAsync(r => r.CompanyId == riskIdentification.CompanyId
+                    //    && r.DepartmentId == riskIdentification.DepartmentId);
+
+                    //if (existingIdentification == null)
+                    //{
+                    riskIdentification.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                    riskIdentification.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                    riskIdentification.CreationDate = DateTime.Now;
+                    riskIdentification.CurrentYear = DateTime.Now.Year;
                     await _riskIdentificationRepository.CreateAsync(riskIdentification);
 
-                    // Remove cached data
-                    _cache.Remove("RiskIdentifications");
+                        // Remove cached data
+                        _cache.Remove("RiskIdentifications");
 
-                    return CreatedAtAction(nameof(GetById), new { id = riskIdentification.Id }, riskIdentification);
+                        return CreatedAtAction(nameof(GetById), new { id = riskIdentification.Id }, riskIdentification);
+                    //}
+                    //else
+                    //{
+                    //    return Conflict(new { error = "DuplicateData", message = "Risk identification already exists." });
+                    //}
                 }
 
                 return BadRequest(ModelState);
@@ -102,21 +117,32 @@ namespace AuditingSystem.Web.Controllers.Api.RiskAssessment
             {
                 if (ModelState.IsValid)
                 {
-                    var existingIdentification = await _riskIdentificationRepository.FindByAsync(id);
-                    if (existingIdentification == null)
-                    {
-                        return NotFound();
-                    }
+                    //var existingIdentificationcheck = await _riskIdentificationRepository.FindByAsync(r => r.CompanyId == riskIdentification.CompanyId
+                    //   && r.DepartmentId == riskIdentification.DepartmentId);
 
-                    // Update the existing identification with the new values
-                    UpdateRiskIdentification(existingIdentification, riskIdentification);
+                    //if (existingIdentificationcheck == null)
+                    //{
+                        var existingIdentification = await _riskIdentificationRepository.FindByAsync(id);
+                        if (existingIdentification == null)
+                        {
+                            return NotFound();
+                        }
 
+                        // Update the existing identification with the new values
+                        UpdateRiskIdentification(existingIdentification, riskIdentification);
+                    existingIdentification.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingIdentification.UpdatedDate = DateTime.Now;
                     await _riskIdentificationRepository.UpdateAsync(existingIdentification);
 
-                    // Remove cached data
-                    _cache.Remove("RiskIdentifications");
+                        // Remove cached data
+                        _cache.Remove("RiskIdentifications");
 
-                    return NoContent();
+                        return NoContent();
+                    //}
+                    //else
+                    //{
+                    //    return Conflict(new { error = "DuplicateData", message = "Risk identification already exists." });
+                    //}
                 }
 
                 return BadRequest(ModelState);
@@ -130,8 +156,13 @@ namespace AuditingSystem.Web.Controllers.Api.RiskAssessment
 
         private void UpdateRiskIdentification(RiskIdentification existing, RiskIdentification updated)
         {
+            existing.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+            existing.UpdatedDate = DateTime.Now;
             existing.Code = updated.Code;
             existing.Name = updated.Name;
+            existing.CompanyId = updated.CompanyId;
+            existing.DepartmentId = updated.DepartmentId;
+            existing.FunctionId = updated.FunctionId;
             existing.Description = updated.Description;
             existing.RiskCategoryId = updated.RiskCategoryId;
             existing.RiskImpactId = updated.RiskImpactId;

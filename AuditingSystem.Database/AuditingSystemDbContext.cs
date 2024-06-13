@@ -7,6 +7,9 @@ using AuditingSystem.Entities.RiskAssessments;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities;
 using AuditingSystem.Entities.AuditFieldWork;
+using AuditingSystem.Entities.AuditFieldTests;
+using AuditingSystem.Entities.AuditReports;
+using AuditingSystem.Entities.FollowUp;
 
 namespace AuditingSystem.Database
 {
@@ -60,6 +63,16 @@ namespace AuditingSystem.Database
         public virtual DbSet<RolesPermissions>? RolesPermissions { get; set; }
         public virtual DbSet<AuditProgram>? AuditPrograms { get; set; }
         public virtual DbSet<AuditProgramList>? AuditProgramLists { get; set; }
+        public virtual DbSet<OperationBudgetType>? OperationBudgetTypes { get; set; }
+        public virtual DbSet<Observation>? Observations { get; set; }
+        public virtual DbSet<Finding>? Findings { get; set; }
+        public virtual DbSet<DraftAuditReports>? DraftAuditReports  { get; set; }
+        public virtual DbSet<ClientActionPlans>? ClientActionPlans { get; set; }
+        public virtual DbSet<FinalAuditReports>? FinalAuditReports { get; set; }
+        public virtual DbSet<SODType>? SODTypes { get; set; }
+        public virtual DbSet<FirstDuty>? FirstDuties { get; set; }
+        public virtual DbSet<SecondDuty>? SecondDuties { get; set; }
+        public virtual DbSet<FirstSecondDuties>? FirstSecondDuties { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

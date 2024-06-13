@@ -23,8 +23,8 @@ namespace AuditingSystem.Entities.AuditPlan
         public virtual int? Outsource { get; set; }
         public virtual int? Manager { get; set; }
 
-        public virtual int? DratAuditPlanId { get; set; }
-        public virtual DraftAuditPlan? DraftAuditPlan { get; set; }
+        public virtual int? AuditResourcesId { get; set; }
+        public virtual AuditResources? AuditResources { get; set; }
 
         public virtual IEnumerable<FinalAuditPlanList>? FinalAuditPlanLists { get; set; }
     }

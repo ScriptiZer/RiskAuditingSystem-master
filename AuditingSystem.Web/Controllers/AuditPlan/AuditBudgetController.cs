@@ -1,11 +1,14 @@
 ﻿using AuditingSystem.Database;
 using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
+using AuditingSystem.Entities.Lockups;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
 using AuditingSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AuditingSystem.Web.Controllers.AuditPlan
 {
@@ -13,12 +16,15 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
     {
         private readonly AuditingSystemDbContext db;
         private readonly IBaseRepository<User, int> _userRepository;
+        private readonly IBaseRepository<OperationBudgetType, int> _operationBudgetType;
 
         public AuditBudgetController(AuditingSystemDbContext db,
-            IBaseRepository<User, int> userRepository)
+            IBaseRepository<User, int> userRepository,
+            IBaseRepository<OperationBudgetType, int> operationBudgetType)
         {
             this.db = db;
             this._userRepository = userRepository;
+            _operationBudgetType = operationBudgetType;
         }
 
         public async Task<IActionResult> Index()
@@ -43,33 +49,36 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
 
                 var yearQuarterDictionary = new Dictionary<string, List<YearQuarter>>();
 
-                foreach (var company in companiesWithYearsAndQuarters)
-                {
-                    var budgetPlanYearIds = company.BudgetPlanYear.Split(',').Select(int.Parse);
-
-                    foreach (var budgetPlanYearId in budgetPlanYearIds)
+                    foreach (var company in companiesWithYearsAndQuarters)
                     {
-                        var year = await db.Years.FirstOrDefaultAsync(y => y.Id == budgetPlanYearId);
+                        var budgetPlanYearIds = company.BudgetPlanYear.Split(',').Select(int.Parse);
 
-                        if (year != null)
+                        foreach (var budgetPlanYearId in budgetPlanYearIds)
                         {
-                            var quarters = year.Quarter.Split(',').ToList();
-                            var yearQuarters = quarters.Select(quarter => new YearQuarter { YearId = year.Id, Quarter = quarter }).ToList();
+                            var year = await db.Years.FirstOrDefaultAsync(y => y.Id == budgetPlanYearId);
 
-                            yearQuarterDictionary.Add(year.Name, yearQuarters);
+                            if (year != null)
+                            {
+                                var quarters = year.Quarter.Split(',').ToList();
+                                var yearQuarters = quarters.Select(quarter => new YearQuarter { YearId = year.Id, Quarter = quarter }).ToList();
+
+                                yearQuarterDictionary.Add(year.Name, yearQuarters);
+                            }
                         }
                     }
-                }
+                
 
                 ViewData["YearQuarterDictionary"] = yearQuarterDictionary;
 
                 var list = await (
                     from b in db.AuditBudgets
-                    join u in db.Users on b.ResourceId equals u.Id
+                    join u in db.Users on b.ResourceId equals u.Id into userJoin 
+                    from u in userJoin.DefaultIfEmpty() 
                     join c in db.Companies on b.CompanyId equals c.Id
-                    where c.Id == user.CompanyId // modify
+                    where c.Id == user.CompanyId
                     select new GetBudgetListVM { AuditBudget = b, Company = c, User = u })
                     .AsNoTracking().ToListAsync();
+
 
                 var groupedByResourceType = list.GroupBy(item => item.AuditBudget.ResourceType);
                 ViewData["GroupedByResourceType"] = groupedByResourceType;
@@ -141,6 +150,31 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
             {
                 return RedirectToAction("Error", "Home");
             }
+        }
+
+        public async Task<IActionResult> Add()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+            var getCompany = await _userRepository.FindByAsync(Convert.ToInt32(userId));
+
+            var operationBudgetType = _operationBudgetType.ListAsync(
+                  new Expression<Func<OperationBudgetType, bool>>[] { u => u.IsDeleted == false },
+                  q => q.OrderBy(u => u.Id),
+                  null).Result;
+
+            var resources = _userRepository.ListAsync(
+              new Expression<Func<User, bool>>[] { u => u.IsDeleted == false },
+              q => q.OrderBy(u => u.Id),
+              null).Result;
+
+            ViewBag.OperationBudgetTypeId = new SelectList(operationBudgetType, "Id", "Name");
+            ViewBag.ResourceId = new SelectList(resources, "Id", "Name");
+            ViewBag.CompanyId = getCompany.CompanyId;
+            ViewBag.UserId = userId;
+            return View();
         }
 
         private List<dynamic> GetAuditBudgetData()

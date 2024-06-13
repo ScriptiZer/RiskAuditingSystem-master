@@ -1,4 +1,5 @@
 ﻿using AuditingSystem.Database;
+using AuditingSystem.Entities.AuditPlan;
 using AuditingSystem.Entities.AuditProcess;
 using AuditingSystem.Entities.Setup;
 using AuditingSystem.Services.Interfaces;
@@ -59,8 +60,12 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                 var existingRecord = db.Industries
                   .Where(x => x.Source == "System")
                   .OrderByDescending(x => x.Id)
-                  .FirstOrDefault();
+                .FirstOrDefault();
 
+                industry.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                industry.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                industry.CreationDate = DateTime.Now;
+                industry.CurrentYear = DateTime.Now.Year;
                 int increment = 5000;
                 if (existingRecord != null)
                 {
@@ -97,6 +102,9 @@ namespace AuditingSystem.Web.Controllers.api.AuditProcess
                         return NotFound(new { error = $"Industry with ID {id} not found" });
                     }
 
+                    existingIndustry.UpdatedBy = HttpContext.Session.GetInt32("UserId");
+                    existingIndustry.UpdatedDate = DateTime.Now;
+                    existingIndustry.Code = updatedIndustry.Code;
                     existingIndustry.Name = updatedIndustry.Name;
                     existingIndustry.Description = updatedIndustry.Description;
                     existingIndustry.ParentIndustryId = updatedIndustry.ParentIndustryId;

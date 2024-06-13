@@ -61,7 +61,7 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
             {
                 // Log the exception or handle it as needed
                 _logger.LogError(ex, "An error occurred while saving data");
-                return StatusCode(500, new { success = false, message = "An error occurred while saving data" });
+                return StatusCode(500, new { success = false, message = "An error occurred while saving data\nError Message: " + ex.Message });
             }
         }
 
