@@ -120,7 +120,7 @@
                 var estimatedSickLeaves = parseFloat($("#EstimatedSickLeaves").val()) || 0;
                 var balancefromPreviousYear = parseFloat($("#BalancefromPreviousYear").val()) || 0;
 
-                var workingDays = daysNumberInYear - (weekends + holidaysNumber + noofInternationalHlidays + noofLeavesDays + (3 * specialWorkingHours) / 8) + estimatedSickLeaves + balancefromPreviousYear;
+                var workingDays = daysNumberInYear - (weekends + holidaysNumber + noofInternationalHlidays + noofLeavesDays + (2 * specialWorkingHours) / 8) + estimatedSickLeaves + balancefromPreviousYear;
                 $("#WorkingDays").val(workingDays);
             }
 

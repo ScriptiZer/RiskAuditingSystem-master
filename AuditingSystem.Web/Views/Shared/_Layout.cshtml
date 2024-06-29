@@ -198,9 +198,9 @@
                 userPermissions.Any(p => p.Permission.Name == "Control Type" && p.View == true) ||
                 userPermissions.Any(p => p.Permission.Name == "Control Process" && p.View == true) ||
                 userPermissions.Any(p => p.Permission.Name == "Control Frequency" && p.View == true) ||
-                userPermissions.Any(p => p.Permission.Name == "Control Effectiveness" && p.View == true) @* ||
+                userPermissions.Any(p => p.Permission.Name == "Control Effectiveness" && p.View == true) ||
                 userPermissions.Any(p => p.Permission.Name == "Permissions" && p.View == true) ||
-                userPermissions.Any(p => p.Permission.Name == "RolesPermissions" && p.View == true )*@)
+                userPermissions.Any(p => p.Permission.Name == "RolesPermissions" && p.View == true ))
                 {
                     <li class="mega-menu mega-menu-sm nav-item">
                         <a class="has-arrow nav-link arrowHeader" href="javascript:void()" aria-expanded="false">
@@ -299,14 +299,14 @@
                             {
                                 <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="Role">Roles</a></li>
                             }
-                            @*  @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Permissions" && p.View == true))
-                        { *@
+                             @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Permissions" && p.View == true))
+                        {
                             <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="Permission">Permission</a></li>
-                            @* }
+                             }
                         @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Roles Permissions" && p.View == true))
-                        { *@
+                        { 
                             <li class="nav-item"> <a class="nav-link navSub" asp-action="Index" asp-controller="RolesPermissions">Roles Permissions</a></li>
-                            @* } *@
+                            } 
                         </ul>
                     </li>
                 }

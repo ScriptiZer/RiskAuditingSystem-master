@@ -82,6 +82,7 @@
                                 <th>Risk Likelihood</th>
                                 <th>Risk Rating Rationalization</th>
                                 <th>Inherent Risk Rating</th>
+                                <th>Inherent Risk Status</th>
                                 <th colspan="2">Actions</th>
                             </tr>
                         </thead>
@@ -99,7 +100,23 @@
                                     <td>@item.RiskImpact.Name</td>
                                     <td>@item.RiskLikelihood.Name</td>
                                     <td>@Html.Raw(item.RiskRatingRationalization)</td>
-                                    <td style="">@item.InherentRiskRating | @item.InherentRiskStatus</td>
+                                    <td style="">@item.InherentRiskRating</td>
+                                    @if (item.InherentRiskStatus == "Low")
+                                    {
+                                        <td style="background-color:green;color:#ffffff;text-align:center;">@item.InherentRiskStatus</td>
+                                    }
+                                    else if (item.InherentRiskStatus == "Medium")
+                                    {
+                                        <td style="background-color:#FFFF00;text-align:center;">@item.InherentRiskStatus</td>
+                                    }
+                                    else if (item.InherentRiskStatus == "High")
+                                    {
+                                        <td style="background-color:red;color:#ffffff;text-align:center;">@item.InherentRiskStatus</td>
+                                    }
+                                    else if (item.InherentRiskStatus == "Critical")
+                                    {
+                                        <td style="background-color:#C00000;color:#ffffff;text-align:center;">@item.InherentRiskStatus</td>
+                                    }
                                     @if (userPermissions != null && userPermissions.Any(p => p.Permission.Name == "Risk Identification" && p.View == true && (p.Edit == false && p.Delete == false)))
                                     {
                                         <td>

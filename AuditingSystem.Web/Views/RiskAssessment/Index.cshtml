@@ -328,20 +328,39 @@
                 dataType: 'json',
                 success: function (response) {
                     $('tbody').empty();
-
+                    var BGColor = "";
+                    var FontColor = "";
                     $.each(response.data.$values, function (index, item) {
+                        if (item.inherentRiskStatus == "Low") {
+                            BGColor = "green";
+                            FontColor = "#ffffff";
+                        }
+                        else if (item.inherentRiskStatus == "Medium") {
+                            BGColor = "#FFFF00";
+                            FontColor = "#000000";
+                        }
+                        else if (item.inherentRiskStatus == "High") {
+                            BGColor = "red";
+                            FontColor = "#ffffff";
+                        }
+                        else if (item.inherentRiskStatus == "Critical") {
+                            BGColor = "#C00000";
+                            FontColor = "#ffffff";
+                        }
                         var row = '<tr>' +
                             '<td><div class="form-group"><select style="border:1px solid #c1c1c1" class="form-control" id="UseToYear" data-id="item.id"><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select></div></td>' +
                             '<td>' + item.riskIdentificationCode + '</td>' +
                             '<td>' + item.companyName + '</td>' +
                             '<td>' + item.departmentName + '</td>' +
+                            '<td>' + item.functionName + '</td>' +
                             '<td>' + item.riskIdentificationName + '</td>' +
                             '<td style="text-align:center; background-color:' + item.riskCategoryBGColor + ';color:' + item.riskCategoryFontColor + '">' + item.riskCategoryName + '</td>' +
                             '<td>' + item.riskIdentificationDescription + '</td>' +
                             '<td>' + item.riskIdentificationRiskRatingRationalization + '</td>' +
                             '<td style="text-align:center;">' + item.riskImpactRate + ' - ' + item.riskImpactName + '</td>' +
                             '<td  style="text-align:center;">' + item.riskLikehoodRate + ' - ' + item.riskLikehoodName + '</td>' +
-                            '<td style="text-align:center; ">' + item.riskIdentificationInherentRiskRating + ' | ' + item.inherentRiskStatus + '</td>' +
+                            '<td style="text-align:center; ">' + item.riskIdentificationInherentRiskRating + '</td>' +
+                            '<td style="text-align:center;background-color='+BGColor+'; color='+FontColor+' ">' + item.inherentRiskStatus + '</td>' +
                             '<td>' + item.controlName + '</td>' +
                             '<td>' + item.controlDescription + '</td>' +
                             '<td style="text-align:center; background-color:' + item.controlTypeBGColor + ';color:' + item.controlTypeFontColor + '">' + item.controlTypeName + '</td>' +

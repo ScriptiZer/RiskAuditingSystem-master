@@ -219,7 +219,7 @@ namespace AuditingSystem.Web.Controllers.AuditPlan
 
                 foreach (var company in companiesWithYearsAndQuarters)
                 {
-                    foreach (var year in company.Years)
+                    foreach (var year in company.Years.OrderBy(y => y.Name).TakeLast(3))
                     {
                         var quarters = year.Quarter.Split(',').ToList();
                         var yearQuarters = new List<YearQuarter>();

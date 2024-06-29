@@ -188,16 +188,13 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
         {
             try
             {
-                //if (ModelState.IsValid)
-                //{
                 var auditR = db.AuditResources.Find(combinedData.ResourceId);
                 auditR.AssignedToUserId = combinedData.AssignedToUserId;
                 db.SaveChanges();
 
-                //var auditResourcesList = combinedData?.auditResourcesLists;
                 var startDateEndDateList = combinedData?.StartDateEndDateList;
 
-                if (/*auditResourcesList == null ||*/ startDateEndDateList == null)
+                if (startDateEndDateList == null)
                 {
                     return BadRequest("Invalid request data");
                 }
@@ -250,13 +247,29 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
                             a.QuarterId == startDateEndDate.QuarterId);
 
                     //var auditResource = await _auditResources.FindByAsync(Convert.ToInt32(startDateEndDate.AuditResourceId));
-                    
+
                     if (existingRecord != null)
                     {
-                        existingRecord.PlanStartDate = startDateEndDate.PlanStartDate;
-                        existingRecord.PlanEndDate = startDateEndDate.PlanEndDate;
-                        existingRecord.ActualStartDate = startDateEndDate.ActualStartDate;
-                        existingRecord.ActualEndDate = startDateEndDate.ActualEndDate;
+                        if (startDateEndDate.PlanStartDate.HasValue)
+                        {
+                            existingRecord.PlanStartDate = startDateEndDate.PlanStartDate.Value;
+                        }
+
+                        if (startDateEndDate.PlanEndDate.HasValue)
+                        {
+                            existingRecord.PlanEndDate = startDateEndDate.PlanEndDate.Value;
+                        }
+
+                        if (startDateEndDate.ActualStartDate.HasValue)
+                        {
+                            existingRecord.ActualStartDate = startDateEndDate.ActualStartDate.Value;
+                        }
+
+                        if (startDateEndDate.ActualEndDate.HasValue)
+                        {
+                            existingRecord.ActualEndDate = startDateEndDate.ActualEndDate.Value;
+                        }
+
                         //existingRecord.AssignedToStartActualId = startDateEndDate.AssignedToStartActualId;
                         //existingRecord.AssignedToEndActualId = startDateEndDate.AssignedToEndActualId;
 
@@ -281,7 +294,7 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
                          2 → Actual → Green
                          3 → Exceeded → Red
                         */
-                        if (existingRecord.PlanStartDate != null)
+                        if (existingRecord.PlanStartDate.HasValue)
                         {
                             int year = existingRecord.PlanStartDate.Value.Year;
                             DateTime startQ1 = new DateTime(year, 1, 1);
@@ -292,31 +305,9 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
                             DateTime endQ3 = new DateTime(year, 9, 30);
                             DateTime startQ4 = new DateTime(year, 10, 1);
                             DateTime endQ4 = new DateTime(year, 12, 31);
-                            /*
-                             &&
-                                (existingRecord_Draft.Year == startDateEndDate.YearId) &&
-                                (existingRecord_Draft.Quarter == startDateEndDate.QuarterId) && 
-                                (draft.Id == existingRecord_Draft.DraftAuditPlanId
-                             */
-                            if (existingRecord.PlanStartDate.Value >= startQ1 && existingRecord.PlanStartDate.Value <= endQ1 && existingRecord_final.Quarter == "Q1" && final.Id == existingRecord_final.FinalAuditPlanId)
+                            if (existingRecord.PlanStartDate.HasValue)
                             {
                                 existingRecord_final.Plan = 1; // Gray
-                            }
-                            else if ((existingRecord.PlanStartDate.Value >= startQ2 && existingRecord.PlanStartDate.Value <= endQ2 && existingRecord_final.Quarter == "Q2" && final.Id == existingRecord_final.FinalAuditPlanId))
-                            {
-                                existingRecord_final.Plan = 1; // Gray
-                            }
-                            else if ((existingRecord.PlanStartDate.Value >= startQ3 && existingRecord.PlanStartDate.Value <= endQ3 && existingRecord_final.Quarter == "Q3" && final.Id == existingRecord_final.FinalAuditPlanId))
-                            {
-                                existingRecord_final.Plan = 1; // Gray
-                            }
-                            else if (existingRecord.PlanStartDate.Value >= startQ4 && existingRecord.PlanStartDate.Value <= endQ4 && existingRecord_final.Quarter == "Q4" && final.Id == existingRecord_final.FinalAuditPlanId)
-                            {
-                                existingRecord_final.Plan = 1; // Gray
-                            }
-                            else
-                            {
-                                existingRecord_final.Plan = 0; // no plan
                             }
                         }
                         else
@@ -339,88 +330,50 @@ namespace AuditingSystem.Web.Controllers.api.AuditPlan
                     }
                     else
                     {
-                        
-                            var item = new FinalAuditPlanList();
-                            item.FinalAuditPlanId = final.Id;
-                            item.Year = startDateEndDate.YearId;
-                            item.Quarter = startDateEndDate.QuarterId;
-                            item.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
-                            item.CreatedBy = HttpContext.Session.GetInt32("UserId");
-                            item.CreationDate = DateTime.Now;
-                            item.CurrentYear = DateTime.Now.Year;
-                            item.IsDeleted = false;
+
+                        var item = new FinalAuditPlanList();
+                        item.FinalAuditPlanId = final.Id;
+                        item.Year = startDateEndDate.YearId;
+                        item.Quarter = startDateEndDate.QuarterId;
+                        item.CreatedByCompany = HttpContext.Session.GetInt32("CompanyId");
+                        item.CreatedBy = HttpContext.Session.GetInt32("UserId");
+                        item.CreationDate = DateTime.Now;
+                        item.CurrentYear = DateTime.Now.Year;
+                        item.IsDeleted = false;
 
 
-                            int year = existingRecord.PlanStartDate.Value.Year;
-                            DateTime startQ1 = new DateTime(year, 1, 1);
-                            DateTime endQ1 = new DateTime(year, 3, 31);
-                            DateTime startQ2 = new DateTime(year, 4, 1);
-                            DateTime endQ2 = new DateTime(year, 6, 30);
-                            DateTime startQ3 = new DateTime(year, 7, 1);
-                            DateTime endQ3 = new DateTime(year, 9, 30);
-                            DateTime startQ4 = new DateTime(year, 10, 1);
-                            DateTime endQ4 = new DateTime(year, 12, 31);
+                        int year = existingRecord.PlanStartDate.HasValue ? existingRecord.PlanStartDate.Value.Year : DateTime.Now.Year;
+                        DateTime startQ1 = new DateTime(year, 1, 1);
+                        DateTime endQ1 = new DateTime(year, 3, 31);
+                        DateTime startQ2 = new DateTime(year, 4, 1);
+                        DateTime endQ2 = new DateTime(year, 6, 30);
+                        DateTime startQ3 = new DateTime(year, 7, 1);
+                        DateTime endQ3 = new DateTime(year, 9, 30);
+                        DateTime startQ4 = new DateTime(year, 10, 1);
+                        DateTime endQ4 = new DateTime(year, 12, 31);
 
-                            if (existingRecord.PlanStartDate.Value >= startQ1 && existingRecord.PlanStartDate.Value <= endQ1)
-                            {
-                                item.Plan = 1; // Gray
-                            }
-                            else if (existingRecord.PlanStartDate.Value >= startQ2 && existingRecord.PlanStartDate.Value <= endQ2)
-                            {
-                                item.Plan = 1; // Gray
-                            }
-                            else if (existingRecord.PlanStartDate.Value >= startQ3 && existingRecord.PlanStartDate.Value <= endQ3)
-                            {
-                                item.Plan = 1; // Gray
-                            }
-                            else if (existingRecord.PlanStartDate.Value >= startQ4 && existingRecord.PlanStartDate.Value <= endQ4)
-                            {
-                                item.Plan = 1; // Gray
-                            }
-                            else
-                            {
-                                item.Plan = 0; // no color
-                            }
+                        if (existingRecord.PlanStartDate.HasValue)
+                        {
+                            item.Plan = 1; // Gray
+                        }
 
 
-                            if (existingRecord.PlanEndDate < startDateEndDate.ActualEndDate)
-                            {
-                                item.Actual = 3; // Exceeded Actual
-                            }
-                            else if ((existingRecord.PlanEndDate >= startDateEndDate.ActualEndDate))
-                            {
-                                item.Actual = 2; // Actual
-                            }
-                            else
-                            {
-                                item.Actual = 0; // no actual
-                            }
+                        if (existingRecord.PlanEndDate < startDateEndDate.ActualEndDate)
+                        {
+                            item.Actual = 3; // Exceeded Actual
+                        }
+                        else if ((existingRecord.PlanEndDate >= startDateEndDate.ActualEndDate))
+                        {
+                            item.Actual = 2; // Actual
+                        }
+                        else
+                        {
+                            item.Actual = 0; // no actual
+                        }
 
 
-                            //if (auditResource.PlanStartDate != null)
-                            //{
-                            //    item.Plan = 1; // Gray
-                            //}
-                            //else
-                            //{
-                            //    item.Plan = 0; // no plan
-                            //}
+                        db.FinalAuditPlanLists.Add(item);
 
-                            //if (auditResource.PlanEndDate < startDateEndDate.ActualEndDate)
-                            //{
-                            //    item.Actual = 3; // Exceeded Actual
-                            //}
-                            //else if ((auditResource.PlanEndDate >= startDateEndDate.ActualEndDate))
-                            //{
-                            //    item.Actual = 2; // Actual
-                            //}
-                            //else
-                            //{
-                            //    item.Actual = 0; // no actual
-                            //}
-
-                            db.FinalAuditPlanLists.Add(item);
-                        
                     }
                 }
 
